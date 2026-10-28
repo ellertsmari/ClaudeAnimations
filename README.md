@@ -76,10 +76,8 @@ npx hyperframes preview examples/clay --stop
   - `ordabokin.mp4` + poster: the Orðabókin film (from `introToUppt-glaerur`)
   - `studio.jpg`: Studio with the Player 2 film at 0:19 and one element
     selected, used in step 08 with numbered markers
-  - The island, Player 2 and neo-punk films are loaded from
-    `../introToModule4/assets/`, so they aren't stored twice. If this folder is
-    moved on its own, copy `island.mp4`, `player2.mp4`, `neopunk.mp4` and their
-    `.jpg` posters into `assets/` and change the paths in `index.html`.
+  - `island.mp4`, `player2.mp4`, `neopunk.mp4` + `.jpg` posters: copies of
+    the films from `../introToModule4/assets/`, so the folder works on its own
 - `examples/`: copies of the files behind each film, linked under the film on
   the page. Copied from `~/Documents/claudeMovies` and
   `~/vefskolinn/sustainable-island-film` in late October 2026, so they won't
