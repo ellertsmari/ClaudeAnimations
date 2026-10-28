@@ -1,0 +1,312 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Jersey 10"; src: url('assets/fonts/Jersey10-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Press Start 2P"; src: url('assets/fonts/PressStart2P-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Silkscreen"; src: url('assets/fonts/Silkscreen-Regular.ttf') format("truetype"); }
+
+    #root {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #F4F1FF;
+    }
+    #root .w09-abs { position: absolute; margin: 0; }
+
+    /* full-bleed ground + faint pixel starfield (own clip layer) */
+    [id="09-why-bg"] {
+      position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+      background:
+        radial-gradient(circle, #2C2560 3.456px, transparent 3.84px) 0 0 / 134.4px 134.4px,
+        radial-gradient(circle, #3a3270 2.688px, transparent 3.072px) 67.2px 44.16px / 211.2px 172.8px,
+        #14112B;
+    }
+
+    /* HUD bar */
+    .w09-hud {
+      left: 0; top: 0; width: 1920px; height: 80.64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 57.6px; box-sizing: border-box;
+      font-family: "Press Start 2P", monospace; font-size: 19.2px; letter-spacing: 0.04em;
+      color: #F4F1FF; border-bottom: 6px solid #2C2560; background: rgba(10,8,24,.35);
+      z-index: 5;
+    }
+    .w09-hud span { position: static; }
+    .w09-p1 { color: #3FE0D0; }
+    .w09-p2 { color: #FF4F8B; }
+    .w09-coin { color: #FFE14D; }
+    .w09-xp { color: #7CFF6B; }
+    .w09-dim { color: #A9A3D9; }
+
+    /* type */
+    .w09-is { font-family: "Jersey 10", sans-serif; font-weight: 400; line-height: .95; white-space: nowrap; }
+    .w09-lbl { font-family: "Silkscreen", monospace; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; white-space: nowrap; }
+
+    .w09-ch { position: relative; }
+    .w09-caret {
+      position: absolute; left: 100%; top: .14em; width: .38em; height: .7em;
+      background: #FFE14D; margin-left: .04em;
+    }
+
+    /* header */
+    [id="09-why-head"] { left: 0; top: 126.72px; width: 1920px; text-align: center; font-size: 107.52px; color: #F4F1FF; }
+
+    /* path svg (viewBox in cqw coords) */
+    [id="09-why-paths"] { left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+
+    /* sprites */
+    .w09-spr { display: block; overflow: visible; }
+    [id="09-why-p1"] { left: 153.6px; top: 449.28px; width: 96px; height: 128.64px; color: #3FE0D0; }
+    [id="09-why-p2"] { left: 249.6px; top: 449.28px; width: 96px; height: 128.64px; color: #FF4F8B; --hair: #FF4F8B; }
+
+    /* route panels: stepped-corner pixel panel (dim slot ring) + lit ring overlay */
+    .w09-panel {
+      left: 729.6px; width: 691.2px; background: #1E1940; transform-origin: 50% 50%;
+      box-shadow: 0 -6px 0 0 #2C2560, 0 6px 0 0 #2C2560, -6px 0 0 0 #2C2560, 6px 0 0 0 #2C2560,
+        15px 15px 0 6px #0A0818;
+    }
+    [id="09-why-cardA"] { top: 295.68px; height: 161.28px; }
+    [id="09-why-cardB"] { top: 587.52px; height: 222.72px; }
+    .w09-ring { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+    [id="09-why-ringA"] { box-shadow: 0 -6px 0 0 #3FE0D0, 0 6px 0 0 #3FE0D0, -6px 0 0 0 #3FE0D0, 6px 0 0 0 #3FE0D0; }
+    [id="09-why-ringB"] { box-shadow: 0 -6px 0 0 #7CFF6B, 0 6px 0 0 #7CFF6B, -6px 0 0 0 #7CFF6B, 6px 0 0 0 #7CFF6B; }
+    .w09-plbl { left: 38.4px; top: 23.04px; font-size: 23.04px; }
+    [id="09-why-textA"] { left: 38.4px; top: 65.28px; font-size: 69.12px; color: #F4F1FF; }
+    [id="09-why-textB"] { left: 38.4px; top: 65.28px; font-size: 65.28px; color: #F4F1FF; }
+
+    /* payoff */
+    [id="09-why-star"] { left: 1574.4px; top: 453.12px; width: 165.12px; height: 165.12px; color: #FFE14D; transform-origin: 50% 50%; }
+    [id="09-why-win"] { left: 1478.4px; top: 648.96px; width: 364.8px; text-align: center; font-size: 24.96px; }
+
+    /* report footer label */
+    [id="09-why-foot"] { left: 0; top: 852.48px; width: 1920px; text-align: center; font-size: 22.08px; }
+
+    /* CRT veil — top layer */
+    .w09-crt {
+      left: 0; top: 0; width: 1920px; height: 1080px; z-index: 20; pointer-events: none;
+      background:
+        repeating-linear-gradient(0deg, rgba(10,8,24,.24) 0 3.072px, transparent 3.072px 6.528px),
+        radial-gradient(ellipse at center, transparent 58%, rgba(10,8,24,.65) 100%);
+    }
+  </style>
+
+  <div data-hf-id="hf-txpd" id="root" data-composition-id="09-why" data-start="0" data-duration="8.693" data-width="1920" data-height="1080">
+
+    <!-- pixel sprites (copied from storyboard.html defs, ids prefixed) -->
+    <svg data-hf-id="hf-8h6w" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs data-hf-id="hf-mh0t">
+        <symbol data-hf-id="hf-nz16" id="09-why-hero" viewBox="0 0 12 16" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-50dh" x="3" y="0" width="6" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-9oat" x="2" y="1" width="1" height="3" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-r2w5" x="9" y="1" width="1" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-yqhe" x="3" y="2" width="6" height="4" fill="#f2c29b" />
+          <rect data-hf-id="hf-gw56" x="4" y="3" width="1" height="1" fill="#0A0818" /><rect data-hf-id="hf-rwnd" x="7" y="3" width="1" height="1" fill="#0A0818" />
+          <rect data-hf-id="hf-7x80" x="5" y="5" width="2" height="1" fill="#c9876a" />
+          <rect data-hf-id="hf-h3wf" x="2" y="6" width="8" height="5" fill="currentColor" />
+          <rect data-hf-id="hf-3435" x="1" y="7" width="1" height="3" fill="#f2c29b" /><rect data-hf-id="hf-rdc1" x="10" y="7" width="1" height="3" fill="#f2c29b" />
+          <rect data-hf-id="hf-3v50" x="3" y="11" width="2" height="4" fill="#2C2560" /><rect data-hf-id="hf-nl14" x="7" y="11" width="2" height="4" fill="#2C2560" />
+          <rect data-hf-id="hf-9p11" x="2" y="15" width="3" height="1" fill="#0A0818" /><rect data-hf-id="hf-s9ti" x="7" y="15" width="3" height="1" fill="#0A0818" />
+        </symbol>
+        <symbol data-hf-id="hf-pkjm" id="09-why-star-sym" viewBox="0 0 9 9" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-p6rx" x="4" y="0" width="1" height="2" fill="currentColor" /><rect data-hf-id="hf-m6e1" x="3" y="2" width="3" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-lp15" x="0" y="3" width="9" height="1" fill="currentColor" /><rect data-hf-id="hf-ybxp" x="1" y="4" width="7" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-wbxh" x="2" y="5" width="5" height="1" fill="currentColor" /><rect data-hf-id="hf-9c6b" x="1" y="6" width="3" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-8vif" x="5" y="6" width="3" height="1" fill="currentColor" /><rect data-hf-id="hf-ijgb" x="1" y="7" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-qxac" x="6" y="7" width="2" height="1" fill="currentColor" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- ground -->
+    <div data-hf-id="hf-87aw" id="09-why-bg" class="clip" data-start="0" data-duration="8.693" data-track-index="0"></div>
+
+    <!-- HUD (furniture) -->
+    <div data-hf-id="hf-1znf" class="w09-abs w09-hud">
+      <span data-hf-id="hf-wyu6"><span data-hf-id="hf-sqzb" class="w09-p1">1UP</span> 012600</span>
+      <span data-hf-id="hf-m7lo" class="w09-coin">HI-SCORE 099999</span>
+      <span data-hf-id="hf-uckh"><span data-hf-id="hf-zf27" class="w09-p2">2UP</span> <span data-hf-id="hf-cqsj" id="09-why-press">PRESS START</span></span>
+    </div>
+
+    <!-- header -->
+    <p data-hf-id="hf-2xef" id="09-why-head" class="w09-abs w09-is" data-type="1">Starfendarannsókn</p>
+
+    <!-- dotted forking path (drawn through masks so the dash pattern survives the draw) -->
+    <svg data-hf-id="hf-41jw" id="09-why-paths" class="w09-abs" viewBox="0 0 100 56.25" aria-hidden="true">
+      <defs data-hf-id="hf-vl9d">
+        <mask data-hf-id="hf-n3e8" id="09-why-m1" maskUnits="userSpaceOnUse" x="-2" y="-2" width="104" height="60.25">
+          <path data-hf-id="hf-4l6o" id="09-why-d1" d="M19 28 H27 V19.5 H38" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="miter" />
+        </mask>
+        <mask data-hf-id="hf-56rd" id="09-why-m2" maskUnits="userSpaceOnUse" x="-2" y="-2" width="104" height="60.25">
+          <path data-hf-id="hf-ebuh" id="09-why-d2" d="M27 28 V36.4 H38" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="miter" />
+        </mask>
+        <mask data-hf-id="hf-2wfq" id="09-why-m3" maskUnits="userSpaceOnUse" x="-2" y="-2" width="104" height="60.25">
+          <path data-hf-id="hf-f16w" id="09-why-d3" d="M74 19.5 H78 V28 H82" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="miter" />
+        </mask>
+        <mask data-hf-id="hf-0kvb" id="09-why-m4" maskUnits="userSpaceOnUse" x="-2" y="-2" width="104" height="60.25">
+          <path data-hf-id="hf-czl3" id="09-why-d4" d="M74 36.4 H78 V28" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="miter" />
+        </mask>
+      </defs>
+      <g data-hf-id="hf-4yj4" fill="none" stroke="#2C2560" stroke-width="1" stroke-dasharray="1.6 0.8">
+        <path data-hf-id="hf-ftrn" d="M19 28 H27 V19.5 H38" mask="url(#09-why-m1)" />
+        <path data-hf-id="hf-4pl2" d="M27 28 V36.4 H38" mask="url(#09-why-m2)" />
+        <path data-hf-id="hf-4m4b" d="M74 19.5 H78 V28 H82" mask="url(#09-why-m3)" />
+        <path data-hf-id="hf-aat8" d="M74 36.4 H78 V28" mask="url(#09-why-m4)" />
+      </g>
+    </svg>
+
+    <!-- the two players at the path start -->
+    <svg data-hf-id="hf-7ae0" id="09-why-p1" class="w09-abs w09-spr"><use data-hf-id="hf-f5pp" href="#09-why-hero" /></svg>
+    <svg data-hf-id="hf-fy9v" id="09-why-p2" class="w09-abs w09-spr"><use data-hf-id="hf-thsx" href="#09-why-hero" /></svg>
+
+    <!-- route A -->
+    <div data-hf-id="hf-5by4" id="09-why-cardA" class="w09-abs w09-panel">
+      <div data-hf-id="hf-y1yb" id="09-why-ringA" class="w09-ring"></div>
+      <p data-hf-id="hf-8n31" id="09-why-lblA" class="w09-abs w09-lbl w09-p1 w09-plbl">Leið A</p>
+      <p data-hf-id="hf-nmbs" id="09-why-textA" class="w09-abs w09-is" data-type="1">Hver kennari getur það</p>
+    </div>
+
+    <!-- route B -->
+    <div data-hf-id="hf-dztz" id="09-why-cardB" class="w09-abs w09-panel">
+      <div data-hf-id="hf-n6go" id="09-why-ringB" class="w09-ring"></div>
+      <p data-hf-id="hf-f4du" id="09-why-lblB" class="w09-abs w09-lbl w09-xp w09-plbl">Leið B</p>
+      <p data-hf-id="hf-nhm0" id="09-why-textB" class="w09-abs w09-is" data-type="1">Hvað forritarar þurfa<br data-hf-id="hf-x5px">enn að kunna</p>
+    </div>
+
+    <!-- shared payoff -->
+    <svg data-hf-id="hf-l5zx" id="09-why-star" class="w09-abs w09-spr"><use data-hf-id="hf-znhb" href="#09-why-star-sym" /></svg>
+    <p data-hf-id="hf-me0z" id="09-why-win" class="w09-abs w09-lbl w09-coin">Báðar leiðir vinna</p>
+
+    <!-- report footer label -->
+    <p data-hf-id="hf-eymu" id="09-why-foot" class="w09-abs w09-lbl w09-dim">Í anda skýrslunnar Gervigreind til góðs: kennarar fyrst</p>
+
+    <!-- CRT veil -->
+    <div data-hf-id="hf-gxod" class="w09-abs w09-crt"></div>
+  </div>
+
+  <script>
+    (function () {
+      var DUR = 8.693;
+      var $ = function (id) { return document.getElementById("09-why-" + id); };
+      var tl = gsap.timeline({ paused: true });
+
+      // ---- helpers -------------------------------------------------------
+      // split an element's text into per-character spans, each carrying its own caret
+      function split(el) {
+        var chars = [];
+        var nodes = Array.prototype.slice.call(el.childNodes);
+        nodes.forEach(function (n) {
+          if (n.nodeType !== 3) return;
+          var frag = document.createDocumentFragment();
+          Array.from(n.textContent).forEach(function (c) {
+            var s = document.createElement("span");
+            s.className = "w09-ch";
+            s.textContent = c;
+            var k = document.createElement("span");
+            k.className = "w09-caret";
+            s.appendChild(k);
+            frag.appendChild(s);
+            chars.push(s);
+          });
+          el.replaceChild(frag, n);
+        });
+        return chars;
+      }
+      // typewriter: char i snaps visible at t0 + i*step; caret rides the newest char,
+      // blinks ~2Hz on the last one, then switches off at caretOff
+      function type(el, t0, step, caretOff) {
+        var chars = split(el);
+        chars.forEach(function (c, i) {
+          var t = t0 + i * step;
+          var caret = c.querySelector(".w09-caret");
+          tl.fromTo(c, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, t);
+          tl.fromTo(caret, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, t);
+          if (i < chars.length - 1) {
+            tl.set(caret, { opacity: 0 }, t + step);
+          } else {
+            var b = t + 0.25, on = false;
+            while (b < caretOff) { tl.set(caret, { opacity: on ? 1 : 0 }, b); on = !on; b += 0.25; }
+            tl.set(caret, { opacity: 0 }, caretOff);
+          }
+        });
+        return t0 + (chars.length - 1) * step;
+      }
+      // stepped draw of a mask path (svg-path-draw, stepped ease)
+      function draw(id, fallbackLen, t0, dur, steps) {
+        var p = $(id);
+        var len = (p.getTotalLength && p.getTotalLength()) || fallbackLen;
+        len = len * 1.02;
+        tl.fromTo(p,
+          { strokeDasharray: len + " " + len, strokeDashoffset: len },
+          { strokeDashoffset: 0, duration: dur, ease: "steps(" + steps + ")" }, t0);
+      }
+      // pixel panel opening on hard steps
+      function openPanel(el, t0) {
+        tl.fromTo(el, { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.18, ease: "steps(3)" }, t0);
+      }
+      // ring lights with an arcade flicker: on (cue) · off · on
+      function light(ring, t0) {
+        tl.fromTo(ring, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, t0);
+        tl.set(ring, { opacity: 0 }, t0 + 0.07);
+        tl.set(ring, { opacity: 1 }, t0 + 0.14);
+      }
+      function stepIn(el, t0, toOpacity) {
+        tl.fromTo(el, { opacity: 0, y: 12 }, { opacity: toOpacity || 1, y: 0, duration: 0.16, ease: "steps(2)" }, t0);
+      }
+
+      // ---- furniture: 2UP "PRESS START" blinks ~2Hz across the frame (finite) ----
+      (function () {
+        var t = 0.25, on = false;
+        while (t < DUR) { tl.set($("press"), { opacity: on ? 1 : 0 }, t); on = !on; t += 0.25; }
+      })();
+
+      // ---- Scene 1 (0.00–2.47): players · header types on "starfendarannsókn" · footer ----
+      tl.fromTo($("p1"), { opacity: 0, y: -18 }, { opacity: 1, y: 0, duration: 0.18, ease: "steps(3)" }, 0.2);
+      tl.fromTo($("p2"), { opacity: 0, y: -18 }, { opacity: 0.6, y: 0, duration: 0.18, ease: "steps(3)" }, 0.32);
+      // 2-frame idle bob, phase-opposed (P1 up while the ghost is down)
+      (function () {
+        var t = 1.0, up = true;
+        while (t < DUR) {
+          tl.set($("p1"), { y: up ? -6 : 0 }, t);
+          tl.set($("p2"), { y: up ? 0 : -6 }, t);
+          up = !up; t += 0.5;
+        }
+      })();
+
+      type($("head"), 0.76, 0.04, 2.4);          // blip@0.76
+      stepIn($("foot"), 1.6);
+
+      // ---- Scene 2 (2.47–5.30): path draws from the players and forks; route A lights ----
+      draw("d1", 27.5, 2.50, 0.70, 11);         // draw@2.50  — trunk + upper branch
+      draw("d2", 19.4, 2.70, 0.50, 8);          // lower branch leaves the fork as the trunk reaches it
+      openPanel($("cardA"), 3.12);              // empty slots open as the branches land on them
+      openPanel($("cardB"), 3.12);
+
+      light($("ringA"), 3.78);                  // blip@3.78  on "kennari"
+      tl.fromTo($("lblA"), { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, 3.78);
+      type($("textA"), 3.88, 0.035, 5.3);
+
+      // ---- Scene 3 (5.30–7.00): route B lights on "forritarar" ----
+      light($("ringB"), 5.68);                  // blip@5.68
+      tl.fromTo($("lblB"), { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, 5.68);
+      type($("textB"), 5.78, 0.03, 6.95);
+
+      // ---- Scene 4 (7.00–8.69): both routes extend right and meet; star pops; hold ----
+      draw("d3", 16.5, 6.95, 0.33, 6);
+      draw("d4", 12.4, 7.03, 0.25, 5);
+      // 2-step pop landing exactly on star@7.28
+      tl.fromTo($("star"), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 0.6, duration: 0.01, ease: "none" }, 7.28);
+      tl.set($("star"), { scale: 1.25 }, 7.36);
+      tl.set($("star"), { scale: 1 }, 7.44);
+      stepIn($("win"), 7.6);
+      // held read: one-pixel stepped jitter on the focal star only
+      tl.set($("star"), { y: -6 }, 8.0);
+      tl.set($("star"), { y: 0 }, 8.5);
+
+      tl.set({}, {}, DUR);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["09-why"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="is">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Vefþróun með gervigreind</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Jersey 15";
+        src: url("assets/fonts/Jersey15-Regular.ttf") format("truetype");
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+      }
+      /* the whole film is one 320x180 pixel canvas shown at 6x with hard pixel edges */
+      #art {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+        display: block;
+      }
+      /* invisible warm-up text so the pixel font is loaded before the first frame */
+      #font-warm {
+        position: absolute;
+        left: -9999px;
+        font-family: "Jersey 15";
+        font-size: 22px;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-syk3" id="root" data-composition-id="main" data-start="0" data-width="1920" data-height="1080" data-fps="24" data-duration="119.3">
+      <canvas data-hf-id="hf-8ntt" id="art" width="320" height="180" data-layout-allow-overflow="true"></canvas>
+      <span data-hf-id="hf-uy56" id="font-warm" data-layout-allow-overflow="true">ÞÐÆÖÁÉÍÓÚÝ þðæöáéíóúý GERVIGREIND</span>
+      <audio data-hf-id="hf-uaql" id="score" src="assets/music/score.mp3" data-start="0" data-duration="119.3" data-track-index="1" data-volume="1"></audio>
+    </div>
+
+    <script src="storyboard/px3.js"></script>
+    <script src="storyboard/cast3.js"></script>
+    <script src="storyboard/scenes-data3.js"></script>
+    <script src="storyboard/scenes3.js"></script>
+    <script>
+      // Every frame is drawn from its time alone by the storyboard engine (seek-safe):
+      // a linear proxy tween on the paused root timeline calls drawAt(t) on each seek.
+      (function () {
+        const S = window.SCENES;
+        const dur = (s) => s.bars * window.BAR;
+        let acc = 0;
+        const starts = S.map((s) => { const a = acc; acc += dur(s); return a; });
+        const TOTAL = acc;
+        const LENGTH = 119.3;
+        const g = new PX.G(document.getElementById("art"));
+
+        function drawAt(t) {
+          if (t >= TOTAL) { g.roles = { bg: "black" }; g.clear("black"); return; }
+          let i = S.length - 1;
+          while (i > 0 && t < starts[i]) i--;
+          const s = S[i];
+          window.ART3_draw(s, g, Math.min(t - starts[i], dur(s) - 1e-4), dur(s));
+        }
+
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          const proxy = { t: 0 };
+          tl.to(proxy, { t: LENGTH, duration: LENGTH, ease: "none", onUpdate: () => drawAt(proxy.t) }, 0);
+          drawAt(0);
+          window.__timelines["main"] = tl;
+        }
+
+        window.__hf = window.__hf || {};
+        window.__hf.buildReady = window.__hf.buildReady || {};
+        window.__hf.buildReady["pixel-film"] = document.fonts.load('22px "Jersey 15"').then(build);
+      })();
+    </script>
+  </body>
+</html>

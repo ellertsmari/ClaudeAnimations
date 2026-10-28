@@ -1,0 +1,219 @@
+<template id="10-ideal-player-template">
+  <div data-hf-id="hf-z7bh" id="root" data-composition-id="10-ideal-player" data-start="0" data-duration="6.593" data-width="1920" data-height="1080">
+    <style>
+      @font-face { font-family: "Jersey 10"; src: url('assets/fonts/Jersey10-Regular.ttf') format("truetype"); }
+      @font-face { font-family: "Press Start 2P"; src: url('assets/fonts/PressStart2P-Regular.ttf') format("truetype"); }
+      @font-face { font-family: "Silkscreen"; src: url('assets/fonts/Silkscreen-Regular.ttf') format("truetype"); }
+
+      #root {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        color: #F4F1FF;
+      }
+      .\31 0-ideal-player-a { position: absolute; margin: 0; box-sizing: border-box; }
+      .\31 0-ideal-player-layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+
+      /* ground: night + faint pixel starfield (sketch .stars) */
+      .\31 0-ideal-player-stars {
+        position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+        background:
+          radial-gradient(circle, #2C2560 3.456px, transparent 3.84px) 0 0 / 134.4px 134.4px,
+          radial-gradient(circle, #3a3270 2.688px, transparent 3.072px) 67.2px 44.16px / 211.2px 172.8px,
+          #14112B;
+      }
+      .\31 0-ideal-player-stars-veil { position: absolute; inset: 0; background: #14112B; opacity: 0.1; }
+
+      /* CRT veil — top layer */
+      .\31 0-ideal-player-crt {
+        position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: 20; pointer-events: none;
+        background:
+          repeating-linear-gradient(0deg, rgba(10,8,24,.24) 0 3.072px, transparent 3.072px 6.528px),
+          radial-gradient(ellipse at center, transparent 58%, rgba(10,8,24,.65) 100%);
+      }
+
+      /* HUD bar */
+      .\31 0-ideal-player-hud {
+        position: absolute; left: 0; top: 0; width: 1920px; height: 80.64px; box-sizing: border-box;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 57.6px;
+        font-family: "Press Start 2P", monospace; font-size: 19.2px; color: #F4F1FF;
+        border-bottom: 6px solid #2C2560; background: rgba(10,8,24,.35); z-index: 5;
+      }
+      .\31 0-ideal-player-hud b { font-weight: 400; }
+
+      /* type */
+      .\31 0-ideal-player-lbl { font-family: "Silkscreen", monospace; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; white-space: nowrap; }
+      .\31 0-ideal-player-arcade { font-family: "Press Start 2P", monospace; line-height: 1.15; white-space: nowrap; }
+      .\31 0-ideal-player-is { font-family: "Jersey 10", sans-serif; line-height: .95; white-space: nowrap; }
+
+      /* pixel panel — stepped ink border + hard offset shadow */
+      .\31 0-ideal-player-panel {
+        background: #1E1940;
+        box-shadow:
+          0 -6px 0 0 #F4F1FF, 0 6px 0 0 #F4F1FF,
+          -6px 0 0 0 #F4F1FF, 6px 0 0 0 #F4F1FF,
+          15px 15px 0 6px #0A0818;
+      }
+      .\31 0-ideal-player-dashed { border: 6px dashed #FF4F8B; background: rgba(255,79,139,.06); }
+
+      /* stat bar: 12 square cells */
+      .\31 0-ideal-player-bar { display: flex; gap: 6.72px; }
+      .\31 0-ideal-player-cell { position: relative; display: block; width: 57.6px; height: 57.6px; background: #2C2560; }
+      .\31 0-ideal-player-fill { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #FFE14D; }
+      .\31 0-ideal-player-flash { border: 6px solid #FFE14D; }
+
+      .\31 0-ideal-player-spr { display: block; overflow: visible; }
+    </style>
+
+    <!-- shared pixel sprites (copied from storyboard.html) -->
+    <svg data-hf-id="hf-8h6w" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs data-hf-id="hf-mh0t">
+        <symbol data-hf-id="hf-fuch" id="10-ideal-player-hero" viewBox="0 0 12 16" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-50dh" x="3" y="0" width="6" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-9oat" x="2" y="1" width="1" height="3" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-r2w5" x="9" y="1" width="1" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-yqhe" x="3" y="2" width="6" height="4" fill="#f2c29b" />
+          <rect data-hf-id="hf-gw56" x="4" y="3" width="1" height="1" fill="#0A0818" /><rect data-hf-id="hf-rwnd" x="7" y="3" width="1" height="1" fill="#0A0818" />
+          <rect data-hf-id="hf-7x80" x="5" y="5" width="2" height="1" fill="#c9876a" />
+          <rect data-hf-id="hf-h3wf" x="2" y="6" width="8" height="5" fill="currentColor" />
+          <rect data-hf-id="hf-3435" x="1" y="7" width="1" height="3" fill="#f2c29b" /><rect data-hf-id="hf-rdc1" x="10" y="7" width="1" height="3" fill="#f2c29b" />
+          <rect data-hf-id="hf-3v50" x="3" y="11" width="2" height="4" fill="#2C2560" /><rect data-hf-id="hf-nl14" x="7" y="11" width="2" height="4" fill="#2C2560" />
+          <rect data-hf-id="hf-9p11" x="2" y="15" width="3" height="1" fill="#0A0818" /><rect data-hf-id="hf-s9ti" x="7" y="15" width="3" height="1" fill="#0A0818" />
+        </symbol>
+        <symbol data-hf-id="hf-zegs" id="10-ideal-player-check" viewBox="0 0 8 7" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-jm34" x="6" y="0" width="2" height="2" fill="currentColor" /><rect data-hf-id="hf-w3b6" x="5" y="2" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-v4me" x="4" y="3" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-sd4y" x="0" y="3" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-7nyo" x="1" y="4" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-ts6e" x="3" y="4" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-5jr5" x="2" y="5" width="2" height="2" fill="currentColor" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- ground (full-bleed background clip, lowest track) -->
+    <div data-hf-id="hf-ie8s" class="clip 10-ideal-player-stars" data-start="0" data-duration="6.593" data-track-index="0"><div data-hf-id="hf-x4xk" class="10-ideal-player-stars-veil"></div></div>
+
+    <!-- HUD -->
+    <div data-hf-id="hf-knuv" class="10-ideal-player-hud">
+      <span data-hf-id="hf-wyu6"><b data-hf-id="hf-e3ae" style="color:#3FE0D0">1UP</b> 012600</span>
+      <span data-hf-id="hf-5zal" style="color:#FFE14D">HI-SCORE 099999</span>
+      <span data-hf-id="hf-uckh"><b data-hf-id="hf-7jgr" style="color:#FF4F8B">2UP</b> <span data-hf-id="hf-nu6f" data-k="press">PRESS START</span></span>
+    </div>
+
+    <!-- the character card (flips in like a select screen) -->
+    <div data-hf-id="hf-e0vx" class="10-ideal-player-layer" data-k="card" style="transform-origin:960px 522px">
+      <p data-hf-id="hf-v06x" class="10-ideal-player-a 10-ideal-player-lbl" style="left:0;width:1920px;top:138.24px;text-align:center;font-size:42.24px;color:#FFE14D">Tilvalinn leikmaður 2</p>
+
+      <!-- left: pink dashed portrait, ghost Player 2 -->
+      <div data-hf-id="hf-d24n" class="10-ideal-player-a 10-ideal-player-dashed" style="left:134.4px;top:238.08px;width:460.8px;height:568.32px"></div>
+      <svg data-hf-id="hf-u9a6" class="10-ideal-player-a 10-ideal-player-spr" data-k="ghost" style="left:241.92px;top:288px;width:249.6px;height:332.16px;color:#FF4F8B;--hair:#FF4F8B;opacity:.55"><use data-hf-id="hf-h0os" href="#10-ideal-player-hero" /></svg>
+      <p data-hf-id="hf-spy4" class="10-ideal-player-a 10-ideal-player-lbl" style="left:134.4px;width:460.8px;top:679.68px;text-align:center;font-size:36.48px;color:#FF4F8B">Þú?</p>
+
+      <!-- right: stat panel -->
+      <div data-hf-id="hf-6af9" class="10-ideal-player-layer" data-k="stats">
+        <div data-hf-id="hf-znsg" class="10-ideal-player-a 10-ideal-player-panel" style="left:691.2px;top:238.08px;width:1094.4px;height:568.32px"></div>
+
+        <!-- FORRITUN row -->
+        <div data-hf-id="hf-x0ap" class="10-ideal-player-layer" data-k="rowA">
+          <p data-hf-id="hf-8dnm" class="10-ideal-player-a 10-ideal-player-lbl" style="left:756.48px;top:284.16px;font-size:36.48px;color:#F4F1FF">Forritun</p>
+          <div data-hf-id="hf-3b8o" class="10-ideal-player-a 10-ideal-player-bar" style="left:756.48px;top:353.28px">
+            <i data-hf-id="hf-d8xw" class="10-ideal-player-cell"></i><i data-hf-id="hf-18e4" class="10-ideal-player-cell"></i><i data-hf-id="hf-01h1" class="10-ideal-player-cell"></i><i data-hf-id="hf-0fs2" class="10-ideal-player-cell"></i><i data-hf-id="hf-2fb7" class="10-ideal-player-cell"></i><i data-hf-id="hf-2tm8" class="10-ideal-player-cell"></i><i data-hf-id="hf-1mp5" class="10-ideal-player-cell"></i><i data-hf-id="hf-2106" class="10-ideal-player-cell"></i><i data-hf-id="hf-xnmv" class="10-ideal-player-cell"></i><i data-hf-id="hf-y1xw" class="10-ideal-player-cell"></i><i data-hf-id="hf-ghus" class="10-ideal-player-cell"></i><i data-hf-id="hf-g3jr" class="10-ideal-player-cell"></i>
+          </div>
+          <p data-hf-id="hf-sbl2" class="10-ideal-player-a 10-ideal-player-arcade" style="left:1662.72px;top:364.8px;font-size:30.72px;color:#A9A3D9">0</p>
+        </div>
+
+        <!-- stamp: check + Fullkomið! -->
+        <div data-hf-id="hf-qb18" class="10-ideal-player-a" data-k="stamp" style="left:760.32px;top:433.92px;width:440px;height:84px;transform-origin:200px 42px">
+          <svg data-hf-id="hf-syxm" class="10-ideal-player-a 10-ideal-player-spr" style="left:0;top:19.2px;width:61.44px;height:53.76px;color:#7CFF6B"><use data-hf-id="hf-mbxg" href="#10-ideal-player-check" /></svg>
+          <p data-hf-id="hf-aogq" class="10-ideal-player-a 10-ideal-player-is" style="left:84.48px;top:0;font-size:84.48px;color:#7CFF6B">Fullkomið!</p>
+        </div>
+
+        <!-- HUGMYND row -->
+        <div data-hf-id="hf-0yeq" class="10-ideal-player-layer" data-k="rowB">
+          <p data-hf-id="hf-3vm3" class="10-ideal-player-a 10-ideal-player-lbl" style="left:756.48px;top:564.48px;font-size:36.48px;color:#F4F1FF">Hugmynd</p>
+          <div data-hf-id="hf-d5pv" class="10-ideal-player-a 10-ideal-player-bar" style="left:756.48px;top:633.6px">
+            <i data-hf-id="hf-fp8q" class="10-ideal-player-cell"><b data-hf-id="hf-kpuu" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-faxp" class="10-ideal-player-cell"><b data-hf-id="hf-qctm" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-i32w" class="10-ideal-player-cell"><b data-hf-id="hf-qr4n" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-horv" class="10-ideal-player-cell"><b data-hf-id="hf-r5fo" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-hagu" class="10-ideal-player-cell"><b data-hf-id="hf-rjqp" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-gw5t" class="10-ideal-player-cell"><b data-hf-id="hf-ry1q" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-job0" class="10-ideal-player-cell"><b data-hf-id="hf-sccr" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-j9zz" class="10-ideal-player-cell"><b data-hf-id="hf-sqns" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-gnfj" class="10-ideal-player-cell"><b data-hf-id="hf-t4yt" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-h1qk" class="10-ideal-player-cell"><b data-hf-id="hf-tj9u" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-futh" class="10-ideal-player-cell"><b data-hf-id="hf-9hny" class="10-ideal-player-fill" data-k="fill"></b></i><i data-hf-id="hf-g94i" class="10-ideal-player-cell"><b data-hf-id="hf-93cx" class="10-ideal-player-fill" data-k="fill"></b></i>
+          </div>
+          <div data-hf-id="hf-vmzm" class="10-ideal-player-a 10-ideal-player-flash" data-k="flash" style="left:744.48px;top:621.6px;width:789.12px;height:81.6px"></div>
+        </div>
+        <p data-hf-id="hf-5nk1" class="10-ideal-player-a 10-ideal-player-arcade" data-k="max" style="left:1624.32px;top:645.12px;font-size:30.72px;color:#FFE14D;transform-origin:50% 50%">MAX</p>
+      </div>
+    </div>
+
+    <!-- CRT veil (topmost) -->
+    <div data-hf-id="hf-0wzc" class="clip 10-ideal-player-crt" data-start="0" data-duration="6.593" data-track-index="2"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        var root = document.querySelector('[data-composition-id="10-ideal-player"]');
+        function q(k) { return root.querySelector('[data-k="' + k + '"]'); }
+        function qa(k) { return root.querySelectorAll('[data-k="' + k + '"]'); }
+
+        var card = q("card"), stats = q("stats"), ghost = q("ghost"), press = q("press");
+        var rowA = q("rowA"), rowB = q("rowB"), stamp = q("stamp"), maxEl = q("max"), flash = q("flash");
+        var fills = qa("fill");
+
+        var tl = gsap.timeline({ paused: true });
+
+        // hard-cut reveal: element pops on exactly at t (stepped, no fade)
+        function show(el, t) {
+          tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.001, ease: "none" }, t - 0.001);
+        }
+
+        // ---- Scene 1 (0.00–0.97): card flips in like a select screen — select@0.05
+        tl.fromTo(card, { scaleX: 0 }, { scaleX: 0.25, duration: 0.001, ease: "none" }, 0.049);
+        tl.to(card, { scaleX: 1, duration: 0.18, ease: "steps(3)" }, 0.11);
+
+        // (stat rows / payoffs start hidden via the immediate-render from-state of their show() fromTo)
+
+        // ghost idle bob: 2-frame, one game pixel, finite (stops before the hold)
+        for (var b = 0; b < 9; b++) {
+          tl.to(ghost, { y: b % 2 === 0 ? -6 : 0, duration: 0.001, ease: "none" }, 0.4 + b * 0.4);
+        }
+
+        // ---- Scene 2 (0.97–2.96): FORRITUN row appears — blip@0.97
+        show(rowA, 0.97);
+        tl.fromTo(rowA, { y: 12 }, { y: 0, duration: 0.08, ease: "steps(2)" }, 0.97);
+
+        // "ekki" — stamp lands at 1.83 (stamp@1.83)
+        show(stamp, 1.77);
+        tl.fromTo(stamp, { scale: 1.6 }, { scale: 1, duration: 0.06, ease: "steps(2)" }, 1.77);
+        tl.to(stats, { x: 6, duration: 0.001, ease: "none" }, 1.83);
+        tl.to(stats, { x: -6, duration: 0.001, ease: "none" }, 1.87);
+        tl.to(stats, { x: 0, duration: 0.001, ease: "none" }, 1.91);
+
+        // ---- Scene 3 (2.96–4.00): HUGMYND row appears, then fills cell by cell
+        show(rowB, 2.96);
+        tl.fromTo(rowB, { y: 12 }, { y: 0, duration: 0.08, ease: "steps(2)" }, 2.96);
+
+        // arpeggio@3.14 → 12 coin cells, last lands at 3.85
+        var step = (3.85 - 3.14) / 11;
+        for (var i = 0; i < fills.length; i++) {
+          var t = 3.14 + i * step;
+          show(fills[i], t);
+          tl.fromTo(fills[i], { scale: 1.3 }, { scale: 1, duration: 0.05, ease: "steps(2)" }, t);
+        }
+
+        // MAX pops at 3.95 (ding@3.95) + 1-pixel coin outline flash on the full bar
+        show(maxEl, 3.95);
+        tl.fromTo(maxEl, { scale: 1.5 }, { scale: 1, duration: 0.08, ease: "steps(2)" }, 3.95);
+        show(flash, 3.95);
+        tl.to(flash, { opacity: 0, duration: 0.001, ease: "none" }, 4.07);
+        tl.to(flash, { opacity: 1, duration: 0.001, ease: "none" }, 4.19);
+        tl.to(flash, { opacity: 0, duration: 0.001, ease: "none" }, 4.31);
+
+        // ---- Scene 4 (4.00–6.19): held still. HUD furniture: PRESS START blinks ~2 Hz (finite)
+        for (var k = 1; k * 0.5 < 6.19; k++) {
+          tl.to(press, { opacity: k % 2 === 1 ? 0 : 1, duration: 0.001, ease: "none" }, k * 0.5);
+        }
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["10-ideal-player"] = tl;
+      })();
+    </script>
+  </div>
+</template>

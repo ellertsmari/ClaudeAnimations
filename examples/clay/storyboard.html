@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clay Film Storyboard</title>
+<style>
+  @font-face { font-family: Fredoka; src: url(assets/fonts/fredoka-600.woff2) format('woff2'); font-weight: 600; }
+  @font-face { font-family: Fredoka; src: url(assets/fonts/fredoka-700.woff2) format('woff2'); font-weight: 700; }
+  :root { --bg: #efe4d0; --ink: #2b2118; --muted: #7a6650; --card: #fbf6ec; --accent: #c8562a; --blue: #2f6fb0; --line: #dccab0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 Georgia, 'Iowan Old Style', serif; }
+  main { max-width: 1180px; margin: 0 auto; padding: 28px 16px 80px; }
+  h1 { font: 700 40px/1.1 Fredoka, system-ui, sans-serif; margin: 0 0 6px; }
+  h2 { font: 700 24px Fredoka, system-ui, sans-serif; margin: 44px 0 10px; }
+  h3 { font: 600 19px Fredoka, system-ui, sans-serif; margin: 0 0 4px; }
+  .lede { color: var(--muted); max-width: 780px; margin: 0 0 18px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; padding: 0; list-style: none; }
+  .facts li { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font: 600 14px Fredoka, system-ui, sans-serif; }
+  .player { position: relative; border-radius: 14px; overflow: hidden; background: #1b1712; box-shadow: 0 12px 30px rgba(60,40,20,.2); }
+  .player canvas { display: block; width: 100%; height: auto; aspect-ratio: 16/9; }
+  .cap { position: absolute; left: 6%; right: 6%; bottom: 5.5%; text-align: center; pointer-events: none; }
+  .cap span { display: inline; font: 600 clamp(13px, 2.1vw, 26px)/1.35 Fredoka, system-ui, sans-serif; color: #fffaf0; background: rgba(30,22,14,.62); padding: .12em .45em; border-radius: .3em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .loading { position: absolute; inset: 0; display: grid; place-items: center; color: #f2e6cf; font: 600 18px Fredoka, sans-serif; background: #1b1712; }
+  .controls { display: flex; align-items: center; gap: 12px; margin: 10px 0 0; flex-wrap: wrap; }
+  .controls button { font: 600 15px Fredoka, system-ui, sans-serif; background: var(--accent); color: #fff; border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; }
+  .controls input[type=range] { flex: 1; min-width: 160px; accent-color: var(--accent); }
+  .controls label { font: 600 14px Fredoka, sans-serif; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+  .time { font: 600 14px ui-monospace, monospace; color: var(--muted); min-width: 92px; }
+  .scene { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 0 0 16px; }
+  .scene header { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+  .scene .tc { font: 600 13px ui-monospace, monospace; color: var(--muted); }
+  .scene .say { margin: 6px 0 12px; font-style: italic; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+  figure { margin: 0; }
+  figure img { width: 100%; aspect-ratio: 16/9; border-radius: 8px; display: block; background: #d8c8ad; cursor: pointer; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .cast { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+  .cast figure img { aspect-ratio: 3/4; }
+  .voices { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+  .voices div { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .voices b { font-family: Fredoka, sans-serif; } .voices audio { width: 100%; margin-top: 6px; }
+  ol.q li { margin: 0 0 10px; } ol.q b { font-family: Fredoka, sans-serif; }
+  .note { color: var(--muted); font-size: 14px; }
+  .rec { color: var(--accent); font-weight: bold; }
+  body.bare main { padding: 0; max-width: none; } body.bare main > :not(.player) { display: none; } body.bare .player { border-radius: 0; }
+  code { font-size: 14px; background: #f6ecd9; padding: 0 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>From one island to another</h1>
+  <p class="lede">A clay stop-motion film introducing Vefskólinn to the teachers of I.E.S. El Rincón during Tækniskólinn's international week: our own LMS on the Isard server at El Rincón, Tibu's GitHub guide, and what the partnership has given us. This is the storyboard pass — real clay renders, rough animation, real narration and music. Nothing is rendered to video yet.</p>
+  <ul class="facts" id="facts"></ul>
+
+  <div class="player"><canvas id="c" width="1280" height="720"></canvas><div class="cap" id="cap"></div><div class="loading" id="loading">Sculpting the sets…</div></div>
+  <div class="controls">
+    <button id="play">▶ Play</button>
+    <input type="range" id="seek" min="0" max="100" step="0.01" value="0">
+    <span class="time" id="time">0:00 / 0:00</span>
+    <label><input type="checkbox" id="subs" checked> Subtitles</label>
+  </div>
+  <p class="note">The animatic plays the actual render engine live in your browser, moving 12 poses a second like hand-animated clay. If it stutters, the first pass through each shot is building the set; the second pass is smooth.</p>
+
+  <h2>Scenes</h2>
+  <div id="scenes"></div>
+
+  <h2>Cast</h2>
+  <p class="lede">Sculpted from the hero video and your photos. Tell me anything that's off — hair, beard, glasses, clothes — and I'll re-sculpt.</p>
+  <div class="cast" id="cast"></div>
+
+  <h2>Narrator voice</h2>
+  <p class="lede">The film uses <b>Emma (American)</b>. Here is the line with the Icelandic names in other voices. The names are respelled so an English voice gets close: <i>Vef-skoh-linn</i>, <i>Tike-nee-skoh-linn</i>, <i>El Rin-kon</i>, <i>Tee-boo</i>.</p>
+  <div class="voices" id="voices"></div>
+
+  <h2>Your call</h2>
+  <ol class="q">
+    <li><b>Length.</b> It runs <span id="len">1:46</span>, longer than the 90 s we aimed for. I can cut it to ~90 s by dropping the snow exterior (s2) and the café toast (s7), or keep it — <span class="rec">I'd keep it</span>, the pace is calm and the teachers are reading English subtitles.</li>
+    <li><b>Subtitles.</b> Burned-in English subtitles help a Spanish-speaking room follow a British voice. <span class="rec">Recommended: keep them.</span> Or Spanish subtitles instead?</li>
+    <li><b>Nira.</b> The narration says "Tibu, Alberto and Nira keep it running", but I have no picture of Nira, so she is not on screen. Describe her (or send a photo) and I'll sculpt her for the server scene — or I can drop her name from the line.</li>
+    <li><b>The school sign.</b> El Rincón's sign is shown as a blue tile with a white swoosh, as in the hero video. Good, or would you rather not imitate it?</li>
+    <li><b>The ending.</b> Should the last card add the Erasmus+ line ("Co-funded by the European Union") or the Vefskólinn / El Rincón logos?</li>
+    <li><b>Voice.</b> Ryan, or one of the alternatives above?</li>
+  </ol>
+  <p class="note">Render cost: each frame is one Three.js render with soft shadows; only 12 different poses per second, so the 1:46 film is ~1,270 unique frames. I'll measure the speed on your laptop before the full render and keep it light (no extra post-processing).</p>
+</main>
+
+<script type="module">
+import { THREE, makeRenderer, flicker, setPose, stepOf, makeStudio } from './storyboard/clay.js';
+import { createDirector, captions } from './storyboard/scenes.js';
+import { loadFonts } from './storyboard/props.js';
+import { makePuppet } from './storyboard/puppet.js';
+import { CAST } from './storyboard/cast.js';
+
+const q = new URLSearchParams(location.search);
+const tl = await (await fetch('assets/timeline.json')).json();
+await loadFonts('');
+const fmt = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+document.getElementById('len').textContent = fmt(tl.total);
+document.getElementById('facts').innerHTML = [`${fmt(tl.total)}`, '16:9 · 1920×1080', 'clay stop-motion, 12 poses/s', 'English narrator + subtitles', 'original ukulele score', 'audience: I.E.S. El Rincón teachers']
+  .map((x) => `<li>${x}</li>`).join('');
+
+const canvas = document.getElementById('c');
+const renderer = makeRenderer(canvas, canvas.width, canvas.height);
+const dir = createDirector(renderer, tl);
+const caps = captions(tl);
+const capEl = document.getElementById('cap');
+const subs = document.getElementById('subs');
+let lastStep = -1;
+function draw(t) {
+  const s = setPose(t);
+  flicker(renderer, s);
+  dir.render(t);
+  const c = caps.find((c) => t >= c.start && t < c.end);
+  capEl.innerHTML = subs.checked && c ? `<span>${c.text}</span>` : '';
+}
+
+// single-frame mode for checking: ?t=12.3
+if (q.has('t')) {
+  document.body.classList.add('bare');
+  draw(parseFloat(q.get('t')));
+  document.getElementById('loading').remove();
+  window.__ready = true;
+} else {
+  // stills: one per shot, at its key moment
+  const scenesEl = document.getElementById('scenes');
+  for (const s of tl.scenes) {
+    const shots = dir.shots.filter((x) => x.scene === s.id);
+    const el = document.createElement('section'); el.className = 'scene';
+    el.innerHTML = `<header><h3>${s.id.toUpperCase()} · ${SCENE_TITLES[s.id]}</h3><span class="tc">${fmt(s.start)}–${fmt(s.start + s.dur)} · ${s.dur.toFixed(1)} s</span></header>
+      <p class="say">“${s.text}”</p><div class="shots"></div>`;
+    scenesEl.append(el);
+    for (const sh of shots) {
+      const t = sh.start + Math.min((sh.to - sh.from) * 0.72, (sh.to - sh.from) - 0.2);
+      draw(t);
+      const fig = document.createElement('figure');
+      fig.innerHTML = `<img alt="${sh.label}" src="${canvas.toDataURL('image/jpeg', 0.82)}"><figcaption>${fmt(sh.start)} · ${sh.label}</figcaption>`;
+      fig.querySelector('img').onclick = () => { seekTo(t); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+      el.querySelector('.shots').append(fig);
+      await new Promise((r) => setTimeout(r, 0));
+    }
+  }
+  // cast portraits
+  const castEl = document.getElementById('cast');
+  const cr = document.createElement('canvas'); cr.width = 480; cr.height = 640;
+  const rr = makeRenderer(cr, 480, 640);
+  for (const spec of CAST) {
+    const st = makeStudio({ backdrop: ['#f1dcc0', '#d9b98e'] });
+    const p = makePuppet(spec); p.root.rotation.y = 0.35; st.scene.add(p.root);
+    p.pose({ smile: 0.8 });
+    const cam = new THREE.PerspectiveCamera(22, 3 / 4, 0.1, 50); cam.position.set(0.1, 1.15, 3.6); cam.lookAt(0, 0.95, 0);
+    setPose(0); rr.render(st.scene, cam);
+    const fig = document.createElement('figure');
+    fig.innerHTML = `<img alt="${spec.name}" src="${cr.toDataURL('image/jpeg', 0.85)}"><figcaption><b>${spec.name}</b></figcaption>`;
+    castEl.append(fig);
+  }
+  rr.dispose();
+  // voices
+  const V = [['en-GB-RyanNeural', 'Ryan · British'], ['en-GB-SoniaNeural', 'Sonia · British'], ['en-IE-ConnorNeural', 'Connor · Irish'], ['en-US-EmmaMultilingualNeural', 'Emma · American (in the film)']];
+  document.getElementById('voices').innerHTML = V.map(([v, n]) => `<div><b>${n}</b><audio controls preload="none" src="assets/voice/demos/${v}.mp3"></audio></div>`).join('');
+
+  // player
+  const audio = new Audio('assets/audio/animatic.mp3');
+  const seek = document.getElementById('seek'), timeEl = document.getElementById('time'), playBtn = document.getElementById('play');
+  seek.max = tl.total;
+  let playing = false, t0 = 0, tStart = 0, cur = 0;
+  window.seekTo = function seekTo(t) { cur = Math.max(0, Math.min(tl.total, t)); audio.currentTime = cur; if (playing) { t0 = performance.now(); tStart = cur; } draw(cur); seek.value = cur; tick(); };
+  function tick() { timeEl.textContent = `${fmt(cur)} / ${fmt(tl.total)}`; }
+  playBtn.onclick = () => {
+    playing = !playing; playBtn.textContent = playing ? '❚❚ Pause' : '▶ Play';
+    if (playing) { if (cur >= tl.total - 0.05) cur = 0; audio.currentTime = cur; audio.play(); t0 = performance.now(); tStart = cur; loop(); } else audio.pause();
+  };
+  seek.oninput = () => seekTo(parseFloat(seek.value));
+  subs.onchange = () => draw(cur);
+  function loop() {
+    if (!playing) return;
+    cur = audio.currentTime || (tStart + (performance.now() - t0) / 1000);
+    if (cur >= tl.total) { playing = false; playBtn.textContent = '▶ Play'; audio.pause(); }
+    const s = stepOf(cur);
+    if (s !== lastStep) { lastStep = s; draw(cur); seek.value = cur; tick(); }
+    requestAnimationFrame(loop);
+  }
+  draw(0); tick();
+  document.getElementById('loading').remove();
+  window.__ready = true;
+}
+</script>
+<script>
+  // scene titles, shared with the module above
+  window.SCENE_TITLES = { s1: 'Two islands', s2: 'Vefskólinn', s3: 'The Sustainable Island', s4: 'Where was that document?', s5: 'Our own LMS, on Isard', s6: "Tibu's GitHub guide", s7: 'What you gave us', s8: 'Gracias' };
+</script>
+</body>
+</html>

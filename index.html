@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en" data-model="strong">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animations with Claude · Vefskólinn</title>
+<script>
+  // pick the model before first paint, so the page never flashes the wrong steps
+  (function () {
+    var m = new URLSearchParams(location.search).get("model");
+    if (m !== "strong" && m !== "weak") { try { m = localStorage.getItem("awc-model"); } catch (e) { m = null; } }
+    if (m === "strong" || m === "weak") document.documentElement.setAttribute("data-model", m);
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#steps">Skip to the steps</a>
+
+<header class="hero">
+  <div class="hero-in">
+    <p class="eyebrow">Vefskólinn · Guide 4.4 · Motion and video</p>
+    <h1>Animations<br>with <span class="hl">Claude</span></h1>
+    <p class="lede">How to make a short film with a coding agent, from the first idea to the MP4, the way we made ours. Every film here is a <b>web page</b>: HTML, CSS and JavaScript on a timeline, rendered frame by frame.</p>
+
+    <div class="pick" id="pick">
+      <p class="pick-q">Which model are you using?</p>
+      <div class="mode-switch" role="group" aria-label="Which model are you using?">
+        <button type="button" class="mode-btn" data-set-model="strong" aria-pressed="true">
+          <b>Claude Opus 5.5</b><span>or another top model. You explore, it invents.</span>
+        </button>
+        <button type="button" class="mode-btn" data-set-model="weak" aria-pressed="false">
+          <b>A weaker model</b><span>smaller, older, free or local. You decide, it follows phases.</span>
+        </button>
+      </div>
+      <p class="pick-hint">The steps below change to match. Not sure? Start with the first one, and switch if the model gets lost.</p>
+    </div>
+
+    <ol class="strip" aria-label="The eleven steps">
+      <li><a href="#s0"><span>00</span>Set up</a></li>
+      <li><a href="#s1"><span>01</span>Your message</a></li>
+      <li><a href="#s2"><span>02</span><i data-for="strong">Pitches</i><i data-for="weak">Rules + style</i></a></li>
+      <li><a href="#s3"><span>03</span>Voice</a></li>
+      <li><a href="#s4"><span>04</span>The plan</a></li>
+      <li><a href="#s5"><span>05</span>Storyboard</a></li>
+      <li><a href="#s6"><span>06</span>Letters</a></li>
+      <li><a href="#s7"><span>07</span>Build</a></li>
+      <li><a href="#s8"><span>08</span>Review</a></li>
+      <li><a href="#s9"><span>09</span>Render</a></li>
+      <li><a href="#s10"><span>10</span>Write it down</a></li>
+    </ol>
+  </div>
+</header>
+
+<div class="layout">
+
+<nav class="toc" aria-label="Contents">
+  <div class="toc-mode">
+    <p class="toc-h">Your model</p>
+    <div class="mode-switch small" role="group" aria-label="Which model are you using?">
+      <button type="button" class="mode-btn" data-set-model="strong" aria-pressed="true">Opus 5.5</button>
+      <button type="button" class="mode-btn" data-set-model="weak" aria-pressed="false">Weaker</button>
+    </div>
+  </div>
+  <p class="toc-h">Contents</p>
+  <ul>
+    <li><a href="#films">The films</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li class="toc-sep"><a href="#s0">00 Set up</a></li>
+    <li><a href="#s1">01 Your message</a></li>
+    <li><a href="#s2">02 <i data-for="strong">Ask for pitches</i><i data-for="weak">Rules and style</i></a></li>
+    <li><a href="#s3">03 Choose a voice</a></li>
+    <li><a href="#s4">04 The plan</a></li>
+    <li><a href="#s5">05 Storyboard page</a></li>
+    <li><a href="#s6">06 Check the letters</a></li>
+    <li><a href="#s7">07 Build</a></li>
+    <li><a href="#s8">08 Review</a></li>
+    <li><a href="#s9">09 Render</a></li>
+    <li><a href="#s10">10 Write it down</a></li>
+    <li class="toc-sep"><a href="#prompts">All the prompts</a></li>
+    <li><a href="#real">Our real prompts</a></li>
+    <li><a href="#trouble">When it goes wrong</a></li>
+    <li><a href="#handin">What you hand in</a></li>
+  </ul>
+  <p class="toc-progress"><span id="doneCount">0</span> / 11 steps done</p>
+</nav>
+
+<main id="main">
+
+<!-- ============ FILMS ============ -->
+<section id="films" class="block">
+  <h2>Five films, five styles</h2>
+  <p>We made these with Claude in autumn 2026, each in a new style. Each one took an evening or two of conversation, and none of them needed any drawing or video editing by hand.</p>
+  <p>Under each film are the files the agent wrote for it: the storyboard page we reviewed, the brief, script and storyboard as Markdown, and the Python tools that made the voice and music. They are copies, so you can open and change them. Our whole <a href="examples/STYLE-LIBRARY.md">style library</a> is there too. The four HyperFrames films also open in Studio, so you can scrub through them second by second (see <a href="#s8">step 08</a>).</p>
+  <p class="note"><b>Open this tutorial through a local server</b>, not straight from disk: run <code>npx serve .</code> in the <code>animations-with-claude</code> folder and open the link it prints. Most things work from disk, but the clay storyboard loads its 3D engine as JavaScript modules, and browsers only allow that from a server.</p>
+  <div class="films">
+    <figure class="film wide">
+      <video src="assets/clay.mp4" poster="assets/clay.jpg" controls preload="none" playsinline></video>
+      <figcaption><span class="new">Newest</span><b>From one island to another</b><span>Clay stop-motion · Three.js puppets driven by HyperFrames · 1 min 37 s · English voice and subtitles</span><span class="cost">Medium render: 97 s took 5 min 20 s with 2 workers</span><div class="film-files"><a class="ff-story" href="examples/clay/storyboard.html">Storyboard page</a> <small>(needs the served page, see above)</small> <a href="examples/clay/BRIEF.md">BRIEF.md</a> <a href="examples/clay/SCRIPT.md">SCRIPT.md</a><span class="ff-tools">tools: <a href="examples/clay/tools/make_voice.py">make_voice.py</a> <a href="examples/clay/tools/make_timeline.py">make_timeline.py</a> <a href="examples/clay/tools/make_music.py">make_music.py</a></span><span class="ff-studio">Studio: <code>npx hyperframes preview examples/clay</code></span></div></figcaption>
+    </figure>
+    <figure class="film">
+      <video src="assets/island.mp4" poster="assets/island.jpg" controls preload="none" playsinline></video>
+      <figcaption><b>The Sustainable Island 2027</b><span>Watercolour · p5.js + p5.brush · 70 s</span><span class="cost heavy">Heavy render: the laptop got hot</span><div class="film-files"><a href="examples/watercolour/STORYBOARD.md">STORYBOARD.md</a> <a href="examples/watercolour/ANIMATION_GUIDE.md">ANIMATION_GUIDE.md</a></div></figcaption>
+    </figure>
+    <figure class="film">
+      <video src="assets/player2.mp4" poster="assets/player2.jpg" controls preload="none" playsinline></video>
+      <figcaption><b>Player 2 óskast</b><span>Pixel arcade · HTML + GSAP in HyperFrames · 81 s</span><span class="cost">80 s rendered in 1.5 min</span><div class="film-files"><a class="ff-story" href="examples/player-2/storyboard.html">Storyboard page</a> <a href="examples/player-2/BRIEF.md">BRIEF.md</a> <a href="examples/player-2/SCRIPT.md">SCRIPT.md</a> <a href="examples/player-2/STORYBOARD.md">STORYBOARD.md</a> <a href="examples/player-2/frame.md">frame.md</a><span class="ff-tools">tools: <a href="examples/player-2/tools/make_voice.py">make_voice.py</a> <a href="examples/player-2/tools/make_chiptune.py">make_chiptune.py</a> <a href="examples/player-2/tools/README.md">README.md</a></span><span class="ff-studio">Studio: <code>npx hyperframes preview examples/player-2</code></span></div></figcaption>
+    </figure>
+    <figure class="film">
+      <video src="assets/neopunk.mp4" poster="assets/neopunk.jpg" controls preload="none" playsinline></video>
+      <figcaption><b>Vefþróun með gervigreind</b><span>Neo-punk pixel · canvas engine + HyperFrames · 2 min</span><span class="cost">Music only, no voice</span><div class="film-files"><a class="ff-story" href="examples/neo-punk/storyboard.html">Storyboard page</a> <a href="examples/neo-punk/BRIEF.md">BRIEF.md</a><span class="ff-tools">tools: <a href="examples/neo-punk/tools/make_music3.py">make_music3.py</a></span><span class="ff-studio">Studio: <code>npx hyperframes preview examples/neo-punk</code></span></div></figcaption>
+    </figure>
+    <figure class="film">
+      <video src="assets/ordabokin.mp4" poster="assets/ordabokin-poster.jpg" controls preload="none" playsinline></video>
+      <figcaption><b>Orðabókin</b><span>Flashcards · HTML + GSAP in HyperFrames · 75 s</span><span class="cost">75 s rendered in 1.3 min</span><div class="film-files"><a class="ff-story" href="examples/ordabokin/boards/storyboard.html">Storyboard page</a> <a href="examples/ordabokin/BRIEF.md">BRIEF.md</a> <a href="examples/ordabokin/SCRIPT.md">SCRIPT.md</a> <a href="examples/ordabokin/STORYBOARD.md">STORYBOARD.md</a> <a href="examples/ordabokin/frame.md">frame.md</a><span class="ff-tools">tools: <a href="examples/ordabokin/tools/build_frames.py">build_frames.py</a> <a href="examples/ordabokin/tools/make_voice.py">make_voice.py</a> <a href="examples/ordabokin/tools/make_music.py">make_music.py</a></span><span class="ff-studio">Studio: <code>npx hyperframes preview examples/ordabokin</code></span></div></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ HOW ============ -->
+<section id="how" class="block">
+  <h2>How it works</h2>
+  <div class="how">
+    <div class="how-diagram" aria-hidden="true">
+      <div class="hd-box"><b>index.html</b><span>scenes, text, images, audio</span></div>
+      <div class="hd-arrow">+</div>
+      <div class="hd-box"><b>GSAP timeline</b><span>paused, so any second can be shown on demand</span></div>
+      <div class="hd-arrow">→</div>
+      <div class="hd-box"><b>headless Chrome</b><span>seeks to 0.000 s, 0.033 s, 0.067 s … takes a picture each time</span></div>
+      <div class="hd-arrow">→</div>
+      <div class="hd-box accent"><b>film.mp4</b><span>FFmpeg joins the frames and the sound</span></div>
+    </div>
+    <div class="how-text">
+      <p><b>HyperFrames</b> (open source, by HeyGen) is the tool that turns a web page into a video. It comes with <b>skills</b>: instruction files that teach a coding agent the rules, like how to time scenes, how to stay deterministic and how to check the result. With the skills installed, you describe the film and the agent does the HTML.</p>
+      <p>Because the film is a web page, anything a browser can draw can go in it. GSAP and CSS for the arcade and flashcard films, a hand-written canvas pixel engine for the neo-punk film, Three.js for the clay stop-motion film. Only the watercolour film used its own renderer.</p>
+      <p class="note"><b>One rule matters most:</b> the same second must always look the same. No <code>Math.random()</code> or <code>Date.now()</code>, no animation that plays by itself. Everything sits on the paused timeline.</p>
+    </div>
+  </div>
+
+  <div class="mode-card" data-for="strong">
+    <h3>Your way of working: <span class="hl-ink">explore</span></h3>
+    <p>A strong model is good at inventing, so let it. You describe the goal, the audience and where you want to check its work. It pitches ideas, chooses the tools, plans the scenes, runs the checks and looks at stills by itself. Your job is to react, choose and push back. When it's stuck, ask it why and what it would try.</p>
+  </div>
+  <div class="mode-card" data-for="weak">
+    <h3>Your way of working: <span class="hl-ink">step by step</span></h3>
+    <p>A weaker model can still write a good scene. What it can't do is plan a whole film, choose the tools and invent a style all at once. So you make those decisions and give it one phase per message: the exact commands and file names, a style card with exact values, and our <a href="starter/"><code>starter/</code></a> project to copy. It stops after every phase and shows you a check. When it's stuck, paste the exact error back, or start again in a new chat.</p>
+  </div>
+  <details class="why">
+    <summary>Why two ways? Compare them</summary>
+    <div class="table-wrap">
+    <table class="compare">
+      <thead><tr><th></th><th>Strong model <small>Claude Opus 5.5</small></th><th>Weaker model <small>smaller, older, free or local</small></th></tr></thead>
+      <tbody>
+        <tr><th>Who invents the style</th><td>The model pitches 4–5 ideas. You choose, mix or push back.</td><td>You do. Hand it a style card with exact colours, fonts and timings.</td></tr>
+        <tr><th>One message holds</th><td>The goal, the audience, the sources and the checkpoints.</td><td>One phase only. It stops and waits after each one.</td></tr>
+        <tr><th>Tools</th><td>It chooses them, and asks you when it needs to install something.</td><td>You name every command and file, and say "use nothing else".</td></tr>
+        <tr><th>Structure</th><td>It plans the scenes and can run helpers in parallel.</td><td>You give it the <code>starter/</code> project to copy, one scene at a time.</td></tr>
+        <tr><th>Checking</th><td>It runs the checks and looks at stills by itself.</td><td>You tell it to run <code>npm run check</code> and paste the output.</td></tr>
+        <tr><th>When it's stuck</th><td>Ask it why, and what it would try.</td><td>Paste the exact error, or start the scene again in a new chat.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </details>
+</section>
+
+<!-- ============ STEPS ============ -->
+<div id="steps" class="steps-intro block">
+  <h2>Step by step</h2>
+  <p>Showing the steps for <b class="mode-name"><span data-for="strong">Claude Opus 5.5</span><span data-for="weak">a weaker model</span></b>. Tick each step off as you go; the ticks stay in this browser.</p>
+</div>
+
+<!-- 00 -->
+<section id="s0" class="step">
+  <header class="slate"><span class="num">00</span><h3>Set up your laptop</h3><label class="done"><input type="checkbox"> done</label></header>
+  <p>You need these once. Check them in a terminal:</p>
+  <pre class="cmd"><code>node -v              # 22 or newer
+ffmpeg -version      # any recent version
+python3 --version    # for voices and music made in code</code></pre>
+  <p>Then install the HyperFrames skills into your agent.</p>
+  <div class="two">
+    <div>
+      <h4>Claude Code</h4>
+      <pre class="cmd"><code>claude plugin marketplace add heygen-com/hyperframes
+claude plugin install hyperframes@hyperframes</code></pre>
+    </div>
+    <div>
+      <h4>Codex, Cursor, Gemini CLI, Copilot …</h4>
+      <pre class="cmd"><code>npx skills add heygen-com/hyperframes
+# pick the "Core Skills" group</code></pre>
+    </div>
+  </div>
+  <p>Restart the agent so it sees the new skills, and run <code>npx hyperframes doctor</code> to check that the machine can render.</p>
+  <p>Make one folder for all your films, and copy <a href="templates/STYLE-LIBRARY.md"><code>templates/STYLE-LIBRARY.md</code></a> into it. Start the agent <em>in that folder</em>, so every film can see the library.</p>
+  <pre class="cmd"><code>films/
+├── STYLE-LIBRARY.md
+└── my-launch-film/      ← <span data-for="strong">the agent makes this</span><span data-for="weak">you and the agent fill this in, phase by phase</span></code></pre>
+  <p data-for="weak">Keep this tutorial's <a href="starter/"><code>starter/</code></a> folder at hand: in Phase 3 the model copies it, so it starts from a project that already works.</p>
+</section>
+
+<!-- 01 -->
+<section id="s1" class="step">
+  <header class="slate"><span class="num">01</span><h3>Know what you want to say</h3><label class="done"><input type="checkbox"> done</label></header>
+  <p>This is the part only you can do. Before you open the agent, answer five questions.<span data-for="strong"> The model will ask you most of them anyway, so it is faster to have the answers ready.</span><span data-for="weak"> You'll paste the answers into Phase 1.</span></p>
+  <ul class="checks">
+    <li><b>Message:</b> the one sentence the viewer should remember.</li>
+    <li><b>Audience:</b> who watches, and what they already know.</li>
+    <li><b>Where:</b> projector, Canvas, portfolio or phone? With sound, or muted? (Padlet and phone viewers often watch muted.)</li>
+    <li><b>Length:</b> 30–60 s for guide 4.4. Our films were 70–120 s and that already felt long.</li>
+    <li><b>Sources:</b> what the agent may read: your repo, your URL, your screenshots. <em>And what it must not open.</em></li>
+  </ul>
+  <p>The <a href="templates/BRIEF.md">brief template</a> has these as headings.</p>
+  <p data-for="weak"><b>Also take 3–4 screenshots of your page</b> (1920×1080 is easiest) and put them in <code>films/my-launch-film/assets/shots/</code>. Your film is built from them.</p>
+  <p class="note" data-for="strong"><b>Real people as characters?</b> It works: the clay film has five of us as puppets, teachers from three schools. Ask the people first. Then give the agent photos and let it number the faces it finds. You say who is who (<q>1 = Smári, 2 = drop …</q>) and send more photos of anyone missing. The agent turns them into a cast list (hair, beard, glasses, shirt) and sculpts from that.</p>
+</section>
+
+<!-- 02 -->
+<section id="s2" class="step">
+  <header class="slate"><span class="num">02</span><h3><span data-for="strong">Ask for pitches, not a film</span><span data-for="weak">Set the rules and pick the style</span></h3><label class="done"><input type="checkbox"> done</label></header>
+
+  <div data-for="strong">
+    <p>Opus is good at inventing, so <b>let it</b>. Ask for several concepts that look very different, and tell it what you have already seen so it doesn't repeat it.</p>
+    <figure class="prompt">
+      <figcaption><span class="tag">Opus 5.5</span> Kick-off <button class="copy" type="button">Copy</button></figcaption>
+<pre>I want to make a short animated film, about <span class="ph">[40]</span> seconds, that launches my web page <span class="ph">[NAME]</span>: <span class="ph">[one line on what it does and who it is for]</span>.
+The code is in <span class="ph">[path or repo]</span> and it is live at <span class="ph">[URL]</span>. Read those first, and nothing else.
+
+The film will be shown <span class="ph">[at our demo day on a projector]</span>. It has to work <span class="ph">[muted too]</span>.
+
+I haven't chosen a style yet. Before you build anything, give me 4–5 pitches that look really different from each other. For each one: the concept, the look, the technology you would use, and what happens in the first five seconds. Tell me which one you would pick and why. I've already seen <span class="ph">[the watercolour, arcade and neo-punk films from class]</span>, so surprise me.
+
+Then ask me everything you need to know, with your default answer in brackets, so I can answer in one message. Show me the storyboard on an HTML page before you start making the video.</pre>
+    </figure>
+    <p>What came back when we asked for the Player 2 film (shortened):</p>
+    <blockquote class="reply">
+      <p><b>1. From napkin to app.</b> A teacher's pen sketch turns into a working app. <b>2. Poster wall.</b> Huge words slam in on the beat. <b>3. Blueprint.</b> The project drawn as a technical drawing, the visual language of a trade school. <b>4. Player 2 wanted.</b> A retro arcade game where the two teachers are Player 1, looking for a co-op partner. <b>5. The Padlet itself.</b> The video <em>is</em> a Padlet board filling up with sticky notes.</p>
+      <p><b>I recommend 4.</b> It's the furthest from watercolour … The levels match your action research cycles, so the video quietly explains the project structure.</p>
+    </blockquote>
+    <p>Now react. Pick one, mix two, or ask for more:</p>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Pick and mix <button class="copy" type="button">Copy</button></figcaption>
+<pre>Number <span class="ph">[3]</span>, but with the ending from <span class="ph">[5]</span>. Make it a bit more <span class="ph">[playful]</span>.</pre></figure>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Explore further <button class="copy" type="button">Copy</button></figcaption>
+<pre>None of these is quite it. Give me three more, further from each other, and one that is a bit weird.</pre></figure>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Ask what it costs <button class="copy" type="button">Copy</button></figcaption>
+<pre>How hard would it be to make it look like <span class="ph">[stop-motion clay]</span>? What would it cost in render time on my laptop?</pre></figure>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Real people in it (ask them first) <button class="copy" type="button">Copy</button></figcaption>
+<pre>Can you make <span class="ph">[me and my two teammates]</span> into characters in the film? Here are some photos: <span class="ph">[photos]</span>. Number the faces you find, and tell me when you want me to say who is who.</pre></figure>
+  </div>
+
+  <div data-for="weak">
+    <p>Open a new chat in your <code>films</code> folder. The first message is always the rules: which tools it may use, how a HyperFrames file must look, and that it stops after every phase. <b>Send it again at the start of every new chat.</b></p>
+    <figure class="prompt"><figcaption><span class="tag">Phase 0</span> The rules <button class="copy" type="button">Copy</button></figcaption>
+<pre>You are helping me make a <span class="ph">[40]</span>-second launch film for my web page. We will use HyperFrames: the film is an HTML page animated with GSAP, and HyperFrames renders it frame by frame to an MP4.
+
+Tools you may use. Do not use any other tools or libraries:
+- npx hyperframes (init, check, snapshot, preview, render, docs)
+- GSAP 3 (already loaded in index.html from cdn.jsdelivr.net)
+- ffmpeg and ffprobe
+- python3 with edge-tts (only in Phase 5)
+
+Rules for every HTML file you write:
+1. The film is index.html. Each scene is its own file, compositions/sN.html, mounted in index.html with data-composition-src.
+2. Every timed element has data-start and data-duration (seconds) and class="clip".
+3. Each file has ONE GSAP timeline created with gsap.timeline({ paused: true }) and registered as window.__timelines["&lt;composition-id&gt;"]. Never call play().
+4. Times inside a scene file start at 0 for that scene.
+5. No Math.random(), no Date.now(), no fetch, no setTimeout or setInterval. The same frame must always look the same.
+6. CSS ids and classes must not start with a digit. Prefix every id with the scene id (s1-title, s2-shot).
+7. Fonts and images are local files in assets/. No web fonts from Google at render time.
+
+Work in phases. I will send one phase at a time. At the end of each phase: run the check I ask for, show me the output, and STOP. Do not start the next phase until I send it.
+
+First, run these and read the output:
+  npx hyperframes docs compositions
+  npx hyperframes docs data-attributes
+  npx hyperframes docs gsap
+Then explain the rules above back to me in your own words, in 7 short lines. Then stop.</pre></figure>
+    <p>If it explains the rules back correctly, it's ready. Now <b>you</b> choose the look. A weaker model can't invent a good style, but it can follow exact numbers. Use this style card, or write your own with the same headings. You'll paste it into Phase 1.</p>
+    <figure class="prompt"><figcaption><span class="tag">Style card</span> Bold poster <button class="copy" type="button">Copy</button></figcaption>
+<pre>STYLE CARD: "Bold poster"
+Canvas: 1920x1080, 30 fps.
+Colours (use only these):
+  paper #F4EFE6 · ink #111111 · accent #FF4F1F · blue #2F5BFF
+  A scene uses at most 3 of them. Text is ink on paper, or paper on ink.
+Fonts:
+  Headlines: Inter 900, 140–180 px, letter-spacing -0.04em, max 6 words per screen.
+  Small labels: Space Grotesk 500, 32 px, UPPERCASE, letter-spacing 0.08em.
+Layout:
+  Left-aligned. Text starts at x = 160 px. Keep 100 px clear on every edge.
+  Screenshots sit in a simple browser frame: 12 px ink border, 40 px top bar, 8 px hard ink shadow offset (no blur).
+Motion:
+  Things enter in 0.5 s with ease "power3.out" (y: 60 → 0, or scale 0.9 → 1).
+  Several items: stagger 0.08 s.
+  After the last item arrives, HOLD at least 1.5 s with nothing new happening.
+  Only one thing moves at a time. Nothing moves at constant speed except progress bars.
+  The title is already on screen at 0 s (the first frame is the thumbnail).
+Between scenes:
+  A hard cut, or an accent-colour panel that wipes across the screen in 0.4 s (ease "power2.inOut").
+End card:
+  The page name, the URL, and nothing else. Hold it for 3 s.
+Avoid:
+  Gradients, glows, blur, emoji, stock icons, rotating 3D, more than 6 words on screen.</pre></figure>
+    <div class="swatches" aria-hidden="true"><i style="background:#F4EFE6"></i><i style="background:#111111"></i><i style="background:#FF4F1F"></i><i style="background:#2F5BFF"></i></div>
+    <p>Want another look? Copy one from our <a href="examples/STYLE-LIBRARY.md">style library</a>, but write it out with exact values like the card above.</p>
+  </div>
+</section>
+
+<!-- 03 -->
+<section id="s3" class="step">
+  <header class="slate"><span class="num">03</span><h3>Choose a voice, or none</h3><label class="done"><input type="checkbox"> done</label></header>
+  <p>Listen to <b>demos before the storyboard</b>: the same opening lines read by two or three voices. <b>The agent can't hear.</b> It can only check that each file has sound, so you have to listen yourself.</p>
+  <div class="table-wrap">
+  <table class="plain">
+    <thead><tr><th>Option</th><th>Good</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td><b>Edge neural voices</b> (<code>edge-tts</code>)</td><td>Natural, many languages, including Icelandic (Gunnar, Guðrún). We used Gunnar twice, and Emma (<code>en-US-EmmaMultilingualNeural</code>) for the clay film.</td><td>Online: your script is sent to Microsoft.</td></tr>
+      <tr><td><b>Kokoro</b> (<code>npx hyperframes tts</code>)</td><td>Runs on your laptop and is free. English and a few other languages (e.g. <code>bf_emma</code>).</td><td>No Icelandic. Slow on a weak CPU.</td></tr>
+      <tr><td><b>Piper</b></td><td>Offline, free, has Icelandic voices.</td><td>Sounds more robotic.</td></tr>
+      <tr><td><b>Your own voice</b></td><td>The most convincing.</td><td>Record the script, then the agent times the film to your recording.</td></tr>
+      <tr><td><b>No voice</b></td><td>Music and a few keywords. Works muted.</td><td>Every scene must read without sound.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <figure class="prompt" data-for="strong"><figcaption><span class="tag">Opus 5.5</span> Voice demos <button class="copy" type="button">Copy</button></figcaption>
+<pre>Can you make me short demos of two or three <span class="ph">[English]</span> voices reading the opening lines before you start the storyboard? Put them in one folder so I can compare them. If I need to install something, just say so.</pre></figure>
+  <div data-for="weak">
+    <p>Make the demos yourself. It's three commands, and the voices go into the film in Phase 5:</p>
+    <pre class="cmd"><code>python3 -m venv .venv &amp;&amp; .venv/bin/pip install edge-tts
+.venv/bin/edge-tts --list-voices | grep en-        # or is-, pl-, es- …
+.venv/bin/edge-tts --voice en-GB-RyanNeural --text "Meet Recipe Finder." --write-media demo-ryan.mp3</code></pre>
+  </div>
+  <p class="note"><b>Learned the hard way:</b> write numbers as words in the voice script. One take silently dropped "prósent" after "80%". Spell names the way they sound in the voice script ("Vef-skoh-linn", "Tee-boo", "twenty twenty-three"), and keep the real spelling for the subtitles.</p>
+</section>
+
+<!-- 04 -->
+<section id="s4" class="step">
+  <header class="slate"><span class="num">04</span><h3>Agree on the plan</h3><label class="done"><input type="checkbox"> done</label></header>
+  <div data-for="strong">
+    <p>Before any animation, the agent writes the plan into files in the project folder:</p>
+    <ul class="files">
+      <li><code>BRIEF.md</code>: message, audience, length, voice, style</li>
+      <li><code>SCRIPT.md</code>: every line the voice says and every word on screen</li>
+      <li><code>STORYBOARD.md</code>: the scenes, their seconds, what moves</li>
+    </ul>
+    <p>A good agent ends with a short list of questions and its defaults. Answer them by number in one message. Then hand over the details and keep the decisions for later:</p>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Approve <button class="copy" type="button">Copy</button></figcaption>
+<pre>Yes, this plan is good. Do it your way, and I'll correct anything on the storyboard.</pre></figure>
+  </div>
+  <div data-for="weak">
+    <p>Phase 1 turns your answers from step 01 and the style card into two files: <code>BRIEF.md</code> and <code>SCRIPT.md</code>, a table of exactly five scenes. No code yet.</p>
+    <figure class="prompt"><figcaption><span class="tag">Phase 1</span> Brief and script <button class="copy" type="button">Copy</button></figcaption>
+<pre>Phase 1. Write two files in the folder <span class="ph">[films/my-launch-film]</span>. Do not write any HTML yet.
+
+BRIEF.md, with exactly these headings:
+- Message: one sentence the viewer should remember: "<span class="ph">[Recipe Finder tells you what to cook from what is already in your fridge.]</span>"
+- Audience: <span class="ph">[classmates and teachers at demo day]</span>
+- Where it is shown: <span class="ph">[projector, with sound]</span>
+- Length: <span class="ph">[40]</span> seconds, 1920x1080, 30 fps
+- Voice: <span class="ph">[none / English, en-GB-RyanNeural]</span>
+- Style: the style card below, copied in full
+
+SCRIPT.md: a table with exactly 5 scenes and these columns:
+| id | seconds | what we see | words on screen (max 6) | voice line (max 15 words, or "none") |
+Scene s1 is the title. Scene s5 is the end card with the URL <span class="ph">[URL]</span>. Scenes s2–s4 show: the problem, the main feature, and one detail people will like. Use the screenshots in assets/shots/: <span class="ph">[list the file names]</span>.
+The seconds must add up to <span class="ph">[40]</span>.
+
+<span class="ph">[PASTE THE STYLE CARD HERE]</span>
+
+Show me SCRIPT.md and stop.</pre></figure>
+    <p>Check the table yourself: do the seconds add up, is every screen six words or fewer, and does each scene say one thing? Ask for changes until it's right.</p>
+  </div>
+  <p>Read the plan carefully. It's the cheapest place to catch a wrong fact, like a date, a name or something you promised that you shouldn't have.</p>
+</section>
+
+<!-- 05 -->
+<section id="s5" class="step">
+  <header class="slate"><span class="num">05</span><h3>See it as a storyboard page</h3><label class="done"><input type="checkbox"> done</label></header>
+  <p>This is the step we would never skip again: a <b>web page</b> with a picture of every scene, in the real fonts and colours, with the words and the timing beside each one. It's much easier to judge a film from that than from a table.</p>
+  <figure class="prompt" data-for="strong"><figcaption><span class="tag">Opus 5.5</span> Storyboard <button class="copy" type="button">Copy</button></figcaption>
+<pre>Make me a web page that shows the storyboard with pictures of every scene, so it is easier for me to picture it.</pre></figure>
+  <figure class="prompt" data-for="weak"><figcaption><span class="tag">Phase 2</span> Storyboard page <button class="copy" type="button">Copy</button></figcaption>
+<pre>Phase 2. Make storyboard.html in the same folder: a static web page (no GSAP, no JavaScript needed) that I can open in a browser.
+For each scene in SCRIPT.md: one card with
+- a 16:9 box, 640x360, that shows the scene's key moment in the style card's colours, fonts and layout (HTML and CSS only, use the real screenshots)
+- the scene id and the start–end time
+- the words on screen and the voice line
+- one line: "what moves" (e.g. "headline slides up, screenshot scales in, accent bar wipes left to right")
+Put the cards in a grid, 2 per row. Use the fonts from assets/fonts.
+Tell me the command to open it (python3 -m http.server 8000) and stop. I will send you changes.</pre></figure>
+  <p>Now edit the storyboard, not the film. Changes here take a minute, and changes after the render take much longer. Be concrete:</p>
+  <figure class="prompt"><figcaption><span class="tag"><span data-for="strong">Opus 5.5</span><span data-for="weak">Change</span></span> Change a line <button class="copy" type="button">Copy</button></figcaption>
+<pre>In scene <span class="ph">[s4]</span>, instead of "<span class="ph">[old line]</span>", say "<span class="ph">[new line]</span>".</pre></figure>
+  <div data-for="strong">
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Push the style <button class="copy" type="button">Copy</button></figcaption>
+<pre>Can you make the style a bit more <span class="ph">[neo-punk]</span>, but keep the content as it is and the expressions on the faces?</pre></figure>
+    <p>If you know exactly what look you want, paste a full art direction. For the neo-punk film we pasted a whole page of it, and the model followed it literally:</p>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> A full art direction <button class="copy" type="button">Copy</button></figcaption>
+<pre>Make another one in a totally different style. Here is the art direction:
+"""
+<span class="ph">[Palette: 2–5 colours …
+Shapes and lines: …
+How it moves: on twos, snaps, holds, smears …
+Transitions: …
+What to avoid: …]</span>
+"""</pre></figure>
+  </div>
+  <p data-for="weak">With a weaker model, change one or two things per message, and say which card.</p>
+</section>
+
+<!-- 06 -->
+<section id="s6" class="step">
+  <header class="slate"><span class="num">06</span><h3>Check the letters</h3><label class="done"><input type="checkbox"> done</label></header>
+  <p>Fonts are where our films broke most often. Many display and pixel fonts are missing letters like þ ð æ ö á, or draw them badly. Before building, ask the agent to <b>render test words in the chosen font, at the exact size they will appear</b>, and look at the image yourself.</p>
+  <div class="stickies">
+    <div class="sticky"><b>Press Start 2P</b>Breaks Icelandic accented capitals. Use it for Latin text and digits only.</div>
+    <div class="sticky"><b>Jersey 15</b>Readable at exactly 22 px (or 44, 66). At 15–20 px its R turns into an A.</div>
+    <div class="sticky"><b>Pixelify Sans</b>Draws æ as "ae".</div>
+    <div class="sticky"><b>Clay plaques</b>Keep raised lettering clear of the clay surface, or the stop-motion wobble eats the letters.</div>
+    <div class="sticky"><b>Test words</b>GERVIGREIND · KÓÐANN · ÞÚ · ÆÐI, or the hardest words in <em>your</em> language.</div>
+  </div>
+  <p>Keep fonts as local files in the project (<code>assets/fonts/</code>), so the render never depends on the network.<span data-for="weak"> The Bold poster card uses Inter and Space Grotesk, which have all the Icelandic letters.</span></p>
+</section>
+
+<!-- 07 -->
+<section id="s7" class="step">
+  <header class="slate"><span class="num">07</span><h3>Build: “now do it!”</h3><label class="done"><input type="checkbox"> done</label></header>
+  <div data-for="strong">
+    <p>When the storyboard is right, say so:</p>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Go <button class="copy" type="button">Copy</button></figcaption>
+<pre>Perfect, now do it!</pre></figure>
+    <p>Then it's the agent's turn. A strong model will typically:</p>
+    <ol class="build">
+      <li>create the project with <code>npx hyperframes init</code></li>
+      <li>write one HTML file per scene, often with several helpers in parallel</li>
+      <li>generate the voice clips and time each scene to them</li>
+      <li>write the music and sound effects <b>in code</b> (a small Python synthesizer), so there are no licences to worry about</li>
+      <li>add subtitles, if the film must work muted</li>
+      <li>run <code>npm run check</code> and fix what it finds</li>
+      <li>open the draft in HyperFrames Studio: <code>npx hyperframes preview</code></li>
+    </ol>
+  </div>
+  <div data-for="weak">
+    <p>Now the build, <b>one scene per message</b>. Phase 3 sets up the project from our starter and builds the first scene. Then repeat Phase 4 for each of the other scenes, and add the voice last.</p>
+    <figure class="prompt"><figcaption><span class="tag">Phase 3</span> Project + the first scene <button class="copy" type="button">Copy</button></figcaption>
+<pre>Phase 3. Set up the project and build ONLY scene s1.
+1. Copy the starter project into <span class="ph">[films/my-launch-film]</span> (index.html, compositions/, package.json, hyperframes.json, meta.json). Keep BRIEF.md, SCRIPT.md and storyboard.html.
+2. Put the fonts in assets/fonts:
+     npm install @fontsource/inter @fontsource/space-grotesk
+   then copy the latin .woff2 files you need from node_modules/@fontsource/*/files/ into assets/fonts and load them with @font-face.
+3. Change compositions/s1.html so it matches the s1 card in storyboard.html and the motion rules in the style card. Keep the same structure as the starter file: &lt;template&gt;, &lt;style&gt;, a root div with data-composition-id="s1", one paused timeline registered as window.__timelines["s1"].
+4. In index.html, set each scene's data-start and data-duration from SCRIPT.md, and set the root data-duration and the tl.to({}, { duration: N }) line to the total length.
+5. Run:  npm run check
+   Fix every error. Then run:  npx hyperframes snapshot --at 0.5,2,3.5 -o snaps
+6. Start Studio so I can look at it myself:  npx hyperframes preview --background
+7. Show me the check output, the paths of the snapshot images and the Studio link, and stop.</pre></figure>
+    <figure class="prompt"><figcaption><span class="tag">Phase 4</span> One more scene (repeat for s2–s5) <button class="copy" type="button">Copy</button></figcaption>
+<pre>Phase 4. Build ONLY scene <span class="ph">[s2]</span>, in compositions/<span class="ph">[s2]</span>.html, following the <span class="ph">[s2]</span> card in storyboard.html and the style card.
+Copy the structure of compositions/s1.html exactly; only change the ids (prefix <span class="ph">[s2]</span>-), the content and the animation.
+Add it to index.html if it isn't there yet. Then run: npm run check
+and: npx hyperframes snapshot --range <span class="ph">[START]</span>,<span class="ph">[END]</span> --frames 3 -o snaps
+Show me the output and stop.</pre></figure>
+    <figure class="prompt"><figcaption><span class="tag">Phase 5</span> Voice (skip if no voice) <button class="copy" type="button">Copy</button></figcaption>
+<pre>Phase 5. Add the voice.
+1. Make a Python virtual environment and install edge-tts:
+     python3 -m venv .venv &amp;&amp; .venv/bin/pip install edge-tts
+2. For each scene with a voice line in SCRIPT.md, run:
+     .venv/bin/edge-tts --voice <span class="ph">[en-GB-RyanNeural]</span> --rate=<span class="ph">[-5%]</span> --text "&lt;the line&gt;" --write-media assets/voice/&lt;scene&gt;.mp3
+   Write numbers as words in the text ("forty", not "40").
+3. Measure each file:  ffprobe -v error -show_entries format=duration -of csv=p=0 assets/voice/&lt;scene&gt;.mp3
+4. If a voice clip is longer than its scene minus 1 second, make the scene longer and update SCRIPT.md, every data-start after it in index.html, and the total length.
+5. Add one &lt;audio&gt; per clip inside the root div of index.html:
+     &lt;audio id="voice-&lt;scene&gt;" src="assets/voice/&lt;scene&gt;.mp3" data-start="&lt;scene start + 0.4&gt;" data-duration="&lt;clip length&gt;" data-track-index="10" data-volume="1"&gt;&lt;/audio&gt;
+6. Run npm run check, show me the output and a table of scene, clip length and scene length, and stop.
+I will listen to the voice myself.</pre></figure>
+    <p class="note"><b>Music:</b> put a track you're allowed to use at <code>assets/music.mp3</code> and ask for one more <code>&lt;audio&gt;</code> line on track 11 with <code>data-volume="0.15"</code>. A strong model can write music in code. A weak one usually can't.</p>
+  </div>
+  <details class="peek">
+    <summary>Look inside a scene file</summary>
+    <p>A scene is just HTML. This is the first scene of <a href="starter/"><code>starter/</code></a>, a two-scene project that passes the check:</p>
+<pre class="code"><code>&lt;template&gt;
+  &lt;style&gt; #s1-title { position: absolute; left: 160px; top: 380px; font-size: 160px; } &lt;/style&gt;
+  &lt;div id="s1-root" data-composition-id="s1" data-start="0" data-duration="4"
+       data-width="1920" data-height="1080"&gt;
+    &lt;h1 id="s1-title" class="clip" data-start="0" data-duration="4"&gt;Meet Recipe Finder&lt;/h1&gt;
+  &lt;/div&gt;
+  &lt;script&gt;
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });       // paused: the renderer moves it
+      tl.fromTo("#s1-title", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, 0);
+      window.__timelines["s1"] = tl;                   // register it under the scene id
+    })();
+  &lt;/script&gt;
+&lt;/template&gt;</code></pre>
+  </details>
+</section>
+
+<!-- 08 -->
+<section id="s8" class="step">
+  <header class="slate"><span class="num">08</span><h3>Review it like a director</h3><label class="done"><input type="checkbox"> done</label></header>
+  <p>Watch the draft three times:</p>
+  <ol class="checks">
+    <li><b>Once at full speed, without pausing.</b> The viewer sees it once. Did you understand each moment before the next one started? Code tends to move everything at the same brisk speed.</li>
+    <li><b>Once muted.</b> Does it still make sense?</li>
+    <li><b>Once frame by frame.</b> Read every word and check every letter, name and date.</li>
+  </ol>
+
+  <h4>Point at the exact frame in Studio</h4>
+  <p><b>HyperFrames Studio</b> is a page in your browser with the film, its scenes and a timeline. You don't edit in it much. You use it to <b>find the exact moment and the exact element</b>, so your feedback can say <q>at 0:19, the panel on the right</q> instead of <q>somewhere in the middle</q>. <span data-for="strong">The agent usually starts it for you.</span><span data-for="weak">Phase 3 started it.</span> To start or stop it yourself, in the project folder:</p>
+  <pre class="cmd"><code>npx hyperframes preview --background   # start Studio, prints the link (localhost:3002)
+npx hyperframes preview --stop         # stop it when you're done</code></pre>
+
+  <figure class="studio">
+    <div class="studio-shot">
+      <img src="assets/studio.jpg" width="1600" height="1000" loading="lazy" alt="HyperFrames Studio with the Player 2 film paused at 0:19. Scene files on the left, the frame in the middle, the selected panel's properties on the right, and the timeline with scene, caption, voice and music tracks at the bottom.">
+      <span class="pin" style="left:3.4%;top:10.8%">1</span>
+      <span class="pin" style="left:25.6%;top:11%">2</span>
+      <span class="pin" style="left:30.5%;top:61%">3</span>
+      <span class="pin" style="left:62.5%;top:21%">4</span>
+      <span class="pin" style="left:74.6%;top:10.1%">5</span>
+      <span class="pin" style="left:91%;top:61.7%">6</span>
+      <span class="pin" style="left:36%;top:72.4%">7</span>
+      <span class="pin" style="left:15.6%;top:91.3%">8</span>
+      <span class="pin" style="left:8.6%;top:61.4%">9</span>
+    </div>
+    <figcaption>Our Player 2 film in Studio, paused at 0:19, with the right-hand panel selected.</figcaption>
+  </figure>
+
+  <ol class="studio-key">
+    <li><b>Compositions:</b> every scene is its own file, with a thumbnail. Click one to watch that scene on its own.</li>
+    <li><b>Preview:</b> the film at the playhead. <kbd>Space</kbd> plays and pauses, <kbd>←</kbd> <kbd>→</kbd> step one frame, <kbd>Shift</kbd>+arrow steps ten.</li>
+    <li><b>The time:</b> where you are and how long the film is (<code>00:19 / 01:20</code>). Put this number in your feedback.</li>
+    <li><b>Click an element</b> in the preview to select it. Here it's the panel with the green ticks.</li>
+    <li><b>Inspector:</b> the selected element's name and id (<code>03 Player One Panel</code>, <code>#03-player-one-panel</code>) and its properties. The id is what the agent searches for in the code, so it's the most precise thing you can give it.</li>
+    <li><b>Ask agent about this element:</b> sends the selection to an agent. In the terminal, your agent can also read what you selected itself, with <code>npx hyperframes preview --selection</code>.</li>
+    <li><b>Timeline:</b> click the ruler to jump to a time. The playhead is the vertical line.</li>
+    <li><b>Tracks:</b> scenes, captions, every voice clip and the music, each on its own row. Here you can see whether a voice clip runs past its scene, or where the music is too loud.</li>
+    <li><b>Lint:</b> the warnings from <code>npm run check</code>. Ours had 374 harmless ones (class names starting with a digit).</li>
+  </ol>
+
+  <p>Want to try it first? Open one of <a href="#films">our films</a> in Studio with the command under it.</p>
+  <p class="note"><b>Careful:</b> Studio edits the same files as your agent. If you drag a clip or change a property, the film changes straight away (<kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes it). That's fine for a small nudge, but tell the agent what you changed, or it may work from an old picture of the file. Bigger changes like the story, several scenes or the style belong with the agent.</p>
+
+  <h4>Send your changes</h4>
+  <div data-for="strong">
+    <p>Play the film once without stopping. Then go back, pause where something is wrong, click the element, and write down the time and the id. Send everything in one message, and ask to see it again before the render:</p>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Feedback <button class="copy" type="button">Copy</button></figcaption>
+<pre>Fix the overlapping nodes in scene <span class="ph">[7]</span> and the zoom in scene <span class="ph">[9]</span>. Make the sound effects quieter and the voice louder. Show me again before rendering.</pre></figure>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Point at it <button class="copy" type="button">Copy</button></figcaption>
+<pre>At <span class="ph">[0:19]</span>, <span class="ph">#03-player-one-panel</span> comes in too early: let it come in after the two characters. At <span class="ph">[0:42]</span> the text is too close to the edge. And look at what I've selected in Studio right now: make it <span class="ph">[smaller and slower]</span>. Show me again before rendering.</pre></figure>
+    <p class="note">We asked twice for quieter sound effects. What worked in the end: voice +7 dB, music at 0.10–0.16, effects at 0.08–0.12.</p>
+  </div>
+  <div data-for="weak">
+    <p>A weaker model can't go looking for things, so give it everything: <b>the scene file, the id, the time inside that scene and the new value</b>. Studio shows you all of these: the scene in the Compositions list, the id in the Inspector. Its clock counts the whole film, but each scene file counts from 0, so subtract the scene's start. One change per message.</p>
+    <figure class="prompt"><figcaption><span class="tag">Fix</span> One exact change <button class="copy" type="button">Copy</button></figcaption>
+<pre>Change only compositions/<span class="ph">[s3]</span>.html. <span class="ph">#s3-shot</span> starts its animation at <span class="ph">0.8</span> s, which is too early. Start it at <span class="ph">1.6</span> s instead, and change nothing else.
+Then run npm run check and npx hyperframes snapshot --range <span class="ph">[START]</span>,<span class="ph">[END]</span> --frames 3 -o snaps, show me the output and stop.</pre></figure>
+  </div>
+</section>
+
+<!-- 09 -->
+<section id="s9" class="step">
+  <header class="slate"><span class="num">09</span><h3>Render</h3><label class="done"><input type="checkbox"> done</label></header>
+  <div data-for="strong">
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Render <button class="copy" type="button">Copy</button></figcaption>
+<pre>Render it.</pre></figure>
+    <p>The agent runs <code>npm run render</code> and you get an MP4 in <code>renders/</code>.</p>
+  </div>
+  <figure class="prompt" data-for="weak"><figcaption><span class="tag">Phase 6</span> Render and write it down <button class="copy" type="button">Copy</button></figcaption>
+<pre>Phase 6.
+1. Run npm run check. It must pass with 0 errors.
+2. Render: npx hyperframes render -o renders/film.mp4
+   Tell me how long the render took.
+3. Make a small copy for slides:
+     ffmpeg -i renders/film.mp4 -vf scale=-2:720 -c:v libx264 -crf 26 -preset slow -c:a aac -b:a 128k renders/film-720p.mp4
+4. Add a row to ../STYLE-LIBRARY.md (create it from the template if it doesn't exist): the style name, the technology, this film, how to make another one, what broke and how we fixed it, and the render time.
+Then stop.</pre></figure>
+  <ul class="checks">
+    <li><b>HTML and GSAP styles are light.</b> 80 s took 1.5 minutes on a laptop.</li>
+    <li><b>Painterly, WebGL and 3D styles are heavier.</b> The clay film (Three.js) took 5 min 20 s for 97 s. The watercolour film took seconds per frame and the laptop got hot.<span data-for="strong"> Ask about render cost when you choose a pitch.</span></li>
+    <li>For a quick test, use <code>npx hyperframes render --quality draft</code>.</li>
+  </ul>
+  <div data-for="strong">
+    <p>For slides or the LMS, make a smaller 720p copy:</p>
+    <pre class="cmd"><code>ffmpeg -i renders/film.mp4 -vf scale=-2:720 -c:v libx264 -crf 26 -preset slow -c:a aac -b:a 128k film-720p.mp4</code></pre>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="s10" class="step">
+  <header class="slate"><span class="num">10</span><h3>Write down what you learned</h3><label class="done"><input type="checkbox"> done</label></header>
+  <p>Every lesson on this page came from our style library: things no model knew until we failed and wrote them down. That's what a skill really is, and it's why each film went faster than the last.</p>
+  <div data-for="strong">
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Save the style <button class="copy" type="button">Copy</button></figcaption>
+<pre>Save this style as a template, and add a row to my STYLE-LIBRARY.md: the technology, this film, how to make another one, what broke and how we fixed it, and how long the render took.</pre></figure>
+    <figure class="prompt"><figcaption><span class="tag">Opus 5.5</span> Be curious <button class="copy" type="button">Copy</button></figcaption>
+<pre>What did you not know about this when we started, that you had to find out by failing?</pre></figure>
+    <p>Next time, start with <q>Read STYLE-LIBRARY.md and make another <span class="ph">[style]</span> film about …</q>.</p>
+  </div>
+  <p data-for="weak">Phase 6 already added a row. Read it, and add what <em>you</em> learned about prompting a weaker model: which phase it got wrong, and what you said to fix it. Next time, paste that row into Phase 1 instead of the style card.</p>
+</section>
+
+<!-- ============ PROMPTS ============ -->
+<section id="prompts" class="block">
+  <h2>All the prompts</h2>
+  <p>Every prompt from the steps, in order, for <b class="mode-name"><span data-for="strong">Claude Opus 5.5</span><span data-for="weak">a weaker model</span></b>. Replace everything in <span class="ph">[brackets]</span>. They're also a file you can keep open beside the agent: <a data-for="strong" href="prompts/opus-explore.md"><code>prompts/opus-explore.md</code></a><a data-for="weak" href="prompts/weaker-model-step-by-step.md"><code>prompts/weaker-model-step-by-step.md</code></a>.</p>
+  <div class="prompt-list" id="promptList"><noscript><p>The list needs JavaScript. The prompts are in the steps above and in the files.</p></noscript></div>
+</section>
+
+<!-- ============ REAL ============ -->
+<section id="real" class="block">
+  <h2>Our real prompts</h2>
+  <p>These are the messages we actually sent, typos and all. Look at how short most of them are, and at how many of them say “show me first”.</p>
+  <div class="timeline">
+    <div class="tl-film">
+      <h3>Player 2 óskast <small>pixel arcade</small></h3>
+      <ol>
+        <li><q>I want to make a video … maybe I would like to try a different style now. The water colors were really cool but I want to try something different to see all what you can do with this method</q></li>
+        <li><q>Let's try an icelandic voice, can you create a demo voice in icelandic before you start making the sotyboard. … If you need me to install something or downloas some software for it, just say so</q></li>
+        <li><q>yes this plan is perfect, just do it your way and I will correct anything on the storyboard if I want something different.</q></li>
+        <li><q>make me a website that shows the storyboard with the pictures so it is easier for me to picture this</q></li>
+        <li><q>maybe instead of saying "engin umsókn, engin frestur og þú þarft ekki að kunna að forrita" it would be beter to just say "best er ef þú kannt alls ekki að forrita en hefur góða hugmynd …"</q></li>
+        <li><q>perfect, now do it!</q></li>
+        <li><q>fix the 07 nodes and fix the zoom and make the sound effects lower and the voice higher, then show me again before rendering</q></li>
+        <li><q>render it</q> · <q>yes, save it as a template</q></li>
+        <li><q>last time, with the water colors, it took a lot longer to render … why did it take so much shorter?</q></li>
+      </ol>
+    </div>
+    <div class="tl-film">
+      <h3>Vefþróun með gervigreind <small>neo-punk pixel</small></h3>
+      <ol>
+        <li><q>… This video should be with a nice music in the background but should also work well without any sound. Avoid too much text and try to keep it as visual as possible. Use high resolution pixel art style with exaggerated facial expressions. Make a story board in html that shows it in an interactive and easy to understand way so that I can ask you to make any changes before you start rendering … Use only a few colors and good contrast</q></li>
+        <li><q>can you make the style a bit more neo-punk but keep the content how it is and the awesome expressions on the character faces. … Skip the voice and add music that fits to the style.</q></li>
+        <li><q>looks good but can you create an another one in a totally different style with more emphasize on AI … Here is a style guide for the video:</q> <span class="aside">(followed by a full page of art direction)</span></li>
+        <li><q>great. some of the letters are unreadable but maybe when you start rendering it in higher contrast it will get better?</q> <span class="aside">(It didn't. The fix was the font size, see step 06.)</span></li>
+        <li><q>Great! Well done! Now do it!</q></li>
+      </ol>
+    </div>
+    <div class="tl-film">
+      <h3>From one island to another <small>clay stop-motion</small></h3>
+      <ol>
+        <li><q>I want to create an animation. It is to introduce our school for teachers from I.E.S. El Rincón. … I would like the animation to be a stop-motion looking film with (or how hard would that be?) Maybe you could make me, Jakub and maybe also […] into figures in that video? … Start drafting this, ask me any questions you need answers to, and tell me when you want me to add names to the figures, then show me the story board on an HTML page before you actually start to make the video</q></li>
+        <li><span class="aside">(The agent showed a numbered lineup of faces from our photos. We answered:)</span> <q>1 = […] 2 = Smári … 7 = drop … But Jakub is missing from this all, even though he plays a big part in the video. Here is another picture of […] for fine tuning him …</q></li>
+        <li><q>Everything is great! can you make the voice be Emma and I like the idea of putting the Erasmus+ in the end</q></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TROUBLE ============ -->
+<section id="trouble" class="block">
+  <h2>When it goes wrong</h2>
+  <div class="table-wrap">
+  <table class="plain">
+    <thead><tr><th>You see</th><th>Likely cause</th><th>Ask for</th></tr></thead>
+    <tbody>
+      <tr><td>Letters missing or wrong (þ, ð, æ, R looks like A)</td><td>The font lacks the glyph, or a pixel font is rendered at the wrong size</td><td>A test image of your hardest words at the real size, or a different font</td></tr>
+      <tr><td>Everything happens at once, too fast to follow</td><td>Code moves every part on the same curve at the same time</td><td>“One thing at a time. Hold every moment until I can read it, at least 1.5 s.”</td></tr>
+      <tr><td>The first frame is empty</td><td>Everything animates in from nothing; the first frame is the thumbnail</td><td>“Have the title on screen at 0 s.”</td></tr>
+      <tr><td>The voice mispronounces a name</td><td>The text-to-speech guesses</td><td>A separate spoken line spelled the way it sounds, and keep the real spelling on screen</td></tr>
+      <tr><td>The preview still plays the old voice</td><td>The preview cached a file with the same name</td><td>New file names for every take (we added a short hash)</td></tr>
+      <tr><td>A scene doesn't show up at all</td><td>An id or class starting with a digit (<code>#02-intro</code>), or a missing <code>data-start</code></td><td>“Run npm run check and fix every error.”</td></tr>
+      <tr><td>Render is slow and the laptop gets hot</td><td>Painterly, WebGL or 3D style (watercolour, clay)</td><td><code>--quality draft</code> while testing, <code>--workers 2</code>, or a lighter style</td></tr>
+      <tr><td>Sound effects drown the voice</td><td>Default volumes</td><td>Voice louder (we used +7 dB with a limiter), music ~0.15, effects ~0.1</td></tr>
+      <tr data-for="weak"><td>The model does several phases at once, or changes files you didn't ask about</td><td>The rules from Phase 0 fell out of its memory</td><td>A new chat: Phase 0 again, then the phase you're on</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============ HAND IN ============ -->
+<section id="handin" class="block handin">
+  <h2>What you hand in for 4.4</h2>
+  <ol class="checks">
+    <li><b>The film</b>: a 30–60 s launch film for your 4.3 page, as a 720p MP4</li>
+    <li><b>The storyboard page</b>, and one change you made because of it</li>
+    <li><b>Your STYLE-LIBRARY.md</b>, with at least one row and a "what broke" note</li>
+    <li><b>Your prompts</b>: the conversation, or the phase prompts you used. Say which model you used, and whether you'd prompt it the same way next time.</li>
+  </ol>
+</section>
+
+</main>
+</div>
+
+<div class="mode-float" id="modeFloat" aria-hidden="true">
+  <div class="mode-switch small" role="group" aria-label="Which model are you using?">
+    <button type="button" class="mode-btn" data-set-model="strong" aria-pressed="true" tabindex="-1">Opus 5.5</button>
+    <button type="button" class="mode-btn" data-set-model="weak" aria-pressed="false" tabindex="-1">Weaker</button>
+  </div>
+</div>
+
+<footer class="foot">
+  <p>Vefskólinn · Tækniskólinn · autumn 2026 · Built from our own films; copies of their files are in <code>examples/</code>. Tools: <a href="https://hyperframes.heygen.com">HyperFrames</a>, GSAP, FFmpeg, edge-tts.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<template>
+  <style>
+    @font-face { font-family: "Jersey 10"; src: url('assets/fonts/Jersey10-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Press Start 2P"; src: url('assets/fonts/PressStart2P-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Silkscreen"; src: url('assets/fonts/Silkscreen-Regular.ttf') format("truetype"); }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #F4F1FF;
+    }
+    #root * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* --- layers --- */
+    [id="11-insert-idea-off"] { position: absolute; inset: 0; background: #000000; }
+    [id="11-insert-idea-screen"] { position: absolute; inset: 0; transform-origin: 50% 50%; overflow: hidden; }
+    [id="11-insert-idea-screen"] > * { position: absolute; }
+    [id="11-insert-idea-ground"] { inset: 0; background: #14112B; }
+    [id="11-insert-idea-stars"] {
+      inset: 0; opacity: 0.9;
+      background:
+        radial-gradient(circle, #2C2560 3.46px, transparent 3.84px) 0 0 / 134.4px 134.4px,
+        radial-gradient(circle, #3a3270 2.69px, transparent 3.07px) 67.2px 44.16px / 211.2px 172.8px;
+    }
+    [id="11-insert-idea-crt"] {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        repeating-linear-gradient(0deg, rgba(10,8,24,0.24) 0 3.07px, transparent 3.07px 6.53px),
+        radial-gradient(ellipse at center, transparent 58%, rgba(10,8,24,0.65) 100%);
+    }
+    [id="11-insert-idea-white"] { inset: 0; background: #F4F1FF; opacity: 0; z-index: 10; }
+
+    /* --- type --- */
+    .arcade-11 { font-family: "Press Start 2P", monospace; font-weight: 400; line-height: 1.15; white-space: nowrap; }
+    .is-11 { font-family: "Jersey 10", sans-serif; font-weight: 400; line-height: 0.95; white-space: nowrap; }
+    .lbl-11 { font-family: "Silkscreen", monospace; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.1; white-space: nowrap; }
+
+    /* --- HUD --- */
+    [id="11-insert-idea-hud"] {
+      top: 0; left: 0; right: 0; height: 80.64px; z-index: 5;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 57.6px;
+      font-family: "Press Start 2P", monospace; font-weight: 400; font-size: 19.2px; letter-spacing: 0.04em;
+      color: #F4F1FF;
+      border-bottom: 6px solid #2C2560;
+      background: rgba(10,8,24,0.35);
+    }
+    [id="11-insert-idea-hud"] b { font-weight: 400; }
+    [id="11-insert-idea-ready"] { display: none; }
+
+    /* --- coin slot --- */
+    [id="11-insert-idea-panel"] {
+      left: 172.8px; top: 299.52px; width: 307.2px; height: 345.6px;
+      background: #2C2560;
+      box-shadow:
+        0 -6px 0 0 #F4F1FF, 0 6px 0 0 #F4F1FF,
+        -6px 0 0 0 #F4F1FF, 6px 0 0 0 #F4F1FF,
+        15px 15px 0 6px #0A0818;
+    }
+    [id="11-insert-idea-slot"] {
+      left: 303.36px; top: 353.28px; width: 46.08px; height: 115.2px;
+      background: #0A0818;
+      box-shadow: 0 0 0 6px #A9A3D9;
+    }
+    [id="11-insert-idea-rimflash"] {
+      left: 285.36px; top: 335.28px; width: 82.08px; height: 151.2px;
+      border: 6px solid #FFE14D; opacity: 0;
+    }
+    [id="11-insert-idea-coinclip"] {
+      left: 200px; top: 100px; width: 250px; height: 256px; overflow: hidden; z-index: 3;
+    }
+    [id="11-insert-idea-bulb"] {
+      position: absolute; left: 72.6px; top: 45.9px; width: 103.68px; height: 129.6px;
+      display: block; overflow: visible; transform-origin: 50% 50%;
+    }
+    [id="11-insert-idea-player2"] {
+      left: 172.8px; width: 307.2px; top: 526.08px; text-align: center;
+      font-size: 24.96px; color: #FF4F8B;
+    }
+    [id="11-insert-idea-insert"] {
+      left: 96px; width: 460.8px; top: 691.2px; text-align: center;
+      font-size: 24px; line-height: 1.5; color: #FFE14D;
+    }
+
+    /* --- end card --- */
+    [id="11-insert-idea-ask"] {
+      left: 633.6px; top: 149.76px; font-size: 203.52px; color: #FFE14D;
+      text-shadow: 8.64px 8.64px 0 #0A0818;
+    }
+    [id="11-insert-idea-ask"] > div { display: block; transform-origin: 0% 80%; }
+    [id="11-insert-idea-names"] {
+      left: 633.6px; top: 587.52px; font-size: 119.04px; color: #3FE0D0;
+      display: flex; align-items: center;
+    }
+    [id="11-insert-idea-caret"] {
+      display: inline-block; width: 36px; height: 92px; margin-left: 8px;
+      background: #FFE14D;
+    }
+    [id="11-insert-idea-school"] {
+      left: 641.28px; top: 737.28px; font-size: 30.72px; color: #A9A3D9;
+    }
+    [id="11-insert-idea-start"] {
+      left: 1382.4px; top: 779.52px; font-size: 24.96px; color: #FFE14D; opacity: 0.8;
+    }
+  </style>
+
+  <div data-hf-id="hf-vyxf" id="root" data-composition-id="11-insert-idea" data-width="1920" data-height="1080">
+    <svg data-hf-id="hf-8h6w" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs data-hf-id="hf-mh0t">
+        <symbol data-hf-id="hf-tadf" id="11-insert-idea-bulbsym" viewBox="0 0 8 10" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-ipkm" x="2" y="0" width="4" height="1" fill="#FFE14D" /><rect data-hf-id="hf-7tqb" x="1" y="1" width="6" height="4" fill="#FFE14D" /><rect data-hf-id="hf-z9oj" x="2" y="5" width="4" height="1" fill="#FFE14D" />
+          <rect data-hf-id="hf-vmui" x="2" y="1" width="1" height="2" fill="#FFF7B8" />
+          <rect data-hf-id="hf-e3no" x="3" y="6" width="2" height="1" fill="#A9A3D9" /><rect data-hf-id="hf-9fpq" x="3" y="7" width="2" height="1" fill="#6F68A3" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- powered-off tube behind the picture -->
+    <div data-hf-id="hf-d7u4" id="11-insert-idea-off" class="clip" data-start="0" data-duration="8.33" data-track-index="0"></div>
+
+    <!-- the picture (collapses on power-off) -->
+    <div data-hf-id="hf-686m" id="11-insert-idea-screen" class="clip" data-start="0" data-duration="8.33" data-track-index="1">
+      <div data-hf-id="hf-9i9f" id="11-insert-idea-ground"></div>
+      <div data-hf-id="hf-l7xh" id="11-insert-idea-stars"></div>
+
+      <div data-hf-id="hf-zaax" id="11-insert-idea-hud">
+        <span data-hf-id="hf-wyu6"><b data-hf-id="hf-e3ae" style="color:#3FE0D0">1UP</b> 012600</span>
+        <span data-hf-id="hf-5zal" style="color:#FFE14D">HI-SCORE 099999</span>
+        <span data-hf-id="hf-uckh"><b data-hf-id="hf-7jgr" style="color:#FF4F8B">2UP</b> <span data-hf-id="hf-n763" id="11-insert-idea-press" style="color:#FF4F8B">PRESS START</span><span data-hf-id="hf-sk6k" id="11-insert-idea-ready" style="color:#FF4F8B">READY?</span></span>
+      </div>
+
+      <div data-hf-id="hf-g4gk" id="11-insert-idea-panel"></div>
+      <div data-hf-id="hf-98pa" id="11-insert-idea-slot"></div>
+      <div data-hf-id="hf-r5n0" id="11-insert-idea-rimflash"></div>
+      <div data-hf-id="hf-95k3" id="11-insert-idea-coinclip">
+        <svg data-hf-id="hf-ckh2" id="11-insert-idea-bulb" shape-rendering="crispEdges"><use data-hf-id="hf-0g7l" href="#11-insert-idea-bulbsym" /></svg>
+      </div>
+      <p data-hf-id="hf-jyin" id="11-insert-idea-player2" class="arcade-11">PLAYER 2</p>
+      <p data-hf-id="hf-uqnt" id="11-insert-idea-insert" class="arcade-11">INSERT<br data-hf-id="hf-x5px">HUGMYND</p>
+
+      <div data-hf-id="hf-1f29" id="11-insert-idea-ask" class="is-11">
+        <div data-hf-id="hf-h53z" id="11-insert-idea-ask1">Svaraðu á</div>
+        <div data-hf-id="hf-o9ke" id="11-insert-idea-ask2">padletinn</div>
+      </div>
+      <p data-hf-id="hf-gyrr" id="11-insert-idea-names" class="is-11"><span data-hf-id="hf-q0rw" id="11-insert-idea-namestext"></span><span data-hf-id="hf-2fq4" id="11-insert-idea-caret"></span></p>
+      <p data-hf-id="hf-a0qn" id="11-insert-idea-school" class="lbl-11">Vefskólinn · Tækniskólinn</p>
+      <p data-hf-id="hf-z9eu" id="11-insert-idea-start" class="arcade-11">PRESS START</p>
+
+      <div data-hf-id="hf-xdjd" id="11-insert-idea-white"></div>
+    </div>
+
+    <!-- CRT glass: always on top -->
+    <div data-hf-id="hf-g7uw" id="11-insert-idea-crt" class="clip" data-start="0" data-duration="8.33" data-track-index="2"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "11-insert-idea";
+      var DUR = 8.33;
+      var host = document.querySelector('[data-composition-id="' + ID + '"]');
+      function $(n) { return host.querySelector('[id="' + ID + "-" + n + '"]'); }
+
+      var screen = $("screen"), white = $("white");
+      var bulb = $("bulb"), slot = $("slot"), rim = $("rimflash");
+      var press = $("press"), ready = $("ready"), player2 = $("player2"), insert = $("insert");
+      var ask1 = $("ask1"), ask2 = $("ask2");
+      var namesText = $("namestext"), caret = $("caret"), school = $("school"), start = $("start");
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ---------- Scene 1 (0.00–1.00): bulb-coin hovers, one 3-frame spin ----------
+      tl.set(bulb, { y: -6 }, 0.10);
+      tl.set(bulb, { scaleX: 0.5 }, 0.18);
+      tl.set(bulb, { scaleX: 0.12 }, 0.30);
+      tl.set(bulb, { y: 0 }, 0.40);
+      tl.set(bulb, { scaleX: 0.5 }, 0.42);
+      tl.set(bulb, { scaleX: 1 }, 0.54);
+      tl.set(bulb, { y: -6 }, 0.66);
+      // HUD 2UP state blinks while the slot waits
+      tl.set(press, { opacity: 0 }, 0.50);
+      tl.set(press, { opacity: 1 }, 0.75);
+      tl.set(press, { opacity: 0 }, 1.00);
+      tl.set(press, { opacity: 1 }, 1.20);
+      // PLAYER 2 label waits dim
+      tl.fromTo(player2, { opacity: 0.45 }, { opacity: 0.45, duration: 0.01 }, 0);
+
+      // ---------- Scene 2 (1.00–2.10): coin drops in 3 hard steps, lands 1.05 ----------
+      tl.set(bulb, { y: 0, scaleX: 0.3 }, 0.75);          // turns edge-on over the slot
+      tl.set(bulb, { y: 84 }, 0.85);                       // step 1
+      tl.set(bulb, { y: 156 }, 0.95);                      // step 2
+      tl.set(bulb, { y: 228 }, 1.05);                      // step 3 — lands (coin-insert)
+      // slot rim flashes coin
+      tl.set(slot, { boxShadow: "0 0 0 6px #FFE14D" }, 1.05);
+      tl.set(rim, { opacity: 1 }, 1.05);
+      tl.set(rim, { opacity: 0 }, 1.12);
+      tl.set(rim, { opacity: 1 }, 1.19);
+      tl.set(rim, { opacity: 0 }, 1.26);
+      // 1.30 (blip-hi): 2UP -> READY?, PLAYER 2 lights, INSERT HUGMYND appears
+      tl.set(press, { display: "none" }, 1.30);
+      tl.set(ready, { display: "inline" }, 1.30);
+      tl.set(ready, { opacity: 0 }, 1.42);
+      tl.set(ready, { opacity: 1 }, 1.54);
+      tl.set(player2, { opacity: 1 }, 1.30);
+      tl.set(player2, { opacity: 0.45 }, 1.38);
+      tl.set(player2, { opacity: 1 }, 1.46);
+      tl.fromTo(insert, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.12, ease: "steps(2)" }, 1.30);
+
+      // ---------- Scene 3 (2.10–3.60): the ask lands word by word ----------
+      tl.fromTo(ask1, { opacity: 0, y: -36 }, { opacity: 1, y: 0, duration: 0.15, ease: "steps(3)" }, 1.95);
+      // "padletinn" slams on 2.72
+      tl.fromTo(ask2, { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1.15, duration: 0.06, ease: "steps(2)" }, 2.62);
+      tl.set(ask2, { scale: 0.96 }, 2.72);
+      tl.set(ask1, { y: 6 }, 2.72);
+      tl.set(ask2, { scale: 1 }, 2.78);
+      tl.set(ask1, { y: 0 }, 2.78);
+
+      // ---------- Scene 4 (3.60–4.90): names type in (4.08), school line (4.6) ----------
+      var NAMES = "Smári & Jakub";
+      var SEQ = [{ t: 0, text: "" }];
+      var KEYS = [4.08, 4.12, 4.16, 4.20, 4.24, 4.30, 4.34, 4.40, 4.44, 4.48, 4.52, 4.56, 4.60];
+      for (var i = 0; i < NAMES.length; i++) SEQ.push({ t: KEYS[i], text: NAMES.slice(0, i + 1) });
+      function textAt(time) {
+        for (var k = SEQ.length - 1; k >= 0; k--) if (time >= SEQ[k].t) return SEQ[k].text;
+        return "";
+      }
+      var driver = { t: 0 };
+      tl.to(driver, {
+        t: DUR, duration: DUR, ease: "none",
+        onUpdate: function () { namesText.textContent = textAt(driver.t); }
+      }, 0);
+      tl.fromTo(caret, { opacity: 0 }, { opacity: 1, duration: 0.01 }, 4.08);
+      tl.set(caret, { opacity: 0 }, 4.85);
+      tl.set(caret, { opacity: 1 }, 5.10);
+      tl.set(caret, { opacity: 0 }, 5.35);
+      tl.fromTo(school, { opacity: 0, x: -12 }, { opacity: 1, x: 0, duration: 0.12, ease: "steps(2)" }, 4.60);
+
+      // ---------- Scene 5 (4.90–7.85): held end card, PRESS START blinks (finite) ----------
+      tl.fromTo(start, { opacity: 0 }, { opacity: 0.8, duration: 0.01 }, 4.90);
+      for (var b = 1; 4.90 + b * 0.25 < 7.85; b++) {
+        tl.set(start, { opacity: b % 2 ? 0 : 0.8 }, 4.90 + b * 0.25);
+      }
+      tl.set(start, { opacity: 0.8 }, 7.80);
+
+      // ---------- Final exit (7.85–8.33): CRT power-off, stepped ----------
+      tl.set(screen, { scaleY: 0.55 }, 7.85);
+      tl.set(white, { opacity: 0.35 }, 7.85);
+      tl.set(screen, { scaleY: 0.2 }, 7.90);
+      tl.set(white, { opacity: 0.7 }, 7.90);
+      tl.set(screen, { scaleY: 0.04 }, 7.95);
+      tl.set(white, { opacity: 1 }, 7.95);
+      tl.set(screen, { scaleY: 0.0056 }, 8.00);            // bright horizontal line (one game pixel)
+      tl.set(screen, { scaleX: 0.5 }, 8.08);
+      tl.set(screen, { scaleX: 0.12 }, 8.13);
+      tl.set(screen, { scaleX: 0.0032 }, 8.18);            // the dot
+      tl.set(screen, { scaleX: 0, scaleY: 0 }, 8.25);      // black
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

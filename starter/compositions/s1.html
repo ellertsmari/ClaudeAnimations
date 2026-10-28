@@ -1,0 +1,21 @@
+<template>
+  <style>
+    #s1-root { position: absolute; inset: 0; background: #f4efe6; color: #111; font-family: sans-serif; }
+    #s1-title { position: absolute; left: 160px; top: 380px; font-size: 160px; font-weight: 900; letter-spacing: -0.04em; }
+    #s1-bar { position: absolute; left: 0; bottom: 0; width: 1920px; height: 24px; background: #ff4f1f; transform-origin: left; }
+  </style>
+  <div id="s1-root" data-composition-id="s1" data-start="0" data-duration="4" data-width="1920" data-height="1080">
+    <h1 id="s1-title" class="clip" data-start="0" data-duration="4" data-track-index="0">Meet Recipe Finder</h1>
+    <div id="s1-bar" class="clip" data-start="0" data-duration="4" data-track-index="1"></div>
+  </div>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      // times are seconds inside this scene (0 = the scene's first frame)
+      tl.fromTo("#s1-title", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, 0);
+      tl.fromTo("#s1-bar", { scaleX: 0 }, { scaleX: 1, duration: 3.4, ease: "none" }, 0.3);
+      window.__timelines["s1"] = tl;
+    })();
+  </script>
+</template>

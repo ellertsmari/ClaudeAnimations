@@ -1,0 +1,17 @@
+<template>
+  <style>
+    #s2-root { position: absolute; inset: 0; background: #111; color: #f4efe6; font-family: sans-serif; }
+    #s2-title { position: absolute; left: 160px; top: 380px; font-size: 160px; font-weight: 900; letter-spacing: -0.04em; }
+  </style>
+  <div id="s2-root" data-composition-id="s2" data-start="0" data-duration="4" data-width="1920" data-height="1080">
+    <h2 id="s2-title" class="clip" data-start="0" data-duration="4" data-track-index="0">Cook what you have.</h2>
+  </div>
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#s2-title", { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, 0.3);
+      window.__timelines["s2"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Player 2 óskast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Jersey+10&family=Press+Start+2P&family=Silkscreen&display=swap">
+<style>
+/* Layout: an arcade cabinet's operator sheet — page chrome stays quiet indigo, the 16:9 cells are the game screens.
+   Single deliberate dark look (the video itself is a night-indigo arcade screen). */
+@font-face { font-family: "Jersey 10"; src: url("public/fonts/Jersey10-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Press Start 2P"; src: url("public/fonts/PressStart2P-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Silkscreen"; src: url("public/fonts/Silkscreen-Regular.ttf") format("truetype"); font-display: swap; }
+
+:root {
+  color-scheme: dark;
+  /* game palette (frame.md) */
+  --night: #14112B; --night2: #1E1940; --night3: #2C2560;
+  --ink: #F4F1FF; --dim: #A9A3D9;
+  --coin: #FFE14D; --p1: #3FE0D0; --p2: #FF4F8B; --xp: #7CFF6B; --shadow: #0A0818;
+  /* page chrome */
+  --page: #0D0B1C; --page-2: #15122B; --page-fg: #E7E3FA; --page-dim: #9A94C6; --rule: #2A2452;
+  /* type */
+  --f-arcade: "Press Start 2P", ui-monospace, monospace;
+  --f-is: "Jersey 10", "Silkscreen", system-ui, sans-serif;
+  --f-label: "Silkscreen", ui-monospace, monospace;
+  --f-text: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gp: 0.3125cqw; /* one game pixel = 6px @1920 */
+}
+* { box-sizing: border-box; }
+body { background: var(--page); color: var(--page-fg); font-family: var(--f-text); font-size: 15px; line-height: 1.5; margin: 0; }
+.wrap { max-width: 1480px; margin: 0 auto; padding-inline: clamp(16px, 3vw, 40px); padding-block: 32px 64px; }
+
+/* ---------- header ---------- */
+header.top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px 40px; align-items: end; border-bottom: 2px solid var(--rule); padding-bottom: 24px; }
+.kicker { font-family: var(--f-label); font-size: 12px; letter-spacing: .12em; color: var(--p1); margin: 0 0 6px; }
+h1 { font-family: var(--f-is); font-weight: 400; font-size: clamp(48px, 7vw, 92px); line-height: .9; margin: 0; color: var(--ink); text-wrap: balance; }
+h1 .p2 { color: var(--p2); }
+h1 small { font-family: var(--f-label); font-size: .2em; letter-spacing: .08em; color: var(--coin); vertical-align: middle; margin-left: .4em; }
+.dek { margin: 10px 0 0; color: var(--page-dim); max-width: 62ch; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.tag { font-family: var(--f-label); font-size: 11px; letter-spacing: .06em; color: var(--page-fg); border: 2px solid var(--rule); padding: 3px 8px; }
+.listen { background: var(--page-2); border: 2px solid var(--rule); padding: 14px 16px; min-width: 0; max-width: 380px; }
+.listen p { margin: 0 0 8px; font-size: 13px; color: var(--page-dim); }
+.listen b { color: var(--coin); font-family: var(--f-label); font-weight: 400; letter-spacing: .06em; font-size: 12px; }
+.listen audio { width: 100%; display: block; }
+
+.brief { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 24px 0 8px; }
+.brief div { background: var(--page-2); border-left: 4px solid var(--rule); padding: 12px 14px; min-width: 0; }
+.brief h2 { font-family: var(--f-label); font-weight: 400; font-size: 12px; letter-spacing: .1em; color: var(--coin); margin: 0 0 6px; }
+.brief p, .brief li { margin: 0; font-size: 14px; color: var(--page-fg); }
+.brief ul { margin: 0; padding-left: 18px; }
+.brief .msg { font-family: var(--f-is); font-size: 22px; line-height: 1.1; color: var(--ink); }
+
+/* view toggle (CSS only) */
+.viewbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 28px 0 8px; }
+.viewbar span { font-family: var(--f-label); font-size: 12px; letter-spacing: .08em; color: var(--page-dim); }
+.viewbar input { position: absolute; opacity: 0; pointer-events: none; }
+.viewbar label { font-family: var(--f-label); font-size: 12px; letter-spacing: .06em; padding: 6px 12px; border: 2px solid var(--rule); cursor: pointer; color: var(--page-fg); }
+.viewbar input:checked + label { background: var(--coin); color: var(--shadow); border-color: var(--coin); }
+.viewbar input:focus-visible + label { outline: 2px solid var(--p1); outline-offset: 2px; }
+
+/* ---------- grid ---------- */
+.act { display: flex; align-items: center; gap: 14px; margin: 34px 0 14px; }
+.act h2 { font-family: var(--f-label); font-weight: 400; font-size: 13px; letter-spacing: .14em; color: var(--coin); margin: 0; white-space: nowrap; }
+.act::after { content: ""; flex: 1; height: 2px; background: repeating-linear-gradient(90deg, var(--rule) 0 8px, transparent 8px 14px); }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 22px; }
+body:has(#v-large:checked) .grid { grid-template-columns: minmax(0, 1fr); max-width: 1100px; }
+body:has(#v-two:checked) .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 1050px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .brief { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 680px) { .grid, body:has(#v-two:checked) .grid { grid-template-columns: minmax(0, 1fr); } header.top { grid-template-columns: minmax(0, 1fr); } .listen { max-width: none; } }
+
+.cell { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.meta { display: flex; justify-content: space-between; gap: 10px; font-family: var(--f-label); font-size: 12px; letter-spacing: .06em; color: var(--page-fg); }
+.meta span:last-child { color: var(--page-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.vo { margin: 0; font-family: var(--f-is); font-size: 21px; line-height: 1.1; color: var(--ink); border-left: 4px solid var(--p2); padding-left: 10px; }
+.note { margin: 0; font-size: 14px; color: var(--page-dim); }
+.note b { color: var(--page-fg); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--f-label); font-size: 10.5px; letter-spacing: .06em; padding: 2px 7px; border: 2px solid var(--rule); color: var(--page-dim); }
+.chip.seam { border-color: var(--p1); color: var(--p1); }
+
+/* ---------- the game screen (sketch) ---------- */
+.frame { position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; container-type: inline-size; overflow: hidden; background: var(--night); color: var(--ink); outline: 2px solid var(--rule); }
+.frame > * { position: absolute; margin: 0; }
+.stars { inset: 0; background:
+  radial-gradient(circle, var(--night3) 0.18cqw, transparent 0.2cqw) 0 0 / 7cqw 7cqw,
+  radial-gradient(circle, #3a3270 0.14cqw, transparent 0.16cqw) 3.5cqw 2.3cqw / 11cqw 9cqw; opacity: .9; }
+.crt { inset: 0; z-index: 20; pointer-events: none; background:
+  repeating-linear-gradient(0deg, rgba(10,8,24,.24) 0 .16cqw, transparent .16cqw .34cqw),
+  radial-gradient(ellipse at center, transparent 58%, rgba(10,8,24,.65) 100%); }
+.hud { top: 0; left: 0; right: 0; height: 4.2cqw; display: flex; align-items: center; justify-content: space-between; padding: 0 3cqw; font-family: var(--f-arcade); font-size: 1cqw; color: var(--ink); border-bottom: var(--gp) solid var(--night3); background: rgba(10,8,24,.35); z-index: 5; }
+.hud * { position: static; }
+.c-p1 { color: var(--p1); } .c-p2 { color: var(--p2); } .c-coin { color: var(--coin); } .c-xp { color: var(--xp); } .c-dim { color: var(--dim); } .c-ink { color: var(--ink); }
+.arcade { font-family: var(--f-arcade); line-height: 1.15; }
+.is { font-family: var(--f-is); line-height: .95; }
+.lbl { font-family: var(--f-label); letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; }
+.panel { background: var(--night2); box-shadow:
+  0 calc(var(--gp) * -1) 0 0 var(--ink), 0 var(--gp) 0 0 var(--ink),
+  calc(var(--gp) * -1) 0 0 0 var(--ink), var(--gp) 0 0 0 var(--ink),
+  calc(var(--gp) * 2.5) calc(var(--gp) * 2.5) 0 var(--gp) var(--shadow); }
+.dashed { border: var(--gp) dashed var(--p2); }
+.cap { left: 50%; transform: translateX(-50%); bottom: 2.4cqw; font-family: var(--f-is); font-size: 2.7cqw; line-height: 1; white-space: nowrap; color: var(--ink); background: rgba(10,8,24,.82); padding: .5cqw 1.4cqw .6cqw; border: var(--gp) solid var(--night3); z-index: 12; }
+.cap em { position: static; font-style: normal; color: var(--coin); }
+.spr { display: block; }
+.spr svg, svg.spr { overflow: visible; }
+.ghost { opacity: .4; }
+.shadow-txt { text-shadow: .45cqw .45cqw 0 var(--shadow); }
+.blinkish { opacity: .85; }
+.xpbar { display: flex; gap: .35cqw; }
+.xpbar i { position: static; display: block; width: 1.6cqw; height: 1.6cqw; background: var(--night3); }
+.xpbar i.on { background: var(--xp); }
+.statbar i { width: 3cqw; height: 3cqw; }
+.node { width: 5.2cqw; height: 5.2cqw; background: var(--night3); box-shadow: 0 0 0 var(--gp) var(--ink), .6cqw .6cqw 0 var(--gp) var(--shadow); display: grid; place-items: center; font-family: var(--f-arcade); font-size: 1.6cqw; color: var(--ink); }
+.node.done { background: var(--xp); color: var(--shadow); }
+.node.now { background: var(--coin); color: var(--shadow); box-shadow: 0 0 0 var(--gp) var(--ink), 0 0 0 calc(var(--gp) * 3) rgba(255,225,77,.35), .6cqw .6cqw 0 var(--gp) var(--shadow); }
+.path { height: 1cqw; background: repeating-linear-gradient(90deg, var(--night3) 0 1.6cqw, transparent 1.6cqw 2.4cqw); }
+.banner { left: 0; right: 0; top: 5.6cqw; height: 7.4cqw; display: flex; align-items: center; gap: 2.4cqw; padding: 0 5cqw; background: var(--night2); border-top: var(--gp) solid var(--ink); border-bottom: var(--gp) solid var(--ink); z-index: 4; }
+.banner * { position: static; }
+
+/* closing cells */
+.seammap { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; background: var(--page-2); border: 2px solid var(--rule); padding: 14px; font-family: var(--f-label); font-size: 12px; }
+.seammap .n { background: var(--night3); color: var(--ink); padding: 3px 6px; }
+.seammap .s { color: var(--p1); font-size: 10.5px; }
+.tokens { background: var(--page-2); border: 2px solid var(--rule); padding: 14px; display: grid; gap: 12px; }
+.sw { display: flex; flex-wrap: wrap; gap: 8px; }
+.sw div { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--page-dim); }
+.sw i { width: 22px; height: 22px; display: block; outline: 2px solid var(--rule); }
+.typerow { display: grid; gap: 4px; }
+.typerow p { margin: 0; font-size: 13px; color: var(--page-dim); }
+.typerow .s1 { font-family: var(--f-arcade); font-size: 13px; color: var(--coin); }
+.typerow .s2 { font-family: var(--f-is); font-size: 26px; line-height: 1; color: var(--ink); }
+.typerow .s3 { font-family: var(--f-label); font-size: 13px; color: var(--p1); letter-spacing: .06em; }
+.bans { margin: 0; padding-left: 18px; font-size: 13px; color: var(--page-dim); }
+
+.open { margin-top: 44px; border-top: 2px solid var(--rule); padding-top: 22px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.open h2 { font-family: var(--f-label); font-weight: 400; font-size: 13px; letter-spacing: .12em; color: var(--coin); margin: 0 0 8px; }
+.open ol, .open ul { margin: 0; padding-left: 20px; color: var(--page-fg); font-size: 14px; display: grid; gap: 6px; }
+@media (max-width: 680px) { .open { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<!-- shared pixel sprites -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="hero" viewBox="0 0 12 16" shape-rendering="crispEdges">
+      <rect x="3" y="0" width="6" height="2" style="fill:var(--hair,#3b2a1a)"/>
+      <rect x="2" y="1" width="1" height="3" style="fill:var(--hair,#3b2a1a)"/>
+      <rect x="9" y="1" width="1" height="2" style="fill:var(--hair,#3b2a1a)"/>
+      <rect x="3" y="2" width="6" height="4" fill="#f2c29b"/>
+      <rect x="4" y="3" width="1" height="1" fill="#0A0818"/><rect x="7" y="3" width="1" height="1" fill="#0A0818"/>
+      <rect x="5" y="5" width="2" height="1" fill="#c9876a"/>
+      <rect x="2" y="6" width="8" height="5" fill="currentColor"/>
+      <rect x="1" y="7" width="1" height="3" fill="#f2c29b"/><rect x="10" y="7" width="1" height="3" fill="#f2c29b"/>
+      <rect x="3" y="11" width="2" height="4" fill="#2C2560"/><rect x="7" y="11" width="2" height="4" fill="#2C2560"/>
+      <rect x="2" y="15" width="3" height="1" fill="#0A0818"/><rect x="7" y="15" width="3" height="1" fill="#0A0818"/>
+    </symbol>
+    <symbol id="bulb" viewBox="0 0 8 10" shape-rendering="crispEdges">
+      <rect x="2" y="0" width="4" height="1" fill="#FFE14D"/><rect x="1" y="1" width="6" height="4" fill="#FFE14D"/><rect x="2" y="5" width="4" height="1" fill="#FFE14D"/>
+      <rect x="2" y="1" width="1" height="2" fill="#FFF7B8"/>
+      <rect x="3" y="6" width="2" height="1" fill="#A9A3D9"/><rect x="3" y="7" width="2" height="1" fill="#6F68A3"/>
+    </symbol>
+    <symbol id="heart" viewBox="0 0 7 6" shape-rendering="crispEdges">
+      <rect x="1" y="0" width="2" height="1" fill="currentColor"/><rect x="4" y="0" width="2" height="1" fill="currentColor"/>
+      <rect x="0" y="1" width="7" height="2" fill="currentColor"/><rect x="1" y="3" width="5" height="1" fill="currentColor"/>
+      <rect x="2" y="4" width="3" height="1" fill="currentColor"/><rect x="3" y="5" width="1" height="1" fill="currentColor"/>
+    </symbol>
+    <symbol id="star" viewBox="0 0 9 9" shape-rendering="crispEdges">
+      <rect x="4" y="0" width="1" height="2" fill="currentColor"/><rect x="3" y="2" width="3" height="1" fill="currentColor"/>
+      <rect x="0" y="3" width="9" height="1" fill="currentColor"/><rect x="1" y="4" width="7" height="1" fill="currentColor"/>
+      <rect x="2" y="5" width="5" height="1" fill="currentColor"/><rect x="1" y="6" width="3" height="1" fill="currentColor"/>
+      <rect x="5" y="6" width="3" height="1" fill="currentColor"/><rect x="1" y="7" width="2" height="1" fill="currentColor"/><rect x="6" y="7" width="2" height="1" fill="currentColor"/>
+    </symbol>
+    <symbol id="chip" viewBox="0 0 10 10" shape-rendering="crispEdges">
+      <rect x="2" y="2" width="6" height="6" fill="#FFE14D"/>
+      <rect x="0" y="3" width="2" height="1" fill="#A9A3D9"/><rect x="0" y="6" width="2" height="1" fill="#A9A3D9"/>
+      <rect x="8" y="3" width="2" height="1" fill="#A9A3D9"/><rect x="8" y="6" width="2" height="1" fill="#A9A3D9"/>
+      <rect x="3" y="0" width="1" height="2" fill="#A9A3D9"/><rect x="6" y="0" width="1" height="2" fill="#A9A3D9"/>
+      <rect x="3" y="8" width="1" height="2" fill="#A9A3D9"/><rect x="6" y="8" width="1" height="2" fill="#A9A3D9"/>
+      <rect x="5" y="3" width="1" height="2" fill="#14112B"/><rect x="4" y="5" width="2" height="1" fill="#14112B"/><rect x="4" y="6" width="1" height="1" fill="#14112B"/>
+    </symbol>
+    <symbol id="chest" viewBox="0 0 14 11" shape-rendering="crispEdges">
+      <rect x="1" y="0" width="12" height="3" fill="#7a4a22"/><rect x="1" y="0" width="12" height="1" fill="#FFE14D"/>
+      <rect x="2" y="3" width="10" height="1" fill="#FFF7B8"/>
+      <rect x="0" y="4" width="14" height="7" fill="#a86b32"/><rect x="0" y="6" width="14" height="1" fill="#FFE14D"/>
+      <rect x="6" y="5" width="2" height="3" fill="#FFE14D"/><rect x="0" y="10" width="14" height="1" fill="#5b3618"/>
+    </symbol>
+    <symbol id="coinico" viewBox="0 0 8 8" shape-rendering="crispEdges">
+      <rect x="2" y="0" width="4" height="1" fill="#FFE14D"/><rect x="1" y="1" width="6" height="6" fill="#FFE14D"/><rect x="2" y="7" width="4" height="1" fill="#FFE14D"/>
+      <rect x="3" y="2" width="2" height="4" fill="#C9A400"/>
+    </symbol>
+    <symbol id="check" viewBox="0 0 8 7" shape-rendering="crispEdges">
+      <rect x="6" y="0" width="2" height="2" fill="currentColor"/><rect x="5" y="2" width="2" height="1" fill="currentColor"/>
+      <rect x="4" y="3" width="2" height="1" fill="currentColor"/><rect x="0" y="3" width="2" height="1" fill="currentColor"/>
+      <rect x="1" y="4" width="2" height="1" fill="currentColor"/><rect x="3" y="4" width="2" height="1" fill="currentColor"/>
+      <rect x="2" y="5" width="2" height="2" fill="currentColor"/>
+    </symbol>
+    <symbol id="cross" viewBox="0 0 7 7" shape-rendering="crispEdges">
+      <rect x="0" y="0" width="2" height="1" fill="currentColor"/><rect x="5" y="0" width="2" height="1" fill="currentColor"/>
+      <rect x="1" y="1" width="2" height="1" fill="currentColor"/><rect x="4" y="1" width="2" height="1" fill="currentColor"/>
+      <rect x="2" y="2" width="3" height="3" fill="currentColor"/>
+      <rect x="1" y="5" width="2" height="1" fill="currentColor"/><rect x="4" y="5" width="2" height="1" fill="currentColor"/>
+      <rect x="0" y="6" width="2" height="1" fill="currentColor"/><rect x="5" y="6" width="2" height="1" fill="currentColor"/>
+    </symbol>
+    <symbol id="joy" viewBox="0 0 8 10" shape-rendering="crispEdges">
+      <rect x="2" y="0" width="4" height="3" fill="#FF4F8B"/><rect x="3" y="3" width="2" height="4" fill="#A9A3D9"/>
+      <rect x="0" y="7" width="8" height="3" fill="#2C2560"/><rect x="1" y="7" width="6" height="1" fill="#F4F1FF"/>
+    </symbol>
+    <symbol id="win" viewBox="0 0 10 8" shape-rendering="crispEdges">
+      <rect x="0" y="0" width="10" height="8" fill="#2C2560"/><rect x="0" y="0" width="10" height="2" fill="currentColor"/>
+      <rect x="1" y="3" width="3" height="4" fill="#A9A3D9"/><rect x="5" y="3" width="4" height="1" fill="#A9A3D9"/><rect x="5" y="5" width="3" height="1" fill="#A9A3D9"/>
+    </symbol>
+    <symbol id="cur" viewBox="0 0 4 7" shape-rendering="crispEdges">
+      <rect x="0" y="0" width="1" height="7" fill="currentColor"/><rect x="1" y="1" width="1" height="5" fill="currentColor"/>
+      <rect x="2" y="2" width="1" height="3" fill="currentColor"/><rect x="3" y="3" width="1" height="1" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="kicker">STORYBOARD · V2 · SKETCH PASS</p>
+      <h1>Player <span class="p2">2</span> óskast <small>V2</small></h1>
+      <p class="dek">Recruitment video for the winter action research project. Every cell below is a still of one game screen at its key moment, drawn in the real fonts and colours. Nothing moves yet; motion arrives in the build.</p>
+      <div class="tags">
+        <span class="tag">1920×1080</span><span class="tag">≈81 s</span><span class="tag">11 screens</span><span class="tag">Icelandic voice · Gunnar</span><span class="tag">Chiptune music</span><span class="tag">Burned-in captions</span>
+      </div>
+    </div>
+    <div class="listen">
+      <p><b>HEAR THE SCRIPT</b><br>The whole voiceover as Gunnar reads it today (72 s of speech).</p>
+      <audio controls preload="none" src="preview/script-gunnar.mp3"></audio>
+    </div>
+  </header>
+
+  <section class="brief" aria-label="Decisions">
+    <div><h2>MESSAGE</h2><p class="msg">Áttu hugmynd sem Canvas ræður ekki við? Við smíðum hana með þér og kennum þér að þróa hana áfram með gervigreind.</p></div>
+    <div><h2>AUDIENCE · ARC</h2><p>Tækniskólinn teachers, not programmers. First on your group's padlet.</p><p style="margin-top:6px">Title screen → quest → Player 1 → empty Player 2 slot → three levels → loot → why → rules → insert idea.</p></div>
+    <div><h2>THE SPINE</h2><p>One arcade game the whole way. The pink <b style="color:var(--p2)">Player 2</b> slot stays empty and blinking until the last screen, where the viewer's idea is the coin that fills it.</p></div>
+  </section>
+
+  <div class="viewbar" role="radiogroup" aria-label="Cell size">
+    <span>VIEW</span>
+    <input type="radio" name="view" id="v-grid" checked><label for="v-grid">3 columns</label>
+    <input type="radio" name="view" id="v-two"><label for="v-two">2 columns</label>
+    <input type="radio" name="view" id="v-large"><label for="v-large">Large</label>
+  </div>
+
+  <!-- ================= ACT 1 ================= -->
+  <div class="act"><h2>ACT 1 · THE INVITATION</h2></div>
+  <div class="grid">
+
+    <!-- 01 -->
+    <article class="cell" id="frame-01">
+      <div class="frame" role="img" aria-label="Title screen: PLAYER 2 ÓSKAST, dialog box with the question, PRESS START">
+        <div class="stars"></div>
+        <svg class="spr" style="left:15cqw;top:9cqw;width:7cqw;height:8.75cqw"><use href="#bulb"/></svg>
+        <svg class="spr" style="left:78cqw;top:9cqw;width:7cqw;height:8.75cqw"><use href="#bulb"/></svg>
+        <p class="arcade c-coin shadow-txt" style="left:0;right:0;top:7.5cqw;text-align:center;font-size:5.2cqw">PLAYER 2</p>
+        <p class="is c-p2 shadow-txt" style="left:0;right:0;top:14.4cqw;text-align:center;font-size:13cqw">ÓSKAST</p>
+        <div class="panel" style="left:18cqw;top:30.5cqw;width:64cqw;height:8.6cqw"></div>
+        <p class="is c-ink" style="left:21cqw;top:32.6cqw;font-size:4cqw">Áttu hugmynd sem Canvas ræður ekki við?<span class="c-coin">▌</span></p>
+        <p class="arcade c-coin" style="left:0;right:0;top:43.4cqw;text-align:center;font-size:1.5cqw">PRESS START</p>
+        <p class="lbl c-dim" style="left:0;right:0;bottom:2cqw;text-align:center;font-size:1.1cqw">© 2026 Smári &amp; Jakub · Vefskólinn</p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>01 · TITLE SCREEN</span><span>0.0–5.0 s</span></div>
+      <p class="vo">„Áttu hugmynd sem Canvas ræður ekki við?“</p>
+      <p class="note"><b>First move:</b> the logo drops in on hard steps with a coin jingle, then the question types letter by letter into the dialog box as Gunnar says it. The dialog box doubles as the caption here.</p>
+      <div class="chips"><span class="chip seam">in: cut</span><span class="chip">hook</span></div>
+    </article>
+
+    <!-- 02 -->
+    <article class="cell" id="frame-02">
+      <div class="frame" role="img" aria-label="Quest select menu with four options and a cyan stamp: Við smíðum það með þér">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 004200</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> PRESS START</span></div>
+        <div class="panel" style="left:6cqw;top:8cqw;width:55cqw;height:35cqw"></div>
+        <p class="lbl c-coin" style="left:9cqw;top:10.6cqw;font-size:2cqw">Veldu verkefni</p>
+        <p class="is c-dim" style="left:13cqw;top:16cqw;font-size:3.6cqw">Leikur fyrir nemendurna</p>
+        <p class="is c-dim" style="left:13cqw;top:21.6cqw;font-size:3.6cqw">Ný leið til að meta verkefni</p>
+        <p class="is c-dim" style="left:13cqw;top:27.2cqw;font-size:3.6cqw">Eitthvað sem enginn hefur gert</p>
+        <svg class="spr c-coin" style="left:9.2cqw;top:33.6cqw;width:1.7cqw;height:3cqw;color:var(--coin)"><use href="#cur"/></svg>
+        <p class="is c-p2" style="left:13cqw;top:32.8cqw;font-size:3.6cqw">??? <span class="c-ink">— þín hugmynd</span></p>
+        <div style="left:12cqw;top:32.2cqw;width:46cqw;height:5.2cqw;border:var(--gp) solid var(--coin)"></div>
+        <div style="left:64cqw;top:12cqw;width:31cqw;height:18cqw;border:calc(var(--gp)*1.5) solid var(--p1);transform:rotate(-4deg);background:rgba(63,224,208,.08)"></div>
+        <p class="is c-p1" style="left:66cqw;top:13.8cqw;width:28cqw;font-size:5.2cqw;transform:rotate(-4deg);text-align:center">VIÐ SMÍÐUM ÞAÐ MEÐ ÞÉR</p>
+        <svg class="spr" style="left:70cqw;top:32cqw;width:6cqw;height:8cqw;color:var(--p1)"><use href="#hero"/></svg>
+        <svg class="spr" style="left:79cqw;top:32cqw;width:6cqw;height:8cqw;color:var(--p1);--hair:#8a5a2b"><use href="#hero"/></svg>
+        <p class="cap"><em>Við smíðum það með þér.</em></p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>02 · QUEST SELECT</span><span>5.0–15.0 s</span></div>
+      <p class="vo">„Leik fyrir nemendurna þína? Nýja leið til að meta verkefni? Eða eitthvað sem enginn hefur gert áður? Við smíðum það með þér.“</p>
+      <p class="note"><b>First move:</b> the arrow hops down one quest each time Gunnar names one, with a blip each time. It lands on the blinking “??? — þín hugmynd”, then the cyan stamp slams on with the last sentence. Shown: the end state.</p>
+      <div class="chips"><span class="chip seam">in: zoom-through</span><span class="chip">promise lands here</span></div>
+    </article>
+
+    <!-- 03 -->
+    <article class="cell" id="frame-03">
+      <div class="frame" role="img" aria-label="Player 1 character screen: Smári and Jakub, and two unlocked teaching systems; Canvas crossed out">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 004200</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> PRESS START</span></div>
+        <p class="arcade c-p1" style="left:7cqw;top:7.6cqw;font-size:2.2cqw">PLAYER 1</p>
+        <svg class="spr" style="left:9cqw;top:13cqw;width:10cqw;height:13.3cqw;color:var(--p1)"><use href="#hero"/></svg>
+        <svg class="spr" style="left:25cqw;top:13cqw;width:10cqw;height:13.3cqw;color:var(--p1);--hair:#8a5a2b"><use href="#hero"/></svg>
+        <div style="left:7cqw;top:27cqw;width:30cqw;height:1.2cqw;background:var(--night3)"></div>
+        <p class="lbl c-p1" style="left:8.6cqw;top:30cqw;font-size:2.2cqw">Smári</p>
+        <p class="lbl c-p1" style="left:24.6cqw;top:30cqw;font-size:2.2cqw">Jakub</p>
+        <p class="is c-dim" style="left:8.6cqw;top:34cqw;font-size:2.6cqw">Vefþróun · Vefskólinn</p>
+        <div class="panel" style="left:47cqw;top:8.4cqw;width:46cqw;height:34.6cqw"></div>
+        <p class="lbl c-coin" style="left:50cqw;top:11cqw;font-size:1.8cqw">Hlutir opnaðir</p>
+        <svg class="spr" style="left:50cqw;top:16cqw;width:4.6cqw;height:3.7cqw;color:var(--xp)"><use href="#win"/></svg>
+        <p class="is c-ink" style="left:56.5cqw;top:15.8cqw;font-size:3.8cqw">Kennslukerfi #1</p>
+        <svg class="spr" style="left:86cqw;top:16.6cqw;width:3cqw;height:2.6cqw;color:var(--xp)"><use href="#check"/></svg>
+        <svg class="spr" style="left:50cqw;top:22.4cqw;width:4.6cqw;height:3.7cqw;color:var(--xp)"><use href="#win"/></svg>
+        <p class="is c-ink" style="left:56.5cqw;top:22.2cqw;font-size:3.8cqw">Kennslukerfi #2</p>
+        <svg class="spr" style="left:86cqw;top:23cqw;width:3cqw;height:2.6cqw;color:var(--xp)"><use href="#check"/></svg>
+        <div style="left:50cqw;top:29.4cqw;width:40cqw;height:0;border-top:var(--gp) dashed var(--night3)"></div>
+        <svg class="spr" style="left:50cqw;top:31.6cqw;width:4.6cqw;height:3.7cqw;color:#5d578c"><use href="#win"/></svg>
+        <p class="is c-dim" style="left:56.5cqw;top:31.4cqw;font-size:3.8cqw">Canvas</p>
+        <svg class="spr" style="left:85.4cqw;top:31.4cqw;width:4cqw;height:4cqw;color:var(--p2)"><use href="#cross"/></svg>
+        <p class="is c-dim" style="left:56.5cqw;top:36.4cqw;font-size:2.4cqw">gerði ekki það sem við þurftum</p>
+        <p class="cap">Við erum <em>Smári og Jakub.</em></p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>03 · PLAYER 1</span><span>15.0–24.0 s</span></div>
+      <p class="vo">„Við erum Smári og Jakub. Við smíðuðum okkar eigin kennslukerfi, af því að Canvas gerði ekki það sem við þurftum.“</p>
+      <p class="note"><b>First move:</b> both characters jump onto their pedestals and the names type in. Each teaching system pops in with a green tick on “kennslukerfi”, and the grey Canvas row gets the pink ✕ on “gerði ekki”.</p>
+      <div class="chips"><span class="chip seam">in: cut</span><span class="chip">credibility</span></div>
+    </article>
+
+    <!-- 04 -->
+    <article class="cell" id="frame-04">
+      <div class="frame" role="img" aria-label="Player 1 ready on the left, empty pink Player 2 slot with a question mark on the right, AI power-up chip between">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 004200</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> <span class="c-p2">PRESS START</span></span></div>
+        <p class="arcade c-p1" style="left:8cqw;top:9cqw;font-size:2cqw">PLAYER 1</p>
+        <p class="lbl c-p1" style="left:8cqw;top:12.6cqw;font-size:1.7cqw">Tilbúnir</p>
+        <svg class="spr" style="left:9cqw;top:17cqw;width:9cqw;height:12cqw;color:var(--p1)"><use href="#hero"/></svg>
+        <svg class="spr" style="left:21cqw;top:17cqw;width:9cqw;height:12cqw;color:var(--p1);--hair:#8a5a2b"><use href="#hero"/></svg>
+        <svg class="spr" style="left:39.5cqw;top:19cqw;width:7cqw;height:7cqw"><use href="#chip"/></svg>
+        <p class="lbl c-coin" style="left:35cqw;top:27.6cqw;width:16cqw;text-align:center;font-size:1.4cqw">Gervigreind</p>
+        <p class="arcade c-p2" style="left:56cqw;top:7.4cqw;width:34cqw;text-align:center;font-size:2.2cqw">PLAYER 2</p>
+        <div class="dashed" style="left:57cqw;top:11.4cqw;width:32cqw;height:24cqw;background:rgba(255,79,139,.06)"></div>
+        <svg class="spr ghost" style="left:67cqw;top:19.4cqw;width:12cqw;height:16cqw;color:var(--p2);--hair:#FF4F8B"><use href="#hero"/></svg>
+        <p class="is c-p2" style="left:57cqw;top:11.6cqw;width:32cqw;text-align:center;font-size:7.4cqw">?</p>
+        <p class="is c-ink" style="left:50cqw;top:37.4cqw;width:46cqw;text-align:center;font-size:3.8cqw"><span class="c-p2">ÓSKAST:</span> kennari með hugmynd</p>
+        <p class="cap">…með okkur og <em>gervigreindinni.</em></p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>04 · PLAYER 2 WANTED</span><span>24.0–32.0 s</span></div>
+      <p class="vo">„Nú vantar okkur leikmann númer tvö: kennara sem vill smíða sinn eigin hugbúnað, með okkur og gervigreindinni.“</p>
+      <p class="note"><b>First move:</b> the empty pink slot flickers on with the “?” blinking, and “ÓSKAST: kennari með hugmynd” types underneath. On “gervigreindinni” the yellow power-up chip drops between the two sides with a power-up sound.</p>
+      <div class="chips"><span class="chip seam">in: cut</span><span class="chip">the empty slot = the spine</span></div>
+    </article>
+  </div>
+
+  <!-- ================= ACT 2 ================= -->
+  <div class="act"><h2>ACT 2 · THE LEVELS</h2></div>
+  <div class="grid">
+
+    <!-- 05 -->
+    <article class="cell" id="frame-05">
+      <div class="frame" role="img" aria-label="Level 1 Hugmyndin: world map with three nodes, ghost Player 2 with a lightbulb, a sketch turning into a wireframe">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 004200</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> PRESS START</span></div>
+        <div class="banner"><span class="arcade c-coin" style="font-size:2.2cqw">LEVEL 1</span><span class="is c-ink" style="font-size:6cqw">Hugmyndin</span></div>
+        <svg class="spr" style="left:13.6cqw;top:14.2cqw;width:3.4cqw;height:4.2cqw"><use href="#bulb"/></svg>
+        <svg class="spr ghost" style="left:11cqw;top:18.6cqw;width:8cqw;height:10.6cqw;color:var(--p2);--hair:#FF4F8B"><use href="#hero"/></svg>
+        <p class="lbl c-p2" style="left:12.6cqw;top:29.6cqw;font-size:1.3cqw">Þú</p>
+        <div class="panel" style="left:28cqw;top:15.4cqw;width:36cqw;height:13.8cqw"></div>
+        <div style="left:30cqw;top:17.6cqw;width:13cqw;height:0;border-top:.4cqw dotted var(--dim);transform:rotate(-3deg)"></div>
+        <div style="left:30.4cqw;top:20.6cqw;width:10cqw;height:0;border-top:.4cqw dotted var(--dim);transform:rotate(4deg)"></div>
+        <div style="left:30cqw;top:23.6cqw;width:12cqw;height:3cqw;border:.4cqw dotted var(--dim);transform:rotate(-2deg)"></div>
+        <p class="arcade c-coin" style="left:44.6cqw;top:20.4cqw;font-size:2cqw">▶</p>
+        <div style="left:49cqw;top:17.4cqw;width:13cqw;height:2.2cqw;border:var(--gp) solid var(--coin)"></div>
+        <div style="left:49cqw;top:20.8cqw;width:6cqw;height:6cqw;border:var(--gp) solid var(--coin)"></div>
+        <div style="left:56.4cqw;top:20.8cqw;width:5.6cqw;height:2.6cqw;border:var(--gp) solid var(--coin)"></div>
+        <div style="left:56.4cqw;top:24.2cqw;width:5.6cqw;height:2.6cqw;border:var(--gp) solid var(--coin)"></div>
+        <svg class="spr" style="left:68cqw;top:19.6cqw;width:7cqw;height:9.3cqw;color:var(--p1)"><use href="#hero"/></svg>
+        <svg class="spr" style="left:77cqw;top:19.6cqw;width:7cqw;height:9.3cqw;color:var(--p1);--hair:#8a5a2b"><use href="#hero"/></svg>
+        <div class="path" style="left:10cqw;width:80cqw;top:36.6cqw"></div>
+        <div class="node now" style="left:17cqw;top:34.5cqw">1</div>
+        <div class="node" style="left:47.4cqw;top:34.5cqw">2</div>
+        <div class="node" style="left:77.8cqw;top:34.5cqw">3</div>
+        <div class="xpbar" style="left:4cqw;top:41.6cqw"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="cap">Þú segir okkur <em>hvað þig vantar</em></p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>05 · LEVEL 1 · HUGMYNDIN</span><span>32.0–38.5 s</span></div>
+      <p class="vo">„Fyrsta borð: hugmyndin. Þú segir okkur hvað þig vantar, og við hönnum það saman.“</p>
+      <p class="note"><b>First move:</b> the LEVEL 1 banner slides in with a jingle. A lightbulb pops over the pink ghost (“Þú”), and on “hönnum það saman” the dotted sketch snaps into a clean yellow wireframe. The world map with its three level nodes stays as one stage through screens 05–07.</p>
+      <div class="chips"><span class="chip seam">in: push-slide ←</span><span class="chip">cycle 1</span></div>
+    </article>
+
+    <!-- 06 -->
+    <article class="cell" id="frame-06">
+      <div class="frame" role="img" aria-label="Level 2 Saman: app window built from bricks, three student sprites with hearts">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 008400</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> PRESS START</span></div>
+        <div class="banner"><span class="arcade c-coin" style="font-size:2.2cqw">LEVEL 2</span><span class="is c-ink" style="font-size:6cqw">Saman</span></div>
+        <svg class="spr" style="left:8cqw;top:18.6cqw;width:7.4cqw;height:9.9cqw;color:var(--p1)"><use href="#hero"/></svg>
+        <svg class="spr" style="left:16.4cqw;top:18.6cqw;width:7.4cqw;height:9.9cqw;color:var(--p1);--hair:#8a5a2b"><use href="#hero"/></svg>
+        <div class="panel" style="left:30cqw;top:15cqw;width:28cqw;height:15cqw"></div>
+        <div style="left:30cqw;top:15cqw;width:28cqw;height:2.4cqw;background:var(--p1)"></div>
+        <div style="left:31.6cqw;top:19cqw;width:24.8cqw;height:9.4cqw;background:
+          linear-gradient(var(--night2),var(--night2)) 0 0 / 100% 2.8cqw no-repeat,
+          repeating-linear-gradient(90deg, #c4703a 0 3.8cqw, var(--shadow) 3.8cqw 4.1cqw) 0 3.1cqw / 100% 2.9cqw no-repeat,
+          repeating-linear-gradient(90deg, #a86b32 0 1.9cqw, var(--shadow) 1.9cqw 2.2cqw, #a86b32 2.2cqw 3.8cqw, var(--shadow) 3.8cqw 4.1cqw) 0 6.3cqw / 100% 3.1cqw no-repeat"></div>
+        <p class="lbl c-ink" style="left:31.6cqw;top:19.3cqw;font-size:1.4cqw">Útgáfa 1</p>
+        <svg class="spr" style="left:65.2cqw;top:15.2cqw;width:3cqw;height:2.6cqw;color:var(--p2)"><use href="#heart"/></svg>
+        <svg class="spr" style="left:73.2cqw;top:14cqw;width:3cqw;height:2.6cqw;color:var(--p2)"><use href="#heart"/></svg>
+        <svg class="spr" style="left:81.2cqw;top:15.2cqw;width:3cqw;height:2.6cqw;color:var(--p2)"><use href="#heart"/></svg>
+        <svg class="spr" style="left:64cqw;top:19.6cqw;width:5.4cqw;height:7.2cqw;color:var(--coin);--hair:#5b3618"><use href="#hero"/></svg>
+        <svg class="spr" style="left:72cqw;top:19.6cqw;width:5.4cqw;height:7.2cqw;color:var(--xp);--hair:#d9a441"><use href="#hero"/></svg>
+        <svg class="spr" style="left:80cqw;top:19.6cqw;width:5.4cqw;height:7.2cqw;color:#b48cff;--hair:#1a1a1a"><use href="#hero"/></svg>
+        <p class="lbl c-dim" style="left:64cqw;top:28cqw;width:22cqw;text-align:center;font-size:1.3cqw">Nemendurnir þínir</p>
+        <div class="path" style="left:10cqw;width:80cqw;top:36.6cqw"></div>
+        <div class="node done" style="left:17cqw;top:34.5cqw">1</div>
+        <div class="node now" style="left:47.4cqw;top:34.5cqw">2</div>
+        <div class="node" style="left:77.8cqw;top:34.5cqw">3</div>
+        <div class="xpbar" style="left:4cqw;top:41.6cqw"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+        <p class="cap">…og þú prófar hana <em>með nemendunum þínum.</em></p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>06 · LEVEL 2 · SAMAN</span><span>38.5–45.0 s</span></div>
+      <p class="vo">„Annað borð: saman. Við smíðum fyrstu útgáfuna, og þú prófar hana með nemendunum þínum.“</p>
+      <p class="note"><b>First move:</b> the camera slides left to node 2 and the banner swaps. Bricks drop row by row into the “Útgáfa 1” (version 1) window. On “nemendunum þínum” three student characters run in and hearts pop above them. The XP bar steps up to 8 of 12.</p>
+      <div class="chips"><span class="chip seam">in: push-slide ←</span><span class="chip">cycle 2</span></div>
+    </article>
+
+    <!-- 07 -->
+    <article class="cell" id="frame-07">
+      <div class="frame" role="img" aria-label="Level 3 Þú við stýrið: Player 2 holds the joystick, chat bubble to the AI, app updates, achievement unlocked">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 012600</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> PRESS START</span></div>
+        <div class="banner"><span class="arcade c-coin" style="font-size:2.2cqw">LEVEL 3</span><span class="is c-ink" style="font-size:6cqw">Þú við stýrið</span><span class="arcade c-xp" style="font-size:1.6cqw;margin-left:auto">LEVEL UP!</span></div>
+        <svg class="spr" style="left:4cqw;top:21cqw;width:5.2cqw;height:6.9cqw;color:var(--p1);opacity:.6"><use href="#hero"/></svg>
+        <svg class="spr" style="left:10cqw;top:21cqw;width:5.2cqw;height:6.9cqw;color:var(--p1);opacity:.6;--hair:#8a5a2b"><use href="#hero"/></svg>
+        <div class="panel" style="left:19cqw;top:15.2cqw;width:27cqw;height:7.4cqw"></div>
+        <p class="is c-ink" style="left:21cqw;top:16.8cqw;font-size:3.4cqw">Bættu við stigatöflu…<span class="c-coin">▌</span></p>
+        <div style="left:36cqw;top:23.2cqw;width:0;height:0;border-left:1.2cqw solid transparent;border-right:1.2cqw solid transparent;border-top:1.6cqw solid var(--night2)"></div>
+        <svg class="spr ghost" style="left:36cqw;top:22cqw;width:6.4cqw;height:8.5cqw;color:var(--p2);--hair:#FF4F8B;opacity:.55"><use href="#hero"/></svg>
+        <svg class="spr" style="left:43cqw;top:25.6cqw;width:3.4cqw;height:4.3cqw"><use href="#joy"/></svg>
+        <div class="panel" style="left:54cqw;top:15.2cqw;width:22cqw;height:14.6cqw"></div>
+        <div style="left:54cqw;top:15.2cqw;width:22cqw;height:2.2cqw;background:var(--p1)"></div>
+        <div style="left:55.4cqw;top:18.6cqw;width:8cqw;height:9.8cqw;background:#3a3270"></div>
+        <div style="left:64.4cqw;top:18.6cqw;width:10.2cqw;height:9.8cqw;border:var(--gp) solid var(--xp);background:rgba(124,255,107,.08)"></div>
+        <p class="lbl c-xp" style="left:65.2cqw;top:19.4cqw;font-size:1.1cqw">Stigatafla</p>
+        <div style="left:65.2cqw;top:21.8cqw;width:8.6cqw;height:.7cqw;background:var(--dim)"></div>
+        <div style="left:65.2cqw;top:23.4cqw;width:7cqw;height:.7cqw;background:var(--dim)"></div>
+        <div style="left:65.2cqw;top:25cqw;width:5.4cqw;height:.7cqw;background:var(--dim)"></div>
+        <div class="panel" style="left:78cqw;top:15.6cqw;width:18cqw;height:11.2cqw"></div>
+        <svg class="spr" style="left:79.4cqw;top:17.2cqw;width:3.6cqw;height:3.6cqw;color:var(--coin)"><use href="#star"/></svg>
+        <p class="lbl c-coin" style="left:84cqw;top:17.6cqw;font-size:1.2cqw">Afrek<br>opnað</p>
+        <p class="is c-ink" style="left:79.4cqw;top:21.6cqw;width:16cqw;font-size:2.3cqw">Þú smíðar með gervigreind</p>
+        <div class="path" style="left:10cqw;width:80cqw;top:36.6cqw"></div>
+        <div class="node done" style="left:17cqw;top:34.5cqw">1</div>
+        <div class="node done" style="left:47.4cqw;top:34.5cqw">2</div>
+        <div class="node now" style="left:77.8cqw;top:34.5cqw">3</div>
+        <div class="xpbar" style="left:4cqw;top:41.6cqw"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <p class="cap">…breyta honum og bæta, <em>alveg eftir þínu höfði.</em></p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>07 · LEVEL 3 · ÞÚ VIÐ STÝRIÐ</span><span>45.0–52.5 s</span></div>
+      <p class="vo">„Þriðja borð: þú við stýrið. Þú lætur gervigreindina breyta honum og bæta, alveg eftir þínu höfði.“</p>
+      <p class="note"><b>First move:</b> the cyan characters step back and dim while the pink player grabs the joystick. “Bættu við stigatöflu…” (“add a leaderboard…”) types into the bubble, and the app grows a green leaderboard panel. On “eftir þínu höfði” the achievement toast pops and LEVEL UP! flashes as the XP bar fills.</p>
+      <div class="chips"><span class="chip seam">in: push-slide ←</span><span class="chip">cycle 3 · the heart</span></div>
+    </article>
+  </div>
+
+  <!-- ================= ACT 3 ================= -->
+  <div class="act"><h2>ACT 3 · WHY JOIN</h2></div>
+  <div class="grid">
+
+    <!-- 08 -->
+    <article class="cell" id="frame-08">
+      <div class="frame" role="img" aria-label="Loot screen: open treasure chest and two reward cards">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 012600</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> PRESS START</span></div>
+        <p class="lbl c-coin" style="left:0;right:0;top:7.4cqw;text-align:center;font-size:2.4cqw">Verðlaun</p>
+        <svg class="spr" style="left:42cqw;top:13cqw;width:16cqw;height:12.6cqw"><use href="#chest"/></svg>
+        <svg class="spr" style="left:37cqw;top:12cqw;width:2.4cqw;height:2.4cqw"><use href="#coinico"/></svg>
+        <svg class="spr" style="left:60cqw;top:11cqw;width:2.4cqw;height:2.4cqw"><use href="#coinico"/></svg>
+        <svg class="spr" style="left:47cqw;top:9.6cqw;width:2cqw;height:2cqw"><use href="#coinico"/></svg>
+        <div class="panel" style="left:7cqw;top:15cqw;width:31cqw;height:24cqw;box-shadow:0 calc(var(--gp)*-1) 0 0 var(--p2),0 var(--gp) 0 0 var(--p2),calc(var(--gp)*-1) 0 0 0 var(--p2),var(--gp) 0 0 0 var(--p2),calc(var(--gp)*2.5) calc(var(--gp)*2.5) 0 var(--gp) var(--shadow)"></div>
+        <svg class="spr" style="left:9.6cqw;top:17.6cqw;width:5.6cqw;height:4.5cqw;color:var(--p2)"><use href="#win"/></svg>
+        <p class="lbl c-p2" style="left:28.4cqw;top:18.4cqw;font-size:1.6cqw">Þinn</p>
+        <p class="is c-ink" style="left:9.6cqw;top:24.4cqw;width:27cqw;font-size:4.2cqw">Hugbúnaður sniðinn að þínum hópi</p>
+        <div class="panel" style="left:62cqw;top:15cqw;width:31cqw;height:24cqw;box-shadow:0 calc(var(--gp)*-1) 0 0 var(--xp),0 var(--gp) 0 0 var(--xp),calc(var(--gp)*-1) 0 0 0 var(--xp),var(--gp) 0 0 0 var(--xp),calc(var(--gp)*2.5) calc(var(--gp)*2.5) 0 var(--gp) var(--shadow)"></div>
+        <svg class="spr" style="left:64.6cqw;top:17.4cqw;width:4.8cqw;height:4.8cqw;color:var(--xp)"><use href="#star"/></svg>
+        <p class="lbl c-xp" style="left:80cqw;top:18.4cqw;font-size:1.6cqw">Ný færni</p>
+        <p class="is c-ink" style="left:64.6cqw;top:24.4cqw;width:27cqw;font-size:4.2cqw">Færni sem fáir kennarar hafa enn</p>
+        <p class="cap">Hugbúnaður sniðinn að þínum hópi, <em>sem þú átt.</em></p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>08 · LOOT</span><span>52.5–60.0 s</span></div>
+      <p class="vo">„Verðlaunin? Hugbúnaður sniðinn að þínum hópi, sem þú átt. Og færni sem fáir kennarar hafa enn.“</p>
+      <p class="note"><b>First move:</b> the chest lid flips open with a burst of coins. The pink card rises out of it on the first sentence and the green card on the second, each with a pickup sound. No money or time off is promised, only what's true.</p>
+      <div class="chips"><span class="chip seam">in: zoom-through</span><span class="chip">what's in it for me</span></div>
+    </article>
+
+    <!-- 09 -->
+    <article class="cell" id="frame-09">
+      <div class="frame" role="img" aria-label="Starfendarannsókn: a path forks into two outcomes that both reach the same gold star">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 012600</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> PRESS START</span></div>
+        <p class="is c-ink" style="left:0;right:0;top:6.6cqw;text-align:center;font-size:5.6cqw">Starfendarannsókn</p>
+        <svg style="left:0;top:0;width:100cqw;height:56.25cqw" viewBox="0 0 100 56.25" aria-hidden="true">
+          <g fill="none" stroke="#2C2560" stroke-width="1" stroke-dasharray="1.6 0.8">
+            <path d="M19 28 H27 V19.5 H38"/><path d="M27 28 V36.4 H38"/>
+            <path d="M74 19.5 H78 V28 H82"/><path d="M74 36.4 H78 V28"/>
+          </g>
+        </svg>
+        <svg class="spr" style="left:8cqw;top:23.4cqw;width:5cqw;height:6.7cqw;color:var(--p1)"><use href="#hero"/></svg>
+        <svg class="spr ghost" style="left:13cqw;top:23.4cqw;width:5cqw;height:6.7cqw;color:var(--p2);--hair:#FF4F8B;opacity:.6"><use href="#hero"/></svg>
+        <div class="panel" style="left:38cqw;top:15.4cqw;width:36cqw;height:8.4cqw;box-shadow:0 calc(var(--gp)*-1) 0 0 var(--p1),0 var(--gp) 0 0 var(--p1),calc(var(--gp)*-1) 0 0 0 var(--p1),var(--gp) 0 0 0 var(--p1),calc(var(--gp)*2.5) calc(var(--gp)*2.5) 0 var(--gp) var(--shadow)"></div>
+        <p class="lbl c-p1" style="left:40cqw;top:16.6cqw;font-size:1.2cqw">Leið A</p>
+        <p class="is c-ink" style="left:40cqw;top:18.8cqw;font-size:3.6cqw">Hver kennari getur það</p>
+        <div class="panel" style="left:38cqw;top:30.6cqw;width:36cqw;height:11.6cqw;box-shadow:0 calc(var(--gp)*-1) 0 0 var(--xp),0 var(--gp) 0 0 var(--xp),calc(var(--gp)*-1) 0 0 0 var(--xp),var(--gp) 0 0 0 var(--xp),calc(var(--gp)*2.5) calc(var(--gp)*2.5) 0 var(--gp) var(--shadow)"></div>
+        <p class="lbl c-xp" style="left:40cqw;top:31.8cqw;font-size:1.2cqw">Leið B</p>
+        <p class="is c-ink" style="left:40cqw;top:34cqw;font-size:3.4cqw">Hvað forritarar þurfa<br>enn að kunna</p>
+        <svg class="spr" style="left:82cqw;top:23.6cqw;width:8.6cqw;height:8.6cqw;color:var(--coin)"><use href="#star"/></svg>
+        <p class="lbl c-coin" style="left:77cqw;top:33.8cqw;width:19cqw;text-align:center;font-size:1.3cqw">Báðar leiðir vinna</p>
+        <p class="lbl c-dim" style="left:0;right:0;top:44.4cqw;text-align:center;font-size:1.15cqw">Í anda skýrslunnar Gervigreind til góðs: kennarar fyrst</p>
+        <p class="cap">Þetta er <em>starfendarannsókn.</em></p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>09 · WHY WE'RE DOING THIS</span><span>60.0–69.5 s</span></div>
+      <p class="vo">„Þetta er starfendarannsókn. Við viljum vita hversu langt kennari kemst með gervigreind, og hvað forritarar framtíðarinnar þurfa enn að kunna.“</p>
+      <p class="note"><b>First move:</b> the dotted path draws itself from the two players and splits. Route A lights cyan on “hversu langt kennari kemst” and route B green on “hvað forritarar…”. Both reach the gold star: either result is a win. The report reference sits small at the bottom.</p>
+      <div class="chips"><span class="chip seam">in: cut</span><span class="chip">honest purpose</span></div>
+    </article>
+
+    <!-- 10 -->
+    <article class="cell" id="frame-10">
+      <div class="frame" role="img" aria-label="Ideal Player 2 stat card: programming 0, perfect; idea at max">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 012600</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> PRESS START</span></div>
+        <p class="lbl c-coin" style="left:0;right:0;top:7.2cqw;text-align:center;font-size:2.2cqw">Tilvalinn leikmaður 2</p>
+        <div class="dashed" style="left:7cqw;top:12.4cqw;width:24cqw;height:29.6cqw;background:rgba(255,79,139,.06)"></div>
+        <svg class="spr ghost" style="left:12.6cqw;top:15cqw;width:13cqw;height:17.3cqw;color:var(--p2);--hair:#FF4F8B;opacity:.55"><use href="#hero"/></svg>
+        <p class="lbl c-p2" style="left:7cqw;width:24cqw;top:35.4cqw;text-align:center;font-size:1.9cqw">Þú?</p>
+        <div class="panel" style="left:36cqw;top:12.4cqw;width:57cqw;height:29.6cqw"></div>
+        <p class="lbl c-ink" style="left:39.4cqw;top:14.8cqw;font-size:1.9cqw">Forritun</p>
+        <div class="xpbar statbar" style="left:39.4cqw;top:18.4cqw"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="arcade c-dim" style="left:86.6cqw;top:19cqw;font-size:1.6cqw">0</p>
+        <svg class="spr" style="left:39.6cqw;top:23.6cqw;width:3.2cqw;height:2.8cqw;color:var(--xp)"><use href="#check"/></svg>
+        <p class="is c-xp" style="left:44cqw;top:22.6cqw;font-size:4.4cqw">Fullkomið!</p>
+        <p class="lbl c-ink" style="left:39.4cqw;top:29.4cqw;font-size:1.9cqw">Hugmynd</p>
+        <div class="xpbar statbar" style="left:39.4cqw;top:33cqw"><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i><i style="background:var(--coin)"></i></div>
+        <p class="arcade c-coin" style="left:84.6cqw;top:33.6cqw;font-size:1.6cqw">MAX</p>
+        <p class="cap">Og best er ef þú kannt <em>alls ekki</em> að forrita…</p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>10 · IDEAL PLAYER 2</span><span>69.5–76.5 s</span></div>
+      <p class="vo">„Og best er ef þú kannt alls ekki að forrita, en hefur góða hugmynd um hvað þig langar til að gera.“</p>
+      <p class="note"><b>First move:</b> the stat card flips in like a character-select screen. The FORRITUN bar stays empty and a green “Fullkomið!” stamps on at “alls ekki”. Then the HUGMYND bar fills cell by cell to MAX on “góða hugmynd”, with a rising chiptune arpeggio.</p>
+      <div class="chips"><span class="chip seam">in: cut</span><span class="chip">twist · changed in v2</span></div>
+    </article>
+
+    <!-- 11 -->
+    <article class="cell" id="frame-11">
+      <div class="frame" role="img" aria-label="End card: coin slot INSERT HUGMYND, Svaraðu á padletinn, Smári og Jakub">
+        <div class="stars"></div>
+        <div class="hud"><span><b class="c-p1">1UP</b> 012600</span><span class="c-coin">HI-SCORE 099999</span><span><b class="c-p2">2UP</b> <span class="c-p2">READY?</span></span></div>
+        <svg class="spr" style="left:14.2cqw;top:7.6cqw;width:5.4cqw;height:6.75cqw"><use href="#bulb"/></svg>
+        <div class="panel" style="left:9cqw;top:15.6cqw;width:16cqw;height:18cqw;background:var(--night3)"></div>
+        <div style="left:15.8cqw;top:18.4cqw;width:2.4cqw;height:6cqw;background:var(--shadow);box-shadow:0 0 0 var(--gp) var(--coin)"></div>
+        <p class="arcade c-p2" style="left:9cqw;width:16cqw;top:27.4cqw;text-align:center;font-size:1.3cqw">PLAYER 2</p>
+        <p class="arcade c-coin" style="left:5cqw;width:24cqw;top:36cqw;text-align:center;font-size:1.25cqw;line-height:1.5">INSERT<br>HUGMYND</p>
+        <p class="is c-coin shadow-txt" style="left:33cqw;top:7.8cqw;font-size:10.6cqw">Svaraðu á<br>padletinn</p>
+        <p class="is c-p1" style="left:33cqw;top:30.6cqw;font-size:6.2cqw">Smári &amp; Jakub</p>
+        <p class="lbl c-dim" style="left:33.4cqw;top:38.4cqw;font-size:1.6cqw">Vefskólinn · Tækniskólinn</p>
+        <p class="arcade c-coin" style="left:72cqw;top:40.6cqw;font-size:1.3cqw;opacity:.8">PRESS START</p>
+        <p class="cap">…eða stoppaðu okkur <em>á ganginum.</em></p>
+        <div class="crt"></div>
+      </div>
+      <div class="meta"><span>11 · INSERT HUGMYND</span><span>76.5–84.0 s</span></div>
+      <p class="vo">„Ertu til? Svaraðu á padletinn, eða stoppaðu okkur á ganginum.“</p>
+      <p class="note"><b>First move:</b> the lightbulb coin spins and drops into the slot with a clunk, and the pink PLAYER 2 lights up “READY?”. “Svaraðu á padletinn” lands on Gunnar's words, the names type in, and PRESS START blinks to the end. This answers the title screen.</p>
+      <div class="chips"><span class="chip seam">in: zoom-through</span><span class="chip">callback to 01</span></div>
+    </article>
+
+    <!-- closing: seam map -->
+    <article class="cell" id="seams">
+      <div class="meta"><span>SEAM MAP</span><span>3 seam types</span></div>
+      <div class="seammap">
+        <span class="n">01</span><span class="s">zoom ›</span><span class="n">02</span><span class="s">cut ›</span><span class="n">03</span><span class="s">cut ›</span><span class="n">04</span><span class="s">push ‹</span><span class="n">05</span><span class="s">push ‹</span><span class="n">06</span><span class="s">push ‹</span><span class="n">07</span><span class="s">zoom ›</span><span class="n">08</span><span class="s">cut ›</span><span class="n">09</span><span class="s">cut ›</span><span class="n">10</span><span class="s">zoom ›</span><span class="n">11</span>
+      </div>
+      <p class="note"><b>Cuts</b> switch game screens like an arcade. <b>Push-slides</b> are the camera travelling left along the level map (05–07). <b>Zoom-throughs</b> mark entering the game, opening the chest, and the coin slot.</p>
+    </article>
+
+    <!-- closing: tokens -->
+    <article class="cell" id="tokens">
+      <div class="meta"><span>TOKENS &amp; BANS</span><span>frame.md</span></div>
+      <div class="tokens">
+        <div class="sw">
+          <div><i style="background:var(--night)"></i>night</div>
+          <div><i style="background:var(--p1)"></i>P1 · us</div>
+          <div><i style="background:var(--p2)"></i>P2 · you</div>
+          <div><i style="background:var(--coin)"></i>look here</div>
+          <div><i style="background:var(--xp)"></i>progress</div>
+          <div><i style="background:var(--ink)"></i>ink</div>
+        </div>
+        <div class="typerow">
+          <p class="s1">PLAYER 2 · LEVEL 1 · 012600</p><p>Press Start 2P, arcade chrome. No Icelandic letters.</p>
+          <p class="s2">Þú átt hugmynd — ð þ æ ö á</p><p>Jersey 10, every Icelandic line.</p>
+          <p class="s3">AFREK OPNAÐ · VERÐLAUN</p><p>Silkscreen, small labels.</p>
+        </div>
+        <ul class="bans">
+          <li>No glowing brains, robots or circuit clichés.</li>
+          <li>No smooth vector art or soft UI cards: pixels only.</li>
+          <li>No slideshow (every beat a fresh card) and no screensaver motion.</li>
+          <li>No promises of money, time off, deadlines or forms.</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+
+  <section class="open">
+    <div>
+      <h2>STILL OPEN · PLEASE CHECK</h2>
+      <ol>
+        <li>Screen 03 says you both teach web development (“Vefþróun · Vefskólinn”) and built your own teaching systems. Is that right for Jakub?</li>
+        <li>“Kennslukerfi #1 / #2” stand for your two LMSs. Real names instead?</li>
+        <li>The pixel characters are generic, not portraits. Fine, or do you want a detail each (glasses, beard, hair colour)?</li>
+        <li>Gunnar says “borð” for level; the screen shows LEVEL 1/2/3.</li>
+      </ol>
+    </div>
+    <div>
+      <h2>CHANGES IN V2</h2>
+      <ul style="margin-bottom:18px">
+        <li><b>10</b> was “Rules of the game” (Engin umsókn · Enginn frestur · Engin forritunarkunnátta). It is now <b>Ideal Player 2</b> with your line: „Og best er ef þú kannt alls ekki að forrita, en hefur góða hugmynd um hvað þig langar til að gera.“</li>
+        <li>The script audio at the top is re-recorded with the new line.</li>
+      </ul>
+      <h2>HOW TO GIVE NOTES</h2>
+      <ul>
+        <li>Name the screen number and what to change, e.g. “04: make the question mark smaller” or “08: change the line to …”.</li>
+        <li>Only the screens you name get redrawn. When the sheet is locked, I animate it and you get a draft video to review before the final render.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+</body>
+</html>

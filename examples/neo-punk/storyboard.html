@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vefþróun með gervigreind</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Jersey+15&display=swap">
+<style>
+@font-face { font-family: "Jersey 15"; src: url("assets/fonts/Jersey15-Regular.ttf") format("truetype"); }
+:root {
+  color-scheme: dark;
+  --black: #000; --cream: #F3E4C6; --orange: #FF5A1F; --red: #C8102E; --blue: #1E3CFF; --green: #A8FF1A;
+  --card: #111; --muted: #B9AE98;
+  --f-ui: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --f-px: "Jersey 15", "Atkinson Hyperlegible", monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--black); color: var(--cream); font: 16px/1.5 var(--f-ui); }
+.wrap { max-width: 1440px; margin: 0 auto; padding: 24px 24px 80px; }
+h1, h2, h3 { font-family: var(--f-px); font-weight: 400; margin: 0; line-height: .9; letter-spacing: .02em; }
+h1 { font-size: 92px; color: var(--orange); }
+h1 span { color: var(--green); }
+h2 { font-size: 56px; margin-bottom: 12px; color: var(--orange); }
+h3 { font-size: 40px; }
+.box { background: var(--card); border: 3px solid var(--cream); }
+header { display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: end; justify-content: space-between; margin-bottom: 22px; }
+.tag { display: inline-block; font-family: var(--f-px); font-size: 30px; background: var(--red); color: var(--cream); padding: 0 12px; margin-bottom: 10px; }
+.message { font-size: 19px; max-width: 800px; margin-top: 12px; }
+.message b { color: var(--green); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--f-px); font-size: 30px; line-height: 1; padding: 4px 10px; background: var(--cream); color: var(--black); }
+.intro { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 22px; }
+.intro > div { padding: 12px 18px; border-left: 8px solid var(--green); background: var(--card); }
+.intro ul { margin: 4px 0 0; padding-left: 20px; }
+.intro b.h { font-family: var(--f-px); font-size: 32px; font-weight: 400; color: var(--green); }
+
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 24px; align-items: start; }
+.screen { padding: 12px; }
+.screen canvas { display: block; width: 100%; aspect-ratio: 16 / 9; image-rendering: pixelated; background: #000; border: 3px solid var(--cream); }
+.sub { min-height: 3.2em; margin: 10px 2px 0; font-size: 17px; }
+.sub .en { color: var(--muted); font-size: 14px; font-style: italic; }
+.sub .lbl { font-family: var(--f-px); color: var(--green); font-size: 28px; margin-right: 6px; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+button { font: 28px/1 var(--f-px); color: var(--black); background: var(--cream); border: 0; padding: 6px 14px; cursor: pointer; }
+button:active { transform: translate(2px, 2px); }
+button.off { background: #444; color: var(--cream); }
+button.primary { background: var(--orange); min-width: 120px; }
+.time { font-family: var(--f-px); font-size: 32px; margin-left: auto; color: var(--green); }
+.bar { position: relative; display: flex; height: 46px; margin-top: 12px; border: 3px solid var(--cream); overflow: hidden; cursor: pointer; user-select: none; }
+.bar .seg { position: relative; font-family: var(--f-px); font-size: 26px; display: flex; align-items: center; justify-content: center; min-width: 0; color: var(--black); border-right: 3px solid var(--black); }
+.bar .seg:last-child { border-right: 0; }
+.bar .seg.cur { outline: 3px solid var(--cream); outline-offset: -6px; }
+.bar .seg.flag::after { content: ""; position: absolute; top: 4px; right: 4px; width: 9px; height: 9px; background: var(--red); border: 2px solid var(--cream); }
+.bar .head { position: absolute; top: 0; bottom: 0; width: 4px; background: var(--cream); mix-blend-mode: difference; pointer-events: none; }
+.detail { padding: 18px 20px; }
+.detail .num { font-family: var(--f-px); font-size: 28px; color: var(--muted); }
+.label { font-family: var(--f-px); font-size: 26px; color: var(--orange); margin: 12px 0 2px; text-transform: uppercase; }
+.detail ol, .row ol { margin: 0; padding-left: 20px; }
+.detail ol li { margin: 3px 0; }
+ul.facts { margin: 0; padding-left: 18px; font-size: 14px; color: var(--muted); }
+.onscreen { display: flex; flex-wrap: wrap; gap: 4px; }
+.onscreen span { font-family: var(--f-px); font-size: 24px; line-height: 1; background: var(--cream); color: var(--black); padding: 3px 6px; }
+.pal { display: flex; gap: 4px; }
+.pal i { width: 26px; height: 26px; border: 2px solid var(--cream); display: inline-block; }
+.flash { font-size: 14px; color: var(--muted); }
+.flag-box { margin-top: 14px; background: var(--red); color: var(--cream); padding: 8px 12px; font-size: 15px; }
+.flag-box b { font-family: var(--f-px); font-size: 26px; font-weight: 400; }
+.faces { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.faces canvas { width: 60px; height: 60px; image-rendering: pixelated; border: 2px solid var(--cream); }
+
+section { margin-top: 48px; }
+.decisions { padding: 18px 22px; }
+.decisions ol { margin: 8px 0 0; padding-left: 22px; }
+.decisions li { margin: 8px 0; }
+.decisions li a { color: var(--green); font-family: var(--f-px); font-size: 28px; }
+.rows { display: grid; gap: 18px; }
+.row { display: grid; grid-template-columns: 340px minmax(0, 1fr) minmax(0, 1fr); gap: 20px; padding: 14px; align-items: start; }
+.row canvas { width: 100%; aspect-ratio: 16 / 9; image-rendering: pixelated; border: 3px solid var(--cream); cursor: pointer; display: block; }
+.row .meta { font-family: var(--f-px); font-size: 28px; color: var(--muted); margin-top: 6px; display: flex; justify-content: space-between; align-items: center; }
+.row .vo { font-size: 17px; margin-top: 8px; }
+.row .vo .en { display: block; color: var(--muted); font-size: 14px; font-style: italic; margin-top: 4px; }
+.row ol { font-size: 15px; }
+.style-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 24px; }
+.cast { padding: 12px; display: grid; gap: 12px; }
+.cast canvas { width: 100%; aspect-ratio: 16 / 9; image-rendering: pixelated; border: 3px solid var(--cream); display: block; }
+.side { padding: 18px 22px; }
+.side table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.side td { border-top: 1px solid #333; padding: 6px 4px; vertical-align: top; }
+.side td:first-child { font-family: var(--f-px); font-size: 22px; color: var(--green); white-space: nowrap; padding-right: 12px; }
+@media (max-width: 1100px) { .stage, .style-grid, .intro { grid-template-columns: 1fr; } .row { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .wrap { padding: 16px 16px 60px; } h1 { font-size: 56px; } .bar .seg { font-size: 0; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <span class="tag">Storyboard v3 · a new style · music only</span>
+      <h1>VEFÞRÓUN MEÐ <span>GERVIGREIND</span></h1>
+      <p class="message">This video tells <b>19–20 year olds about to graduate</b> that <b>AI writes code now, so the valuable skill is steering it</b>: knowing what to build, reading the code, catching the mistakes and owning every line. Vefskólinn teaches exactly that, in one year.</p>
+    </div>
+    <div class="chips"><span class="chip" id="chipLen">1:56</span><span class="chip">24 FPS</span><span class="chip">132 BPM</span><span class="chip">320×180 ×6</span></div>
+  </header>
+
+  <div class="intro">
+    <div><b class="h">MORE AI</b>
+      <ul>
+        <li>It opens on the question every student is asking: <i>"Gervigreind skrifar kóðann. Til hvers að læra?"</i> The answer comes as the AI's code tower collapses: "Einhver þarf að stýra henni."</li>
+        <li>The AI is now a co-star (an acid-green one-eyed creature) and appears in 8 of the 14 scenes.</li>
+        <li>New 8-bar core scene: <b>how you work with AI</b>. 1. Lýstu → 2. Gervigreindin smíðar → 3. Prófaðu og lestu kóðann → 4. Útskýrðu, ending on "Þú átt hverja línu".</li>
+        <li>The programme name appears as "Vefþróun með gervigreind".</li>
+      </ul>
+    </div>
+    <div><b class="h">THE STYLE GUIDE, APPLIED</b>
+      <ul>
+        <li>Flat poster fields with 2–5 colours per shot, from black, cream, orange, blood red, electric blue and acid green.</li>
+        <li>Lopsided characters: mismatched oversized eyes, sharp teeth, jagged hair, rough outlines that boil.</li>
+        <li>Animated on twos (12 drawings/s at 24 fps), with snap pose changes, hard jump cuts and extreme close-ups.</li>
+        <li>One- or two-frame flash interruptions (inverted, silhouette or red impact frames), at most two per scene and never strobing.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="screen box">
+      <canvas id="view" width="320" height="180" aria-label="Animatic"></canvas>
+      <div class="controls">
+        <button id="prev" title="Previous scene">◀◀</button>
+        <button id="play" class="primary">▶ PLAY</button>
+        <button id="next" title="Next scene">▶▶</button>
+        <button id="sound">MUSIC ON</button>
+        <button id="subs">NOTES ON</button>
+        <span class="time" id="time">0:00 / 0:00</span>
+      </div>
+      <div class="bar" id="bar"><div class="head" id="head"></div></div>
+      <div class="sub" id="sub"></div>
+    </div>
+    <aside class="detail box" id="detail"></aside>
+  </div>
+
+  <section>
+    <div class="decisions box">
+      <h2>YOUR CALL</h2>
+      <ol id="decisions"></ol>
+    </div>
+  </section>
+
+  <section>
+    <h2>SCENE BY SCENE</h2>
+    <div class="rows" id="rows"></div>
+  </section>
+
+  <section>
+    <h2>CAST & RULES</h2>
+    <div class="style-grid">
+      <div class="cast box"><canvas id="cast1" width="320" height="180"></canvas><canvas id="cast2" width="320" height="180"></canvas></div>
+      <div class="side box">
+        <table>
+          <tr><td>Resolution</td><td>320×180 art pixels shown at 6× (1920×1080). Medium-res, crisp, no anti-aliasing.</td></tr>
+          <tr><td>Palette</td><td id="palAll"></td></tr>
+          <tr><td>Motion</td><td>Drawings on twos (12/s at 24 fps). Outlines boil on threes (8/s). Snap pose and expression changes on the beat; smear arms when typing.</td></tr>
+          <tr><td>Flashes</td><td>Four kinds: blue silhouette on black, black silhouette on cream, red impact frame with cream speed lines, and colour swap. 1–2 frames each, 10 in the whole film, never two in a row. Each one has a reason (a collapse, a slam, a bug, a stamp, a reveal).</td></tr>
+          <tr><td>Type</td><td>Jersey 15 at its native pixel size and whole multiples of it (15/30/45 px), so þ ð æ á stay sharp. No letter wobble; a 1-pixel drop shadow only on busy fields. (Micro 5 was dropped: it broke M and Ð apart.)</td></tr>
+          <tr><td>Texture</td><td>Light screen-print grain only, never enough to hide pixel clusters.</td></tr>
+          <tr><td>Music</td><td>Original acid-punk at 132 BPM in E minor: punk drums, fuzz bass, power chords, and a squelchy 303 acid line that is the AI's voice. Hits land on the snaps, the collapse, the title slams, the bug, the stamp and the price stop.</td></tr>
+          <tr><td>Silent</td><td>No narration. The posters carry every fact, so it reads the same with the sound off.</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="storyboard/px3.js"></script>
+<script src="storyboard/cast3.js"></script>
+<script src="storyboard/scenes-data3.js"></script>
+<script src="storyboard/scenes3.js"></script>
+<script>
+(function () {
+  const S = window.SCENES, PAL = PX.PAL;
+  const dur = (s) => s.bars * window.BAR;
+  let acc = 0;
+  const starts = S.map((s) => { const a = acc; acc += dur(s); return a; });
+  const TOTAL = acc;
+  const POSTER = { 1: 0.62, 2: 0.9, 3: 0.65, 4: 0.75, 5: 0.82, 6: 0.85, 7: 0.3, 8: 0.25, 9: 0.15, 10: 0.8, 11: 0.4, 12: 0.85, 13: 0.4, 14: 0.25 };
+  const fmt = (x) => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  document.getElementById("chipLen").textContent = fmt(TOTAL);
+  const view = new PX.G(document.getElementById("view"));
+  const music = new Audio("assets/music/score.mp3"); music.preload = "auto";
+  let t = 0, playing = false, last = 0, cur = -1, musicOn = true, notesOn = true;
+  const sceneAt = (x) => { for (let i = S.length - 1; i >= 0; i--) if (x >= starts[i]) return i; return 0; };
+  function draw() {
+    const i = sceneAt(t), s = S[i], lt = Math.min(t - starts[i], dur(s) - 0.001);
+    try { window.ART3_draw(s, view, lt, dur(s)); } catch (e) { console.error(e); }
+    if (i !== cur) { cur = i; showDetail(i); }
+    document.getElementById("head").style.left = `${(t / TOTAL) * 100}%`;
+    document.getElementById("time").textContent = `${fmt(t)} / ${fmt(TOTAL)}`;
+  }
+  function loop(now) {
+    if (playing) {
+      if (musicOn && !music.paused && Math.abs(music.currentTime - t) < 0.5) t = music.currentTime; else t += (now - last) / 1000;
+      if (t >= TOTAL) { t = TOTAL - 0.001; setPlaying(false); }
+    }
+    last = now; draw(); requestAnimationFrame(loop);
+  }
+  function setPlaying(p) {
+    playing = p; last = performance.now();
+    document.getElementById("play").textContent = p ? "❚❚ PAUSE" : "▶ PLAY";
+    if (p) { if (t >= TOTAL - 0.01) t = 0; if (musicOn) { music.currentTime = t; music.play().catch(() => {}); } } else music.pause();
+  }
+  function seek(x) { t = Math.max(0, Math.min(TOTAL - 0.001, x)); if (playing && musicOn) music.currentTime = t; }
+  const jump = (i) => seek(starts[i] + 0.001);
+
+  const bar = document.getElementById("bar");
+  S.forEach((s) => { const d = document.createElement("div"); d.className = "seg" + (s.flag ? " flag" : ""); d.style.flex = `${dur(s)} 1 0`; d.style.background = PAL[s.palette[0]]; if (s.palette[0] === "black") d.style.color = PAL.cream; d.textContent = s.id; d.title = `${s.id}. ${s.title}`; bar.appendChild(d); });
+  let dragging = false;
+  const barSeek = (e) => { const r = bar.getBoundingClientRect(); seek(((e.clientX - r.left) / r.width) * TOTAL); };
+  bar.addEventListener("pointerdown", (e) => { dragging = true; bar.setPointerCapture(e.pointerId); barSeek(e); });
+  bar.addEventListener("pointermove", (e) => { if (dragging) barSeek(e); });
+  bar.addEventListener("pointerup", () => { dragging = false; });
+  document.getElementById("play").onclick = () => setPlaying(!playing);
+  document.getElementById("prev").onclick = () => jump(Math.max(0, t - starts[sceneAt(t)] < 0.6 ? sceneAt(t) - 1 : sceneAt(t)));
+  document.getElementById("next").onclick = () => jump(Math.min(S.length - 1, sceneAt(t) + 1));
+  document.getElementById("sound").onclick = (e) => { musicOn = !musicOn; e.target.classList.toggle("off", !musicOn); e.target.textContent = musicOn ? "MUSIC ON" : "MUSIC OFF"; if (!musicOn) music.pause(); else if (playing) { music.currentTime = t; music.play().catch(() => {}); } };
+  document.getElementById("subs").onclick = (e) => { notesOn = !notesOn; e.target.classList.toggle("off", !notesOn); e.target.textContent = notesOn ? "NOTES ON" : "NOTES OFF"; showDetail(cur); };
+  document.addEventListener("keydown", (e) => {
+    if (e.target.closest("button") && e.code === "Space") return;
+    if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); }
+    if (e.code === "ArrowRight") jump(Math.min(S.length - 1, sceneAt(t) + 1));
+    if (e.code === "ArrowLeft") jump(Math.max(0, sceneAt(t) - 1));
+  });
+
+  const palChips = (p) => `<span class="pal">${p.map((c) => `<i title="${c}" style="background:${PAL[c]}"></i>`).join("")}</span>`;
+  function faceChip(expr) {
+    const c = document.createElement("canvas"); c.width = 40; c.height = 40;
+    const g = new PX.G(c); g.roles = { bg: "orange", fig: "cream", ink: "black", acc: "red", hi: "cream", ai: "green" }; g.clear();
+    CAST3.head(g, 20, 22, 14, { face: expr, t: 0.3, id: 1, jaw: 0.6 });
+    c.title = expr; return c;
+  }
+  function showDetail(i) {
+    if (i < 0) return;
+    const s = S[i];
+    [...bar.querySelectorAll(".seg")].forEach((d, k) => d.classList.toggle("cur", k === i));
+    document.getElementById("detail").innerHTML = `
+      <div class="num">SCENE ${s.id} / ${S.length} · ${fmt(starts[i])}–${fmt(starts[i] + dur(s))} · ${s.bars} BARS</div>
+      <h3>${esc(s.title)}</h3>
+      <div class="label">On screen</div><div class="onscreen">${s.onscreen.map((o) => `<span>${esc(o)}</span>`).join("")}</div>
+      <div class="label">What happens</div><ol>${s.beats.map((b) => `<li>${esc(b)}</li>`).join("")}</ol>
+      ${s.expr.length ? `<div class="label">Faces</div><div class="faces" id="faces"></div>` : ""}
+      <div class="label">Colours</div>${palChips(s.palette)}
+      ${s.flashes.length ? `<div class="flash">Flash frames: ${s.flashes.map((f) => `${f.kind} × ${f.frames} frame${f.frames > 1 ? "s" : ""} on beat ${f.beat}`).join(", ")}</div>` : ""}
+      <div class="label">Music</div><div class="flash">${esc(s.music)}</div>
+      ${s.facts.length ? `<div class="label">Based on</div><ul class="facts">${s.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>` : ""}
+      ${s.flag ? `<div class="flag-box"><b>CHECK:</b> ${esc(s.flag)}</div>` : ""}`;
+    const fc = document.getElementById("faces"); if (fc) s.expr.forEach((x) => fc.appendChild(faceChip(x)));
+    document.getElementById("sub").innerHTML = notesOn ? `<span class="lbl">SAYS:</span>${esc(s.says)}<div class="en">${esc(s.en)}</div>` : "";
+  }
+
+  const dl = document.getElementById("decisions");
+  S.filter((s) => s.flag).forEach((s) => { const li = document.createElement("li"); li.innerHTML = `<a href="#row-${s.id}">${s.id}. ${esc(s.title)}</a>: ${esc(s.flag)}`; dl.appendChild(li); });
+  ["The diploma line from v2 is gone, folded into \"VINNA · NÁM\" in scene 11, to make room for the AI scenes. Want it back?",
+   "Music: acid-punk is rawer than v2's darksynth. If it's too much for a school assembly, I can tame the fuzz and keep the acid line."]
+    .forEach((x) => { const li = document.createElement("li"); li.textContent = x; dl.appendChild(li); });
+
+  const rows = document.getElementById("rows");
+  S.forEach((s, i) => {
+    const r = document.createElement("div"); r.className = "row box"; r.id = `row-${s.id}`;
+    r.innerHTML = `
+      <div><canvas width="320" height="180"></canvas><div class="meta"><span>${s.id}. ${esc(s.title)}</span>${palChips(s.palette)}</div></div>
+      <div><div class="onscreen">${s.onscreen.map((o) => `<span>${esc(o)}</span>`).join("")}</div><div class="vo">${esc(s.says)}<span class="en">${esc(s.en)}</span></div></div>
+      <div><div class="label" style="margin-top:0">${fmt(starts[i])} · ${s.bars} bars</div><ol>${s.beats.map((b) => `<li>${esc(b)}</li>`).join("")}</ol>${s.flag ? `<div class="flag-box"><b>CHECK:</b> ${esc(s.flag)}</div>` : ""}</div>`;
+    rows.appendChild(r);
+    const cv = r.querySelector("canvas");
+    cv.title = "Play from here";
+    cv.onclick = () => { jump(i); window.scrollTo({ top: 0, behavior: "smooth" }); setPlaying(true); };
+    r._draw = () => window.ART3_draw(s, new PX.G(cv), POSTER[s.id] * dur(s), dur(s));
+  });
+
+  function drawCast() {
+    let g = new PX.G(document.getElementById("cast1"));
+    g.roles = { bg: "orange", fig: "cream", ink: "black", acc: "red", hi: "cream", ai: "green" }; g.clear();
+    const ex = ["grin", "shock", "scream", "smug", "focus", "panic", "joy", "stars", "cry", "cool", "jaw", "wink"];
+    ex.forEach((e, i) => { const x = 28 + (i % 6) * 53, y = 46 + Math.floor(i / 6) * 84; g.seed = i; CAST3.head(g, x, y, 17, { face: e, t: 0.3, id: 1, jaw: 0.9 }); g.text(e.toUpperCase(), x, y + 36, { size: 10, align: "center" }); });
+    g = new PX.G(document.getElementById("cast2"));
+    g.roles = { bg: "black", fig: "cream", ink: "black", acc: "red", hi: "cream", ai: "green" }; g.clear();
+    ["happy", "eager", "type", "wrong", "sheepish"].forEach((m, i) => { CAST3.ai(g, 26 + i * 40, 76, { R: 13, mood: m, t: 0.4 }); g.text(m.toUpperCase(), 26 + i * 40, 98, { size: 10, align: "center", color: "hi" }); });
+    g.text("THE AI", 6, 12, { size: 10, color: "ai" });
+    g.rect(214, 0, 106, 180, "blue");
+    g.text("TEACHERS", 220, 12, { size: 10, color: "hi" });
+    g.roles.bg = "blue";
+    CAST3.teacherA(g, 242, 176, { R: 15, face: "grin", t: 0 });
+    CAST3.teacherB(g, 292, 176, { R: 15, face: "joy", t: 0 });
+    g.text("THE HERO + CLASSMATES", 6, 116, { size: 10, color: "hi" });
+    g.rim((L) => { CAST3.hero(L, 30, 176, { R: 14, face: "grin", arms: "hips" }); CAST3.person(L, 80, 176, { R: 13, hair: "bun", id: 5, face: "smug", shirt: "orange" }); CAST3.person(L, 126, 176, { R: 13, hair: "mohawk", hairC: "red", id: 6, face: "joy" }); CAST3.hero(L, 176, 176, { R: 14, face: "joy", cap: true }); }, "cream", 1);
+  }
+  document.getElementById("palAll").innerHTML = palChips(["black", "cream", "orange", "red", "blue", "green"]) + "<br>2–5 per shot. The bar above shows each scene's lead colour.";
+
+  document.fonts.load("15px \"Jersey 15\"").then(() => {
+    rows.querySelectorAll(".row").forEach((r) => r._draw());
+    drawCast();
+    requestAnimationFrame((n) => { last = n; loop(n); });
+  });
+})();
+</script>
+</body>
+</html>

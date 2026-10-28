@@ -1,0 +1,356 @@
+<template>
+<div data-hf-id="hf-bm1e" id="root" data-composition-id="05-level-one" data-start="0" data-duration="6.655" data-width="1920" data-height="1080">
+  <style>
+    @font-face { font-family: "Jersey 10"; src: url('assets/fonts/Jersey10-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Press Start 2P"; src: url('assets/fonts/PressStart2P-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Silkscreen"; src: url('assets/fonts/Silkscreen-Regular.ttf') format("truetype"); }
+
+    #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; color: #F4F1FF; }
+    [data-composition-id="05-level-one"] * { box-sizing: border-box; }
+
+    /* full-bleed ground + starfield (own clip) */
+    [id="05-level-one-bg"] { position: absolute; inset: 0; background-color: #14112B; }
+    [id="05-level-one-stars"] {
+      position: absolute; inset: 0; opacity: .9;
+      background:
+        radial-gradient(circle, #2C2560 3.456px, transparent 3.84px) 0 0 / 134.4px 134.4px,
+        radial-gradient(circle, #3a3270 2.688px, transparent 3.072px) 67.2px 44.16px / 211.2px 172.8px;
+    }
+
+    /* stage: every element positioned in px (sketch cqw x 19.2) */
+    [id="05-level-one-stage"] { position: absolute; inset: 0; }
+    [id="05-level-one-stage"] > * { position: absolute; margin: 0; }
+
+    [class~="05-level-one-arcade"] { font-family: "Press Start 2P", monospace; line-height: 1.15; font-weight: 400; }
+    [class~="05-level-one-is"] { font-family: "Jersey 10", sans-serif; line-height: .95; font-weight: 400; }
+    [class~="05-level-one-lbl"] { font-family: "Silkscreen", monospace; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; font-weight: 400; }
+    [class~="05-level-one-spr"] { display: block; overflow: visible; }
+
+    /* HUD bar */
+    [id="05-level-one-hud"] {
+      top: 0; left: 0; right: 0; height: 80.64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 57.6px;
+      font-family: "Press Start 2P", monospace; font-size: 19.2px; color: #F4F1FF;
+      border-bottom: 6px solid #2C2560; background: rgba(10,8,24,.35);
+      z-index: 5;
+    }
+    [id="05-level-one-hud"] b { font-weight: 400; }
+    [id="05-level-one-press"] { display: inline-block; color: #FF4F8B; }
+
+    /* level banner */
+    [id="05-level-one-banner"] {
+      left: 0; right: 0; top: 107.52px; height: 142.08px;
+      display: flex; align-items: center; gap: 46.08px; padding: 0 96px;
+      background: #1E1940; border-top: 6px solid #F4F1FF; border-bottom: 6px solid #F4F1FF;
+      z-index: 4;
+    }
+    [id="05-level-one-lvl"] { font-size: 42.24px; color: #FFE14D; }
+    [id="05-level-one-title"] { font-size: 115.2px; color: #F4F1FF; white-space: nowrap; display: flex; align-items: center; }
+    [id="05-level-one-title"] span { display: inline; }
+    [id="05-level-one-caret"] {
+      display: inline-block; width: 30px; height: 84px; margin-left: 8px; background: #FFE14D;
+    }
+
+    /* Player 2 ghost + bulb + label */
+    [id="05-level-one-p2grp"] { left: 0; top: 0; width: 0; height: 0; }
+    [id="05-level-one-p2grp"] > * { position: absolute; }
+    [id="05-level-one-idea"] { left: 261.12px; top: 272.64px; width: 65.28px; height: 80.64px; transform-origin: 50% 100%; }
+    [id="05-level-one-ghost"] { left: 211.2px; top: 357.12px; width: 153.6px; height: 203.52px; color: #FF4F8B; --hair: #FF4F8B; opacity: .4; }
+    [id="05-level-one-you"] { left: 241.92px; top: 568.32px; font-size: 24.96px; color: #FF4F8B; }
+
+    /* board panel */
+    [id="05-level-one-panel"] {
+      left: 537.6px; top: 295.68px; width: 691.2px; height: 264.96px;
+      background: #1E1940;
+      box-shadow:
+        0 -6px 0 0 #F4F1FF, 0 6px 0 0 #F4F1FF,
+        -6px 0 0 0 #F4F1FF, 6px 0 0 0 #F4F1FF,
+        15px 15px 0 6px #0A0818;
+    }
+    [id="05-level-one-scrib"] { left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+
+    /* clean wireframe */
+    [class~="05-level-one-wire"] { border: 6px solid #FFE14D; transform-origin: 50% 50%; }
+    [id="05-level-one-wh"] { left: 940.8px; top: 334.08px; width: 249.6px; height: 42.24px; }
+    [id="05-level-one-wa"] { left: 940.8px; top: 399.36px; width: 115.2px; height: 115.2px; }
+    [id="05-level-one-wb"] { left: 1082.88px; top: 399.36px; width: 107.52px; height: 49.92px; }
+    [id="05-level-one-wc"] { left: 1082.88px; top: 464.64px; width: 107.52px; height: 49.92px; }
+    [id="05-level-one-arrow"] { left: 863px; top: 393px; width: 24px; height: 42px; color: #FFE14D; }
+
+    /* Player 1 sprites */
+    [id="05-level-one-smari"] { left: 1305.6px; top: 376.32px; width: 134.4px; height: 178.56px; color: #3FE0D0; }
+    [id="05-level-one-jakub"] { left: 1478.4px; top: 376.32px; width: 134.4px; height: 178.56px; color: #3FE0D0; --hair: #8a5a2b; }
+
+    /* world-map stage (shared 05-07) */
+    [id="05-level-one-path"] {
+      left: 192px; width: 1536px; top: 702.72px; height: 19.2px;
+      background: repeating-linear-gradient(90deg, #2C2560 0 30.72px, transparent 30.72px 46.08px);
+    }
+    [class~="05-level-one-node"] {
+      width: 99.84px; height: 99.84px; top: 662.4px;
+      background: #2C2560;
+      box-shadow: 0 0 0 6px #F4F1FF, 11.52px 11.52px 0 6px #0A0818;
+      display: grid; place-items: center;
+      font-family: "Press Start 2P", monospace; font-size: 30.72px; color: #F4F1FF;
+    }
+    [id="05-level-one-n1"] { left: 326.4px; }
+    [id="05-level-one-n2"] { left: 910.08px; }
+    [id="05-level-one-n3"] { left: 1493.76px; }
+    [id="05-level-one-n1now"] {
+      left: 326.4px; background: #FFE14D; color: #0A0818;
+      box-shadow: 0 0 0 6px #F4F1FF, 0 0 0 18px rgba(255,225,77,.35), 11.52px 11.52px 0 6px #0A0818;
+    }
+    [id="05-level-one-ring"] {
+      left: 326.4px; top: 662.4px; width: 99.84px; height: 99.84px;
+      box-shadow: 0 0 0 6px #FFE14D; transform-origin: 50% 50%;
+    }
+
+    /* XP bar */
+    [id="05-level-one-xp"] { left: 76.8px; top: 798.72px; display: flex; gap: 6.72px; }
+    [id="05-level-one-xp"] i { display: block; width: 30.72px; height: 30.72px; background: #2C2560; }
+
+    /* CRT veil (top layer, own clip) */
+    [id="05-level-one-crt"] {
+      position: absolute; inset: 0; z-index: 20; pointer-events: none;
+      background:
+        repeating-linear-gradient(0deg, rgba(10,8,24,.24) 0 3.072px, transparent 3.072px 6.528px),
+        radial-gradient(ellipse at center, transparent 58%, rgba(10,8,24,.65) 100%);
+    }
+  </style>
+
+  <!-- pixel sprites (copied from storyboard.html) -->
+  <svg data-hf-id="hf-8h6w" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs data-hf-id="hf-mh0t">
+      <symbol data-hf-id="hf-tl5p" id="05-level-one-hero" viewBox="0 0 12 16" shape-rendering="crispEdges">
+        <rect data-hf-id="hf-50dh" x="3" y="0" width="6" height="2" style="fill:var(--hair,#3b2a1a)" />
+        <rect data-hf-id="hf-9oat" x="2" y="1" width="1" height="3" style="fill:var(--hair,#3b2a1a)" />
+        <rect data-hf-id="hf-r2w5" x="9" y="1" width="1" height="2" style="fill:var(--hair,#3b2a1a)" />
+        <rect data-hf-id="hf-yqhe" x="3" y="2" width="6" height="4" fill="#f2c29b" />
+        <rect data-hf-id="hf-gw56" x="4" y="3" width="1" height="1" fill="#0A0818" /><rect data-hf-id="hf-rwnd" x="7" y="3" width="1" height="1" fill="#0A0818" />
+        <rect data-hf-id="hf-7x80" x="5" y="5" width="2" height="1" fill="#c9876a" />
+        <rect data-hf-id="hf-h3wf" x="2" y="6" width="8" height="5" fill="currentColor" />
+        <rect data-hf-id="hf-3435" x="1" y="7" width="1" height="3" fill="#f2c29b" /><rect data-hf-id="hf-rdc1" x="10" y="7" width="1" height="3" fill="#f2c29b" />
+        <rect data-hf-id="hf-3v50" x="3" y="11" width="2" height="4" fill="#2C2560" /><rect data-hf-id="hf-nl14" x="7" y="11" width="2" height="4" fill="#2C2560" />
+        <rect data-hf-id="hf-9p11" x="2" y="15" width="3" height="1" fill="#0A0818" /><rect data-hf-id="hf-s9ti" x="7" y="15" width="3" height="1" fill="#0A0818" />
+      </symbol>
+      <symbol data-hf-id="hf-ptm3" id="05-level-one-bulb" viewBox="0 0 8 10" shape-rendering="crispEdges">
+        <rect data-hf-id="hf-ipkm" x="2" y="0" width="4" height="1" fill="#FFE14D" /><rect data-hf-id="hf-7tqb" x="1" y="1" width="6" height="4" fill="#FFE14D" /><rect data-hf-id="hf-z9oj" x="2" y="5" width="4" height="1" fill="#FFE14D" />
+        <rect data-hf-id="hf-vmui" x="2" y="1" width="1" height="2" fill="#FFF7B8" />
+        <rect data-hf-id="hf-e3no" x="3" y="6" width="2" height="1" fill="#A9A3D9" /><rect data-hf-id="hf-9fpq" x="3" y="7" width="2" height="1" fill="#6F68A3" />
+      </symbol>
+      <symbol data-hf-id="hf-gzai" id="05-level-one-cur" viewBox="0 0 4 7" shape-rendering="crispEdges">
+        <rect data-hf-id="hf-qbyc" x="0" y="0" width="1" height="7" fill="currentColor" /><rect data-hf-id="hf-ed4q" x="1" y="1" width="1" height="5" fill="currentColor" />
+        <rect data-hf-id="hf-vuj8" x="2" y="2" width="1" height="3" fill="currentColor" /><rect data-hf-id="hf-dzw2" x="3" y="3" width="1" height="1" fill="currentColor" />
+      </symbol>
+      <mask data-hf-id="hf-dmbf" id="05-level-one-scribmask" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
+        <g data-hf-id="hf-cajk" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter">
+          <path data-hf-id="hf-1wp1" id="05-level-one-m1" d="M 566 341.76 L 835.6 341.76" transform="rotate(-3 700.8 341.76)" />
+          <path data-hf-id="hf-qeug" id="05-level-one-m2" d="M 573.68 399.36 L 785.68 399.36" transform="rotate(4 679.68 399.36)" />
+          <path data-hf-id="hf-6qzx" id="05-level-one-m3" d="M 579.84 456.96 L 802.56 456.96 L 802.56 506.88 L 579.84 506.88 Z" transform="rotate(-2 691.2 481.92)" />
+        </g>
+      </mask>
+    </defs>
+  </svg>
+
+  <div data-hf-id="hf-04ft" id="05-level-one-bg" class="clip" data-start="0" data-duration="6.655" data-track-index="0">
+    <div data-hf-id="hf-r2e6" id="05-level-one-stars"></div>
+  </div>
+
+  <div data-hf-id="hf-2j5f" id="05-level-one-stage">
+    <div data-hf-id="hf-ivry" id="05-level-one-hud"><span data-hf-id="hf-0etj"><b data-hf-id="hf-e3ae" style="color:#3FE0D0">1UP</b> 004200</span><span data-hf-id="hf-5zal" style="color:#FFE14D">HI-SCORE 099999</span><span data-hf-id="hf-uckh"><b data-hf-id="hf-7jgr" style="color:#FF4F8B">2UP</b> <span data-hf-id="hf-c95e" id="05-level-one-press">PRESS START</span></span></div>
+
+    <!-- world map: path + three level nodes -->
+    <div data-hf-id="hf-r37y" id="05-level-one-path"></div>
+    <div data-hf-id="hf-onku" id="05-level-one-n1" class="05-level-one-node" data-layout-allow-overlap="">1</div>
+    <div data-hf-id="hf-ki1x" id="05-level-one-ring"></div>
+    <div data-hf-id="hf-hdfk" id="05-level-one-n1now" class="05-level-one-node" data-layout-allow-overlap="">1</div>
+    <div data-hf-id="hf-qm3c" id="05-level-one-n2" class="05-level-one-node">2</div>
+    <div data-hf-id="hf-jdvs" id="05-level-one-n3" class="05-level-one-node">3</div>
+
+    <div data-hf-id="hf-mckb" id="05-level-one-xp"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><i data-hf-id="hf-ylp6"></i><i data-hf-id="hf-0l8b"></i><i data-hf-id="hf-0zjc"></i><i data-hf-id="hf-zsm9"></i><i data-hf-id="hf-06xa"></i><i data-hf-id="hf-26gf"></i><i data-hf-id="hf-2krg"></i><i data-hf-id="hf-oz7w"></i><i data-hf-id="hf-okwv"></i></div>
+
+    <!-- board -->
+    <div data-hf-id="hf-litn" id="05-level-one-panel"></div>
+    <svg data-hf-id="hf-zork" id="05-level-one-scrib" viewBox="0 0 1920 1080" aria-hidden="true">
+      <g data-hf-id="hf-d1tc" id="05-level-one-scribg" mask="url(#05-level-one-scribmask)" fill="none" stroke="#A9A3D9" stroke-width="7.68" stroke-dasharray="7.68 7.68" stroke-linecap="butt">
+        <path data-hf-id="hf-ejqj" d="M 576 341.76 L 825.6 341.76" transform="rotate(-3 700.8 341.76)" />
+        <path data-hf-id="hf-6ozf" d="M 583.68 399.36 L 775.68 399.36" transform="rotate(4 679.68 399.36)" />
+        <path data-hf-id="hf-qybh" d="M 579.84 456.96 L 802.56 456.96 L 802.56 506.88 L 579.84 506.88 Z" transform="rotate(-2 691.2 481.92)" />
+      </g>
+    </svg>
+    <svg data-hf-id="hf-g8up" id="05-level-one-arrow" class="05-level-one-spr"><use data-hf-id="hf-21v3" href="#05-level-one-cur" width="100%" height="100%" /></svg>
+    <div data-hf-id="hf-q13m" id="05-level-one-wh" class="05-level-one-wire"></div>
+    <div data-hf-id="hf-2jm3" id="05-level-one-wa" class="05-level-one-wire"></div>
+    <div data-hf-id="hf-ro4g" id="05-level-one-wb" class="05-level-one-wire"></div>
+    <div data-hf-id="hf-sfs9" id="05-level-one-wc" class="05-level-one-wire"></div>
+
+    <!-- Player 2 ghost with idea -->
+    <div data-hf-id="hf-fvlm" id="05-level-one-p2grp">
+      <svg data-hf-id="hf-htc7" id="05-level-one-ghost" class="05-level-one-spr"><use data-hf-id="hf-qzwt" href="#05-level-one-hero" width="100%" height="100%" /></svg>
+      <svg data-hf-id="hf-9c3f" id="05-level-one-idea" class="05-level-one-spr"><use data-hf-id="hf-gbui" href="#05-level-one-bulb" width="100%" height="100%" /></svg>
+    </div>
+    <p data-hf-id="hf-e3ve" id="05-level-one-you" class="05-level-one-lbl">Þú</p>
+
+    <!-- Player 1 sprites -->
+    <svg data-hf-id="hf-d61o" id="05-level-one-smari" class="05-level-one-spr"><use data-hf-id="hf-b62p" href="#05-level-one-hero" width="100%" height="100%" /></svg>
+    <svg data-hf-id="hf-ns1l" id="05-level-one-jakub" class="05-level-one-spr"><use data-hf-id="hf-cczs" href="#05-level-one-hero" width="100%" height="100%" /></svg>
+
+    <!-- level banner -->
+    <div data-hf-id="hf-eawp" id="05-level-one-banner">
+      <span data-hf-id="hf-b7cg" id="05-level-one-lvl" class="05-level-one-arcade">LEVEL 1</span>
+      <span data-hf-id="hf-layv" id="05-level-one-title" class="05-level-one-is"><span data-hf-id="hf-j7ez">H</span><span data-hf-id="hf-rjuk">u</span><span data-hf-id="hf-x44y">g</span><span data-hf-id="hf-uqas">m</span><span data-hf-id="hf-pymg">y</span><span data-hf-id="hf-tjdp">n</span><span data-hf-id="hf-xifz">d</span><span data-hf-id="hf-wbiw">i</span><span data-hf-id="hf-mult">n</span><i data-hf-id="hf-wpu0" id="05-level-one-caret"></i></span>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-mses" id="05-level-one-crt" class="clip" data-start="0" data-duration="6.655" data-track-index="9"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "05-level-one";
+      var END = 6.155;
+      var $ = function (n) { return document.getElementById(ID + "-" + n); };
+      var tl = gsap.timeline({ paused: true });
+      // initial state: applied immediately (so t=0 renders correctly) and pinned at 0 on the timeline
+      var init = function (el, vars) { gsap.set(el, vars); tl.set(el, vars, 0); };
+
+      // ---------- furniture: 2UP PRESS START blinks pink/off at ~2 Hz (finite) ----------
+      var press = $("press");
+      init(press, { opacity: 1 });
+      for (var bt = 0.25, bi = 0; bt < END; bt += 0.25, bi++) {
+        tl.set(press, { opacity: bi % 2 === 0 ? 0 : 1 }, bt);
+      }
+
+      // ---------- Scene 1 (0.00-1.35): banner slides in, node 1 turns coin ----------
+      // jingle@0.10 — banner is mid-slide on the jingle, landed by 0.5s
+      tl.fromTo($("banner"), { x: -1920 }, { x: 0, duration: 0.44, ease: "power3.out" }, 0.04);
+
+      // typewriter "Hugmyndin" on its word (1.355-1.905) behind a yellow caret
+      var chars = $("title").querySelectorAll("span");
+      var caret = $("caret");
+      init(chars, { display: "none" });
+      init(caret, { opacity: 0 });
+      tl.set(caret, { opacity: 1 }, 0.5);
+      tl.set(caret, { opacity: 0 }, 0.75);
+      tl.set(caret, { opacity: 1 }, 1.0);
+      tl.set(caret, { opacity: 0 }, 1.2);
+      tl.set(caret, { opacity: 1 }, 1.355);
+      for (var c = 0; c < chars.length; c++) {
+        tl.set(chars[c], { display: "inline" }, 1.355 + c * 0.058);
+      }
+      for (var ct = 2.1, ci = 0; ct < 2.8; ct += 0.25, ci++) {
+        tl.set(caret, { opacity: ci % 2 === 0 ? 0 : 1 }, ct);
+      }
+      tl.set(caret, { opacity: 0 }, 2.85);
+
+      // node 1 becomes the current level on "Fyrsta" (0.68) + stepped pulse rings
+      var now = $("n1now"), ring = $("ring");
+      init(now, { opacity: 0 });
+      init(ring, { opacity: 0, scale: 1 });
+      tl.set(now, { opacity: 1 }, 0.68);
+      tl.set($("n1"), { opacity: 0 }, 0.68);
+      [0.68, 1.18, 1.68].forEach(function (pt) {
+        tl.fromTo(ring, { opacity: 0.9, scale: 1 },
+          { opacity: 0, scale: 1.7, duration: 0.42, ease: "steps(4)", immediateRender: false }, pt);
+      });
+
+      // ---------- Scene 2 (1.35-3.80): ghost, board, scribble, bulb ----------
+      var ghost = $("ghost"), you = $("you"), bulb = $("idea"), panel = $("panel");
+      // "Þú" (2.818): pink ghost steps in above node 1
+      init(ghost, { opacity: 0, x: -36 });
+      init(you, { opacity: 0 });
+      tl.set(ghost, { opacity: 0.4, x: -36 }, 2.82);
+      tl.set(ghost, { x: -18 }, 2.87);
+      tl.set(ghost, { x: 0 }, 2.92);
+      tl.set(you, { opacity: 1 }, 2.92);
+
+      // "segir" (2.993): the board panel opens on hard steps
+      init(panel, { opacity: 0, scaleY: 1 });
+      tl.set(panel, { opacity: 1, scaleY: 0.2 }, 2.99);
+      tl.set(panel, { scaleY: 0.6 }, 3.05);
+      tl.set(panel, { scaleY: 1 }, 3.11);
+
+      // "okkur" (3.28) scribble@3.28: dotted sketch draws itself (svg-path-draw, stepped)
+      var mpaths = [$("m1"), $("m2"), $("m3")];
+      var fallback = [269.6, 212, 545.28];
+      var lens = mpaths.map(function (p, i) {
+        var l = 0;
+        try { l = p.getTotalLength(); } catch (e) { l = 0; }
+        if (!l) l = fallback[i];
+        l = l * 1.05;
+        p.style.strokeDasharray = l + " " + l;
+        p.style.strokeDashoffset = l;
+        return l;
+      });
+      tl.fromTo(mpaths[0], { strokeDashoffset: lens[0] }, { strokeDashoffset: 0, duration: 0.26, ease: "steps(5)" }, 3.28);
+      tl.fromTo(mpaths[1], { strokeDashoffset: lens[1] }, { strokeDashoffset: 0, duration: 0.2, ease: "steps(4)" }, 3.47);
+      tl.fromTo(mpaths[2], { strokeDashoffset: lens[2] }, { strokeDashoffset: 0, duration: 0.36, ease: "steps(6)" }, 3.62);
+
+      // "vantar" (3.843) ding@3.84: bulb 2-step pop above the ghost
+      init(bulb, { opacity: 0, scale: 0.5, y: 12 });
+      tl.set(bulb, { opacity: 1, scale: 0.6, y: 6 }, 3.84);
+      tl.set(bulb, { scale: 1.25, y: -6 }, 3.89);
+      tl.set(bulb, { scale: 1, y: 0 }, 3.95);
+
+      // ghost + bulb idle bob (2-frame, stepped, finite)
+      var p2grp = $("p2grp");
+      init(p2grp, { y: 0 });
+      for (var gt = 3.2, gi = 0; gt < END; gt += 0.3, gi++) {
+        tl.set(p2grp, { y: gi % 2 === 0 ? -6 : 0 }, gt);
+      }
+
+      // ---------- Scene 3 (3.80-6.16): P1 hop in, wireframe snap, XP ----------
+      // "við" (4.48) jump@4.48: the two cyan sprites hop in at the right of the board
+      [["smari", 4.48], ["jakub", 4.56]].forEach(function (s) {
+        var el = $(s[0]), t0 = s[1];
+        init(el, { opacity: 0, x: 48, y: 0 });
+        tl.set(el, { opacity: 1, x: 36, y: -30 }, t0);
+        tl.set(el, { x: 24, y: -48 }, t0 + 0.05);
+        tl.set(el, { x: 12, y: -36 }, t0 + 0.10);
+        tl.set(el, { x: 0, y: 0 }, t0 + 0.15);
+        for (var bt2 = t0 + 0.45, bj = 0; bt2 < END; bt2 += 0.3, bj++) {
+          tl.set(el, { y: bj % 2 === 0 ? -6 : 0 }, bt2);
+        }
+      });
+
+      // "saman" (5.105) snap@5.11: scribble flashes and snaps into a clean wireframe
+      var scribg = $("scribg");
+      init(scribg, { attr: { stroke: "#A9A3D9" } });
+      tl.set(scribg, { attr: { stroke: "#FFE14D" } }, 5.11);
+      tl.set(scribg, { attr: { stroke: "#A9A3D9" } }, 5.2);
+
+      var arrow = $("arrow");
+      init(arrow, { opacity: 0, x: -18 });
+      tl.set(arrow, { opacity: 1, x: -18 }, 5.11);
+      tl.set(arrow, { x: -6 }, 5.15);
+      tl.set(arrow, { x: 0 }, 5.19);
+      // menu-cursor blink over the hold (steps, finite)
+      for (var at = 5.7, ai = 0; at < END; at += 0.25, ai++) {
+        tl.set(arrow, { opacity: ai % 2 === 0 ? 0 : 1 }, at);
+      }
+
+      [["wh", 5.11], ["wa", 5.15], ["wb", 5.19], ["wc", 5.23]].forEach(function (w) {
+        var el = $(w[0]);
+        init(el, { opacity: 0, scale: 1 });
+        tl.set(el, { opacity: 1, scale: 1.12 }, w[1]);
+        tl.set(el, { scale: 1 }, w[1] + 0.05);
+      });
+
+      // xp@5.40: XP bar steps 0 -> 4 cells
+      var cells = $("xp").querySelectorAll("i");
+      for (var x = 0; x < 4; x++) {
+        init(cells[x], { backgroundColor: "#2C2560", scale: 1 });
+        tl.set(cells[x], { backgroundColor: "#7CFF6B", scale: 1.2 }, 5.4 + x * 0.06);
+        tl.set(cells[x], { scale: 1 }, 5.4 + x * 0.06 + 0.04);
+      }
+
+      // hold to the end of the frame
+      tl.set({}, {}, END);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["05-level-one"] = tl;
+    })();
+  </script>
+</div>
+</template>

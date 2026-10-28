@@ -1,0 +1,226 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Jersey 10"; src: url('assets/fonts/Jersey10-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Press Start 2P"; src: url('assets/fonts/PressStart2P-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Silkscreen"; src: url('assets/fonts/Silkscreen-Regular.ttf') format("truetype"); }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #F4F1FF;
+    }
+    #root * { box-sizing: border-box; }
+    #root p { margin: 0; }
+
+    /* full-bleed ground + pixel starfield (background clip) */
+    [id="01-title-bg"] {
+      position: absolute; inset: 0; z-index: 0;
+      background-color: #14112B;
+    }
+    [id="01-title-stars"] {
+      position: absolute; inset: 0; opacity: 0.9;
+      background:
+        radial-gradient(circle, #2C2560 3.456px, transparent 3.84px) 0 0 / 134.4px 134.4px,
+        radial-gradient(circle, #3a3270 2.688px, transparent 3.072px) 67.2px 44.16px / 211.2px 172.8px;
+    }
+
+    /* content stage (shakes on the logo drop) */
+    [id="01-title-stage"] { position: absolute; inset: 0; z-index: 5; }
+    [id="01-title-stage"] > * { position: absolute; }
+
+    /* bulb-coins: 7cqw x 8.75cqw */
+    [id="01-title-bulb-l"], [id="01-title-bulb-r"] { top: 172.8px; width: 134.4px; height: 168px; }
+    [id="01-title-bulb-l"] { left: 288px; }
+    [id="01-title-bulb-r"] { left: 1497.6px; }
+    [id="01-title-bulb-l"] svg, [id="01-title-bulb-r"] svg { display: block; width: 134.4px; height: 168px; overflow: visible; }
+
+    [id="01-title-player"] {
+      left: 0; right: 0; top: 144px; text-align: center;
+      font-family: "Press Start 2P", monospace; font-size: 99.84px; line-height: 1.15;
+      color: #FFE14D; text-shadow: 8.64px 8.64px 0 #0A0818; white-space: nowrap;
+    }
+    [id="01-title-oskast"] {
+      left: 0; right: 0; top: 276.48px; text-align: center;
+      font-family: "Jersey 10", sans-serif; font-size: 249.6px; line-height: 0.95;
+      color: #FF4F8B; text-shadow: 8.64px 8.64px 0 #0A0818; white-space: nowrap;
+      transform-origin: 50% 50%;
+    }
+
+    /* pixel-panel dialog box: stepped corners via cross box-shadow, hard offset shadow */
+    [id="01-title-panel"] {
+      left: 345.6px; top: 585.6px; width: 1228.8px; height: 165.12px;
+      background: #1E1940;
+      box-shadow:
+        0 -6px 0 0 #F4F1FF, 0 6px 0 0 #F4F1FF,
+        -6px 0 0 0 #F4F1FF, 6px 0 0 0 #F4F1FF,
+        15px 15px 0 6px #0A0818;
+      transform-origin: 50% 50%;
+    }
+    [id="01-title-q"] {
+      left: 403.2px; top: 625.92px;
+      font-family: "Jersey 10", sans-serif; font-size: 76.8px; line-height: 0.95;
+      color: #F4F1FF; white-space: nowrap;
+    }
+    [id="01-title-caret"] {
+      display: inline-block; width: 0.42em; height: 0.78em;
+      margin-left: 0.06em; vertical-align: -0.06em;
+      background: #FFE14D;
+    }
+
+    [id="01-title-start"] {
+      left: 0; right: 0; top: 812px; text-align: center;
+      font-family: "Press Start 2P", monospace; font-size: 28.8px; line-height: 1.15;
+      color: #FFE14D; white-space: nowrap;
+    }
+    [id="01-title-foot"] {
+      left: 0; right: 0; top: 866px; text-align: center;
+      font-family: "Silkscreen", monospace; font-size: 21.12px; line-height: 1.1;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: #A9A3D9; white-space: nowrap;
+    }
+
+    /* CRT veil: scanlines + corner vignette, topmost */
+    [id="01-title-crt"] {
+      position: absolute; inset: 0; z-index: 20; pointer-events: none;
+      background:
+        repeating-linear-gradient(0deg, rgba(10,8,24,0.24) 0 3.072px, transparent 3.072px 6.528px),
+        radial-gradient(ellipse at center, transparent 58%, rgba(10,8,24,0.65) 100%);
+    }
+  </style>
+
+  <div data-hf-id="hf-unvl" id="root" data-composition-id="01-title" data-start="0" data-duration="4.93" data-width="1920" data-height="1080">
+
+    <div data-hf-id="hf-mgm6" id="01-title-bg" class="clip" data-start="0" data-duration="4.93" data-track-index="0">
+      <div data-hf-id="hf-buvl" id="01-title-stars"></div>
+    </div>
+
+    <svg data-hf-id="hf-8h6w" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs data-hf-id="hf-mh0t">
+        <symbol data-hf-id="hf-l7zu" id="01-title-bulb" viewBox="0 0 8 10" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-ipkm" x="2" y="0" width="4" height="1" fill="#FFE14D" /><rect data-hf-id="hf-7tqb" x="1" y="1" width="6" height="4" fill="#FFE14D" /><rect data-hf-id="hf-z9oj" x="2" y="5" width="4" height="1" fill="#FFE14D" />
+          <rect data-hf-id="hf-vmui" x="2" y="1" width="1" height="2" fill="#FFF7B8" />
+          <rect data-hf-id="hf-e3no" x="3" y="6" width="2" height="1" fill="#A9A3D9" /><rect data-hf-id="hf-9fpq" x="3" y="7" width="2" height="1" fill="#6F68A3" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <div data-hf-id="hf-vyrw" id="01-title-stage">
+      <div data-hf-id="hf-wfjc" id="01-title-bulb-l"><svg data-hf-id="hf-8src" id="01-title-bulb-l-svg" viewBox="0 0 8 10" shape-rendering="crispEdges"><use data-hf-id="hf-f8f4" href="#01-title-bulb" /></svg></div>
+      <div data-hf-id="hf-fywu" id="01-title-bulb-r"><svg data-hf-id="hf-neqe" id="01-title-bulb-r-svg" viewBox="0 0 8 10" shape-rendering="crispEdges"><use data-hf-id="hf-rrko" href="#01-title-bulb" /></svg></div>
+
+      <p data-hf-id="hf-5e2l" id="01-title-player">PLAYER 2</p>
+      <p data-hf-id="hf-pqcf" id="01-title-oskast">ÓSKAST</p>
+
+      <div data-hf-id="hf-870w" id="01-title-panel"></div>
+      <p data-hf-id="hf-294y" id="01-title-q"><span data-hf-id="hf-bdf1" id="01-title-qtext"></span><span data-hf-id="hf-ulzo" id="01-title-caret"></span></p>
+
+      <p data-hf-id="hf-d0eu" id="01-title-start">PRESS START</p>
+      <p data-hf-id="hf-0hw1" id="01-title-foot">© 2026 Smári &amp; Jakub · Vefskólinn</p>
+    </div>
+
+    <div data-hf-id="hf-ghyq" id="01-title-crt" class="clip" data-start="0" data-duration="4.93" data-track-index="2"></div>
+  </div>
+
+  <script>
+    (function () {
+      var host = document.querySelector('[data-composition-id="01-title"]');
+      var q = function (n) { return host.querySelector('[id="01-title-' + n + '"]'); };
+      var DUR = 4.53;
+      var tl = gsap.timeline({ paused: true });
+
+      var stage = q("stage"), player = q("player"), oskast = q("oskast");
+      var bulbL = q("bulb-l"), bulbR = q("bulb-r"), svgL = q("bulb-l-svg"), svgR = q("bulb-r-svg");
+      var panel = q("panel"), qtext = q("qtext"), caret = q("caret");
+      var start = q("start"), foot = q("foot");
+
+      // Scene 1 (0.00-0.70): PLAYER 2 drops from above in 3 hard steps, lands 0.45 (logo-drop)
+      tl.fromTo(player, { y: -280 }, { y: 0, duration: 0.45, ease: "steps(3)" }, 0);
+      // landing thump: 1-game-pixel stage shake
+      tl.set(stage, { y: 6 }, 0.45);
+      tl.set(stage, { y: -3 }, 0.5);
+      tl.set(stage, { y: 0 }, 0.55);
+
+      // Scene 2 (0.70-1.50): ÓSKAST pops on a 3-step scale at 0.75 (blip-hi)
+      tl.fromTo(oskast, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.001, ease: "none" }, 0.75);
+      tl.fromTo(oskast, { scale: 0.33 }, { scale: 1, duration: 0.12, ease: "steps(2)" }, 0.75);
+
+      // bulb-coins appear at 1.0 with a 2-step pickup pop, then one 3-frame spin
+      [bulbL, bulbR].forEach(function (b) {
+        tl.fromTo(b, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.001, ease: "none" }, 1.0);
+        tl.fromTo(b, { scale: 1.15 }, { scale: 1, duration: 0.06, ease: "steps(1)" }, 1.0);
+      });
+      [svgL, svgR].forEach(function (s) {
+        var frames = [0.55, 0.12, 0.55, 1];
+        tl.set(s, { scaleX: 1, transformOrigin: "50% 50%" }, 1.06);
+        frames.forEach(function (sx, i) { tl.set(s, { scaleX: sx }, 1.12 + i * 0.07); });
+      });
+      // 2-frame idle bob (finite, opposite phase)
+      for (var k = 0; k < 7; k++) {
+        var t = 1.6 + k * 0.45;
+        tl.set(bulbL, { y: k % 2 === 0 ? -6 : 0 }, t);
+        tl.set(bulbR, { y: k % 2 === 0 ? 0 : -6 }, t);
+      }
+
+      // footer label present from 1.0
+      tl.fromTo(foot, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.001, ease: "none" }, 1.0);
+
+      // Scene 3 (1.50-3.90): dialog box opens in 3 height steps at 1.45
+      tl.fromTo(panel, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.001, ease: "none" }, 1.45);
+      tl.fromTo(panel, { scaleY: 0.33 }, { scaleY: 1, duration: 0.12, ease: "steps(2)" }, 1.45);
+      // caret waits at the line start once the box is open
+      tl.fromTo(caret, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.001, ease: "none" }, 1.57);
+
+      // per-character typing paced to the voice word timings; "við?" completes at 3.65
+      var WORDS = [
+        ["Áttu", 1.68, 1.855], ["hugmynd", 1.917, 2.28], ["sem", 2.28, 2.417],
+        ["Canvas", 2.43, 2.855], ["ræður", 2.868, 3.192], ["ekki", 3.192, 3.418],
+        ["við?", 3.43, 3.65]
+      ];
+      var CHARS = [];
+      WORDS.forEach(function (w, wi) {
+        var txt = w[0], s = w[1], e = w[2], n = txt.length, last = wi === WORDS.length - 1;
+        for (var c = 0; c < n; c++) {
+          var tc = last ? s + c * (e - s) / (n - 1) : s + c * (e - s) / n;
+          CHARS.push([txt[c], tc]);
+        }
+        if (!last) CHARS.push([" ", e]);
+      });
+      for (var i = 1; i < CHARS.length; i++) {
+        if (CHARS[i][1] < CHARS[i - 1][1] + 0.02) CHARS[i][1] = CHARS[i - 1][1] + 0.02;
+      }
+      var lastShown = -1;
+      function render(time) {
+        var count = 0;
+        while (count < CHARS.length && time >= CHARS[count][1] - 1e-6) count++;
+        if (count === lastShown) return;
+        lastShown = count;
+        var str = "";
+        for (var j = 0; j < count; j++) str += CHARS[j][0];
+        qtext.textContent = str;
+      }
+      var driver = { t: 0 };
+      render(0);
+      tl.fromTo(driver, { t: 0 }, {
+        t: DUR, duration: DUR, ease: "none",
+        onUpdate: function () { render(driver.t); }
+      }, 0);
+
+      // caret blinks after the last char (~2 Hz, finite)
+      tl.set(caret, { autoAlpha: 0 }, 3.9);
+      tl.set(caret, { autoAlpha: 1 }, 4.15);
+      tl.set(caret, { autoAlpha: 0 }, 4.4);
+
+      // Scene 4 (3.90-4.53): PRESS START blinks on at 3.95 (blip-lo), then holds
+      tl.fromTo(start, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.001, ease: "none" }, 3.95);
+      tl.set(start, { autoAlpha: 0 }, 4.07);
+      tl.set(start, { autoAlpha: 1 }, 4.19);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["01-title"] = tl;
+    })();
+  </script>
+</template>

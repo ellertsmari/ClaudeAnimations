@@ -1,0 +1,273 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Jersey 10"; src: url('assets/fonts/Jersey10-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Press Start 2P"; src: url('assets/fonts/PressStart2P-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Silkscreen"; src: url('assets/fonts/Silkscreen-Regular.ttf') format("truetype"); }
+
+    #root {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #F4F1FF;
+    }
+    #root * { box-sizing: border-box; }
+    #root p { margin: 0; }
+
+    /* every authored layer is absolutely placed in 1920×1080 px (sketch cqw × 19.2) */
+    [class~="02-quest-select-abs"] { position: absolute; margin: 0; }
+
+    /* ground + faint pixel starfield (background clip) */
+    [id="02-quest-select-bg"] { left: 0; top: 0; width: 1920px; height: 1080px; background: #14112B; }
+    [id="02-quest-select-stars"] {
+      position: absolute; inset: 0; opacity: .9;
+      background:
+        radial-gradient(circle, #2C2560 3.456px, transparent 3.84px) 0 0 / 134.4px 134.4px,
+        radial-gradient(circle, #3a3270 2.688px, transparent 3.072px) 67.2px 44.16px / 211.2px 172.8px;
+    }
+
+    /* HUD bar */
+    [id="02-quest-select-hud"] {
+      left: 0; top: 0; width: 1920px; height: 80.64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 57.6px;
+      font-family: "Press Start 2P", monospace; font-size: 19.2px; color: #F4F1FF;
+      border-bottom: 6px solid #2C2560; background: rgba(10,8,24,.35); z-index: 5;
+    }
+    [id="02-quest-select-hud"] b { font-weight: 400; }
+
+    /* pixel panel — stepped corners via box-shadow stack, hard offset shadow */
+    [id="02-quest-select-panel"] {
+      left: 115.2px; top: 153.6px; width: 1056px; height: 672px;
+      background: #1E1940;
+      box-shadow:
+        0 -6px 0 0 #F4F1FF, 0 6px 0 0 #F4F1FF,
+        -6px 0 0 0 #F4F1FF, 6px 0 0 0 #F4F1FF,
+        15px 15px 0 6px #0A0818;
+      z-index: 2;
+    }
+
+    [id="02-quest-select-head"] {
+      left: 172.8px; top: 203.52px;
+      font-family: "Silkscreen", monospace; font-size: 38.4px; line-height: 1.1;
+      letter-spacing: .08em; text-transform: uppercase; color: #FFE14D; white-space: nowrap; z-index: 3;
+    }
+
+    [class~="02-quest-select-item"] {
+      left: 249.6px;
+      font-family: "Jersey 10", sans-serif; font-size: 69.12px; line-height: .95;
+      color: #FFE14D; white-space: nowrap; z-index: 3;
+    }
+
+    [id="02-quest-select-cursor"] { left: 176.64px; top: 322.56px; width: 32.64px; height: 57.6px; color: #FFE14D; overflow: visible; z-index: 4; }
+
+    [id="02-quest-select-box"] {
+      left: 230.4px; top: 618.24px; width: 883.2px; height: 99.84px;
+      border: 6px solid #FFE14D; z-index: 3;
+    }
+
+    /* cyan stamp (rotation −4° applied by the timeline, not CSS) */
+    [id="02-quest-select-stamp"] { left: 1228.8px; top: 230.4px; width: 595.2px; height: 345.6px; z-index: 6; }
+    [id="02-quest-select-stampbox"] {
+      position: absolute; left: 0; top: 0; width: 595.2px; height: 345.6px;
+      border: 9px solid #3FE0D0; background: rgba(63,224,208,.08);
+    }
+    [id="02-quest-select-stamptxt"] {
+      position: absolute; left: 38.4px; top: 34.56px; width: 537.6px; margin: 0;
+      font-family: "Jersey 10", sans-serif; font-size: 99.84px; line-height: .95;
+      color: #3FE0D0; text-align: center;
+    }
+
+    [class~="02-quest-select-hero"] { top: 614.4px; width: 115.2px; height: 153.6px; color: #3FE0D0; overflow: visible; z-index: 6; }
+
+    /* CRT veil — topmost */
+    [id="02-quest-select-crt"] {
+      left: 0; top: 0; width: 1920px; height: 1080px; z-index: 20; pointer-events: none;
+      background:
+        repeating-linear-gradient(0deg, rgba(10,8,24,.24) 0 3px, transparent 3px 6px),
+        radial-gradient(ellipse at center, transparent 58%, rgba(10,8,24,.65) 100%);
+    }
+  </style>
+
+  <div data-hf-id="hf-zrhl" id="root" data-composition-id="02-quest-select" data-width="1920" data-height="1080">
+    <!-- pixel sprites (copied from storyboard.html, ids frame-prefixed) -->
+    <svg data-hf-id="hf-8h6w" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs data-hf-id="hf-mh0t">
+        <symbol data-hf-id="hf-uvma" id="02-quest-select-hero" viewBox="0 0 12 16" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-50dh" x="3" y="0" width="6" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-9oat" x="2" y="1" width="1" height="3" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-r2w5" x="9" y="1" width="1" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-yqhe" x="3" y="2" width="6" height="4" fill="#f2c29b" />
+          <rect data-hf-id="hf-gw56" x="4" y="3" width="1" height="1" fill="#0A0818" /><rect data-hf-id="hf-rwnd" x="7" y="3" width="1" height="1" fill="#0A0818" />
+          <rect data-hf-id="hf-7x80" x="5" y="5" width="2" height="1" fill="#c9876a" />
+          <rect data-hf-id="hf-h3wf" x="2" y="6" width="8" height="5" fill="currentColor" />
+          <rect data-hf-id="hf-3435" x="1" y="7" width="1" height="3" fill="#f2c29b" /><rect data-hf-id="hf-rdc1" x="10" y="7" width="1" height="3" fill="#f2c29b" />
+          <rect data-hf-id="hf-3v50" x="3" y="11" width="2" height="4" fill="#2C2560" /><rect data-hf-id="hf-nl14" x="7" y="11" width="2" height="4" fill="#2C2560" />
+          <rect data-hf-id="hf-9p11" x="2" y="15" width="3" height="1" fill="#0A0818" /><rect data-hf-id="hf-s9ti" x="7" y="15" width="3" height="1" fill="#0A0818" />
+        </symbol>
+        <symbol data-hf-id="hf-v1lf" id="02-quest-select-cur" viewBox="0 0 4 7" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-qbyc" x="0" y="0" width="1" height="7" fill="currentColor" /><rect data-hf-id="hf-ed4q" x="1" y="1" width="1" height="5" fill="currentColor" />
+          <rect data-hf-id="hf-vuj8" x="2" y="2" width="1" height="3" fill="currentColor" /><rect data-hf-id="hf-dzw2" x="3" y="3" width="1" height="1" fill="currentColor" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- background: night ground + starfield -->
+    <div data-hf-id="hf-mh2f" id="02-quest-select-bg" class="02-quest-select-abs clip" data-start="0" data-duration="9.742" data-track-index="0">
+      <div data-hf-id="hf-3e8b" id="02-quest-select-stars"></div>
+    </div>
+
+    <!-- HUD -->
+    <div data-hf-id="hf-oyfb" id="02-quest-select-hud" class="02-quest-select-abs">
+      <span data-hf-id="hf-0etj"><b data-hf-id="hf-e3ae" style="color:#3FE0D0">1UP</b> 004200</span>
+      <span data-hf-id="hf-5zal" style="color:#FFE14D">HI-SCORE 099999</span>
+      <span data-hf-id="hf-uckh"><b data-hf-id="hf-7jgr" style="color:#FF4F8B">2UP</b> <span data-hf-id="hf-y6vv" id="02-quest-select-press">PRESS START</span></span>
+    </div>
+
+    <!-- quest menu (pinned anchor) -->
+    <div data-hf-id="hf-51pa" id="02-quest-select-panel" class="02-quest-select-abs"></div>
+    <p data-hf-id="hf-8ccz" id="02-quest-select-head" class="02-quest-select-abs">Veldu verkefni</p>
+    <p data-hf-id="hf-rs3d" id="02-quest-select-i1" class="02-quest-select-abs 02-quest-select-item" style="top:307.2px">Leikur fyrir nemendurna</p>
+    <p data-hf-id="hf-e9qz" id="02-quest-select-i2" class="02-quest-select-abs 02-quest-select-item" style="top:414.72px">Ný leið til að meta verkefni</p>
+    <p data-hf-id="hf-n0zg" id="02-quest-select-i3" class="02-quest-select-abs 02-quest-select-item" style="top:522.24px">Eitthvað sem enginn hefur gert</p>
+    <div data-hf-id="hf-3yvr" id="02-quest-select-box" class="02-quest-select-abs"></div>
+    <p data-hf-id="hf-ktml" id="02-quest-select-i4" class="02-quest-select-abs 02-quest-select-item" style="top:629.76px"><span data-hf-id="hf-pjs1" id="02-quest-select-qqq" style="color:#FF4F8B">???</span> <span data-hf-id="hf-clju" style="color:#F4F1FF">— þín hugmynd</span></p>
+    <svg data-hf-id="hf-lxbr" id="02-quest-select-cursor" class="02-quest-select-abs" shape-rendering="crispEdges"><use data-hf-id="hf-kinp" href="#02-quest-select-cur" /></svg>
+
+    <!-- cyan stamp (payoff) -->
+    <div data-hf-id="hf-60mx" id="02-quest-select-stamp" class="02-quest-select-abs">
+      <div data-hf-id="hf-ehio" id="02-quest-select-stampbox"></div>
+      <p data-hf-id="hf-az5w" id="02-quest-select-stamptxt">VIÐ SMÍÐUM ÞAÐ MEÐ ÞÉR</p>
+    </div>
+
+    <!-- Player 1 sprites: Smári, Jakub -->
+    <svg data-hf-id="hf-1fhr" id="02-quest-select-smari" class="02-quest-select-abs 02-quest-select-hero" style="left:1344px" shape-rendering="crispEdges"><use data-hf-id="hf-a3nh" href="#02-quest-select-hero" /></svg>
+    <svg data-hf-id="hf-qk2c" id="02-quest-select-jakub" class="02-quest-select-abs 02-quest-select-hero" style="left:1516.8px;--hair:#8a5a2b" shape-rendering="crispEdges"><use data-hf-id="hf-4aoh" href="#02-quest-select-hero" /></svg>
+
+    <!-- CRT veil -->
+    <div data-hf-id="hf-57sx" id="02-quest-select-crt" class="02-quest-select-abs"></div>
+  </div>
+
+  <script>
+    (function () {
+      var $ = function (n) { return document.getElementById("02-quest-select-" + n); };
+      var COIN = "#FFE14D", DIM = "#A9A3D9";
+      var tl = gsap.timeline({ paused: true });
+
+      // split text nodes into per-character spans (typewriter), preserving nested color spans
+      function splitChars(el) {
+        var out = [];
+        (function walk(node) {
+          Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+            if (n.nodeType === 3) {
+              var frag = document.createDocumentFragment();
+              Array.from(n.textContent).forEach(function (ch) {
+                var s = document.createElement("span");
+                s.textContent = ch;
+                frag.appendChild(s);
+                out.push(s);
+              });
+              n.parentNode.replaceChild(frag, n);
+            } else if (n.nodeType === 1) {
+              walk(n);
+            }
+          });
+        })(el);
+        return out;
+      }
+      function typeIn(chars, t0, dt) {
+        chars.forEach(function (c, i) { tl.set(c, { opacity: 1 }, t0 + i * dt); });
+      }
+
+      var head = splitChars($("head"));
+      var items = [$("i1"), $("i2"), $("i3"), $("i4")];
+      var itemChars = items.map(splitChars);
+      var cursor = $("cursor"), panel = $("panel"), box = $("box"), stamp = $("stamp");
+      var smari = $("smari"), jakub = $("jakub"), qqq = $("qqq"), press = $("press");
+      var STEP = 107.52; // one menu row (5.6cqw)
+
+      // ---- initial states (t = 0) ----
+      tl.set(panel, { opacity: 0, scaleY: 0.08, transformOrigin: "50% 0%" }, 0);
+      tl.set(head, { opacity: 0 }, 0);
+      itemChars.forEach(function (cs) { tl.set(cs, { opacity: 0 }, 0); });
+      tl.set(cursor, { opacity: 0, x: 0, y: 0 }, 0);
+      tl.set(box, { opacity: 0 }, 0);
+      tl.set(stamp, { opacity: 0, scale: 1.4, rotation: -4, transformOrigin: "50% 50%" }, 0);
+      tl.set([smari, jakub], { opacity: 0, y: 0 }, 0);
+
+      // ---- Scene 1 (0.00–0.38): panel opens on 4 hard steps (menu-open@0.05), header types ----
+      tl.set(panel, { opacity: 1 }, 0.05);
+      tl.fromTo(panel, { scaleY: 0.08 }, { scaleY: 1, duration: 0.24, ease: "steps(4)", immediateRender: false }, 0.05);
+      typeIn(head, 0.14, 0.016);
+
+      // cursor hop: instant first step on the cue, lands 0.05s later, 1-game-pixel kick right
+      function hop(t, fromRow, toRow) {
+        tl.set(cursor, { y: (fromRow + (toRow - fromRow) * 0.5) * STEP, x: 6 }, t);
+        tl.set(cursor, { y: toRow * STEP }, t + 0.05);
+        tl.set(cursor, { x: 0 }, t + 0.1);
+      }
+
+      // ---- Scene 2 (0.38): quest 1 + cursor arrives (blip@0.38) ----
+      tl.set(items[0], { color: COIN }, 0.38);
+      typeIn(itemChars[0], 0.38, 0.016);
+      tl.set(cursor, { opacity: 1, y: 0, x: -12 }, 0.38);
+      tl.set(cursor, { x: -6 }, 0.43);
+      tl.set(cursor, { x: 0 }, 0.48);
+
+      // ---- Scene 3 (2.54): quest 2, cursor hops, quest 1 dims (blip@2.54) ----
+      tl.set(items[0], { color: DIM }, 2.54);
+      tl.set(items[1], { color: COIN }, 2.54);
+      typeIn(itemChars[1], 2.54, 0.016);
+      hop(2.54, 0, 1);
+
+      // ---- Scene 4 (4.93): quest 3 (blip@4.93) ----
+      tl.set(items[1], { color: DIM }, 4.93);
+      tl.set(items[2], { color: COIN }, 4.93);
+      typeIn(itemChars[2], 4.93, 0.016);
+      hop(4.93, 1, 2);
+
+      // ---- Scene 5 (6.60): "??? — þín hugmynd" + yellow outline, cursor hops (blip-hi@6.60) ----
+      tl.set(items[2], { color: DIM }, 6.60);
+      typeIn(itemChars[3], 6.60, 0.016);
+      hop(6.60, 2, 3);
+      tl.set(box, { opacity: 1 }, 6.60);
+      tl.set(box, { opacity: 0 }, 6.68);
+      tl.set(box, { opacity: 1 }, 6.76);
+      // ??? blinks — stepped, finite (~2 Hz), ends visible
+      for (var t = 7.0, on = false; t < 9.6; t += 0.25, on = !on) {
+        tl.set(qqq, { opacity: on ? 1 : 0 }, t);
+      }
+      tl.set(qqq, { opacity: 1 }, 9.6);
+
+      // ---- Scene 6 (7.89): cyan stamp slams 1.4 → 1 in 2 hard steps (stamp@7.89) ----
+      tl.set(stamp, { opacity: 1, scale: 1.4 }, 7.89);
+      tl.set(stamp, { scale: 1.2 }, 7.95);
+      tl.set(stamp, { scale: 1.0 }, 8.01);
+
+      // P1 sprites hop up into place under it — 2-step jump (jump@8.30)
+      function jump(el, t) {
+        tl.set(el, { opacity: 1, y: 30 }, t);
+        tl.set(el, { y: -30 }, t + 0.07);
+        tl.set(el, { y: 0 }, t + 0.15);
+        // 2-frame idle bob over the hold
+        tl.set(el, { y: -6 }, t + 0.55);
+        tl.set(el, { y: 0 }, t + 0.95);
+      }
+      jump(smari, 8.30);
+      jump(jakub, 8.36);
+
+      // HUD: 2UP "PRESS START" blinks across the frame (stepped, finite), ends visible
+      for (var b = 0.4, vis = false; b < 9.6; b += 0.4, vis = !vis) {
+        tl.set(press, { opacity: vis ? 1 : 0 }, b);
+      }
+      tl.set(press, { opacity: 1 }, 9.6);
+
+      tl.set({}, {}, 9.742);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["02-quest-select"] = tl;
+    })();
+  </script>
+</template>

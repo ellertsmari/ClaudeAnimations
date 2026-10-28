@@ -1,0 +1,248 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Jersey 10"; src: url('assets/fonts/Jersey10-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Press Start 2P"; src: url('assets/fonts/PressStart2P-Regular.ttf') format("truetype"); }
+    @font-face { font-family: "Silkscreen"; src: url('assets/fonts/Silkscreen-Regular.ttf') format("truetype"); }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #F4F1FF;
+    }
+    #root p { margin: 0; position: absolute; white-space: nowrap; }
+    #root svg { position: absolute; display: block; overflow: visible; }
+
+    [class~="03-player-one-bg"] {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle, #2C2560 3.456px, transparent 3.84px) 0 0 / 134.4px 134.4px,
+        radial-gradient(circle, #3a3270 2.688px, transparent 3.072px) 67.2px 44.16px / 211.2px 172.8px,
+        #14112B;
+    }
+    [class~="03-player-one-hud"] {
+      position: absolute; top: 0; left: 0; right: 0; height: 80.64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 57.6px; box-sizing: border-box;
+      font-family: "Press Start 2P", monospace; font-size: 19.2px; letter-spacing: 0.04em;
+      color: #F4F1FF; border-bottom: 6px solid #2C2560; background: rgba(10,8,24,.35);
+      z-index: 5;
+    }
+    [class~="03-player-one-hud"] b { font-weight: 400; }
+    [class~="03-player-one-crt"] {
+      position: absolute; inset: 0; z-index: 20; pointer-events: none;
+      background:
+        repeating-linear-gradient(0deg, rgba(10,8,24,.24) 0 3.072px, transparent 3.072px 6.528px),
+        radial-gradient(ellipse at center, transparent 58%, rgba(10,8,24,.65) 100%);
+    }
+    [class~="03-player-one-panel"] {
+      position: absolute; background: #1E1940;
+      box-shadow:
+        0 -6px 0 0 #F4F1FF, 0 6px 0 0 #F4F1FF,
+        -6px 0 0 0 #F4F1FF, 6px 0 0 0 #F4F1FF,
+        15px 15px 0 6px #0A0818;
+    }
+    [class~="03-player-one-arcade"] { font-family: "Press Start 2P", monospace; line-height: 1.15; letter-spacing: 0.04em; }
+    [class~="03-player-one-is"] { font-family: "Jersey 10", sans-serif; line-height: .95; }
+    [class~="03-player-one-lbl"] { font-family: "Silkscreen", monospace; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; }
+    [class~="03-player-one-wrap"] { position: absolute; inset: 0; }
+  </style>
+
+  <div data-hf-id="hf-bdgp" id="root" data-composition-id="03-player-one" data-width="1920" data-height="1080">
+
+    <!-- pixel sprites (from storyboard.html defs) -->
+    <svg data-hf-id="hf-8h6w" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs data-hf-id="hf-mh0t">
+        <symbol data-hf-id="hf-vd9a" id="03-player-one-hero" viewBox="0 0 12 16" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-50dh" x="3" y="0" width="6" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-9oat" x="2" y="1" width="1" height="3" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-r2w5" x="9" y="1" width="1" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-yqhe" x="3" y="2" width="6" height="4" fill="#f2c29b" />
+          <rect data-hf-id="hf-gw56" x="4" y="3" width="1" height="1" fill="#0A0818" /><rect data-hf-id="hf-rwnd" x="7" y="3" width="1" height="1" fill="#0A0818" />
+          <rect data-hf-id="hf-7x80" x="5" y="5" width="2" height="1" fill="#c9876a" />
+          <rect data-hf-id="hf-h3wf" x="2" y="6" width="8" height="5" fill="currentColor" />
+          <rect data-hf-id="hf-3435" x="1" y="7" width="1" height="3" fill="#f2c29b" /><rect data-hf-id="hf-rdc1" x="10" y="7" width="1" height="3" fill="#f2c29b" />
+          <rect data-hf-id="hf-3v50" x="3" y="11" width="2" height="4" fill="#2C2560" /><rect data-hf-id="hf-nl14" x="7" y="11" width="2" height="4" fill="#2C2560" />
+          <rect data-hf-id="hf-9p11" x="2" y="15" width="3" height="1" fill="#0A0818" /><rect data-hf-id="hf-s9ti" x="7" y="15" width="3" height="1" fill="#0A0818" />
+        </symbol>
+        <symbol data-hf-id="hf-16r1" id="03-player-one-check" viewBox="0 0 8 7" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-jm34" x="6" y="0" width="2" height="2" fill="currentColor" /><rect data-hf-id="hf-w3b6" x="5" y="2" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-v4me" x="4" y="3" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-sd4y" x="0" y="3" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-7nyo" x="1" y="4" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-ts6e" x="3" y="4" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-5jr5" x="2" y="5" width="2" height="2" fill="currentColor" />
+        </symbol>
+        <symbol data-hf-id="hf-bk6e" id="03-player-one-cross" viewBox="0 0 7 7" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-of0x" x="0" y="0" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-p5xk" x="5" y="0" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-vtml" x="1" y="1" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-qeuk" x="4" y="1" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-qnau" x="2" y="2" width="3" height="3" fill="currentColor" />
+          <rect data-hf-id="hf-8fmh" x="1" y="5" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-58g8" x="4" y="5" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-jp93" x="0" y="6" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-h9pi" x="5" y="6" width="2" height="1" fill="currentColor" />
+        </symbol>
+        <symbol data-hf-id="hf-deh7" id="03-player-one-win" viewBox="0 0 10 8" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-3df4" x="0" y="0" width="10" height="8" fill="#2C2560" /><rect data-hf-id="hf-hfdt" x="0" y="0" width="10" height="2" fill="currentColor" />
+          <rect data-hf-id="hf-ymj7" x="1" y="3" width="3" height="4" fill="#A9A3D9" /><rect data-hf-id="hf-2rv1" x="5" y="3" width="4" height="1" fill="#A9A3D9" /><rect data-hf-id="hf-2tys" x="5" y="5" width="3" height="1" fill="#A9A3D9" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- background: night ground + starfield (full-duration clip, lowest track) -->
+    <div data-hf-id="hf-sq3b" class="clip 03-player-one-bg" data-start="0" data-duration="7.655" data-track-index="0"></div>
+
+    <!-- HUD -->
+    <div data-hf-id="hf-18t0" class="03-player-one-hud">
+      <span data-hf-id="hf-0etj"><b data-hf-id="hf-e3ae" style="color:#3FE0D0">1UP</b> 004200</span>
+      <span data-hf-id="hf-5zal" style="color:#FFE14D">HI-SCORE 099999</span>
+      <span data-hf-id="hf-uckh"><b data-hf-id="hf-7jgr" style="color:#FF4F8B">2UP</b> <span data-hf-id="hf-gcav" id="03-player-one-press">PRESS START</span></span>
+    </div>
+
+    <!-- LEFT: Player 1 -->
+    <p data-hf-id="hf-2hlg" id="03-player-one-title" class="03-player-one-arcade" style="left:134.4px;top:145.92px;font-size:42.24px;color:#3FE0D0">PLAYER 1</p>
+
+    <div data-hf-id="hf-ysgx" id="03-player-one-pedestal" style="position:absolute;left:134.4px;top:518.4px;width:576px;height:24px;background:#2C2560;transform-origin:0 50%"></div>
+
+    <div data-hf-id="hf-mb1d" id="03-player-one-s1" style="position:absolute;left:172.8px;top:249.6px;width:192px;height:256px">
+      <svg data-hf-id="hf-et0s" id="03-player-one-s1-b" class="03-player-one-spr" style="left:0;top:0;width:192px;height:256px;color:#3FE0D0" viewBox="0 0 12 16" shape-rendering="crispEdges"><use data-hf-id="hf-0ryp" href="#03-player-one-hero" /></svg>
+    </div>
+    <div data-hf-id="hf-jauu" id="03-player-one-s2" style="position:absolute;left:480px;top:249.6px;width:192px;height:256px">
+      <svg data-hf-id="hf-m7eu" id="03-player-one-s2-b" class="03-player-one-spr" style="left:0;top:0;width:192px;height:256px;color:#3FE0D0;--hair:#8a5a2b" viewBox="0 0 12 16" shape-rendering="crispEdges"><use data-hf-id="hf-f4lh" href="#03-player-one-hero" /></svg>
+    </div>
+
+    <p data-hf-id="hf-gpz1" id="03-player-one-n1" class="03-player-one-lbl" style="left:165.12px;top:576px;font-size:42.24px;color:#3FE0D0">Smári</p>
+    <p data-hf-id="hf-qc48" id="03-player-one-n2" class="03-player-one-lbl" style="left:472.32px;top:576px;font-size:42.24px;color:#3FE0D0">Jakub</p>
+    <p data-hf-id="hf-7cst" id="03-player-one-sub" class="03-player-one-is" style="left:165.12px;top:652.8px;font-size:49.92px;color:#A9A3D9">Vefþróun · Vefskólinn</p>
+
+    <!-- RIGHT: unlock panel -->
+    <div data-hf-id="hf-q3mp" id="03-player-one-panel" class="03-player-one-panel" style="left:902.4px;top:161.28px;width:883.2px;height:664.32px"></div>
+    <p data-hf-id="hf-dqe7" id="03-player-one-ptitle" class="03-player-one-lbl" style="left:960px;top:211.2px;font-size:34.56px;color:#FFE14D">Hlutir opnaðir</p>
+
+    <div data-hf-id="hf-7eob" id="03-player-one-row1" class="03-player-one-wrap">
+      <svg data-hf-id="hf-u71d" style="left:960px;top:307.2px;width:88.32px;height:71.04px;color:#7CFF6B" viewBox="0 0 10 8" shape-rendering="crispEdges"><use data-hf-id="hf-hbl1" href="#03-player-one-win" /></svg>
+      <p data-hf-id="hf-bekw" class="03-player-one-is" style="left:1084.8px;top:303.36px;font-size:72.96px;color:#F4F1FF">Kennslukerfi #1</p>
+    </div>
+    <svg data-hf-id="hf-gy17" id="03-player-one-ck1" style="left:1651.2px;top:318.72px;width:57.6px;height:49.92px;color:#7CFF6B" viewBox="0 0 8 7" shape-rendering="crispEdges"><use data-hf-id="hf-0x43" href="#03-player-one-check" /></svg>
+
+    <div data-hf-id="hf-yqsg" id="03-player-one-row2" class="03-player-one-wrap">
+      <svg data-hf-id="hf-vg14" style="left:960px;top:430.08px;width:88.32px;height:71.04px;color:#7CFF6B" viewBox="0 0 10 8" shape-rendering="crispEdges"><use data-hf-id="hf-ddfd" href="#03-player-one-win" /></svg>
+      <p data-hf-id="hf-7n3q" class="03-player-one-is" style="left:1084.8px;top:426.24px;font-size:72.96px;color:#F4F1FF">Kennslukerfi #2</p>
+    </div>
+    <svg data-hf-id="hf-yxby" id="03-player-one-ck2" style="left:1651.2px;top:441.6px;width:57.6px;height:49.92px;color:#7CFF6B" viewBox="0 0 8 7" shape-rendering="crispEdges"><use data-hf-id="hf-0skj" href="#03-player-one-check" /></svg>
+
+    <div data-hf-id="hf-60vk" id="03-player-one-divider" style="position:absolute;left:960px;top:564.48px;width:768px;height:0;border-top:6px dashed #2C2560;transform-origin:0 50%"></div>
+
+    <div data-hf-id="hf-dcpy" id="03-player-one-canvas" class="03-player-one-wrap">
+      <svg data-hf-id="hf-rmzq" style="left:960px;top:606.72px;width:88.32px;height:71.04px;color:#5d578c" viewBox="0 0 10 8" shape-rendering="crispEdges"><use data-hf-id="hf-ekcg" href="#03-player-one-win" /></svg>
+      <p data-hf-id="hf-uu4s" class="03-player-one-is" style="left:1084.8px;top:602.88px;font-size:72.96px;color:#A9A3D9">Canvas</p>
+    </div>
+    <svg data-hf-id="hf-04ua" id="03-player-one-x" style="left:1639.68px;top:602.88px;width:76.8px;height:76.8px;color:#FF4F8B" viewBox="0 0 7 7" shape-rendering="crispEdges"><use data-hf-id="hf-fwvj" href="#03-player-one-cross" /></svg>
+    <p data-hf-id="hf-8z3t" id="03-player-one-note" class="03-player-one-is" style="left:1084.8px;top:698.88px;font-size:46.08px;color:#A9A3D9">gerði ekki það sem við þurftum</p>
+
+    <!-- CRT veil: topmost -->
+    <div data-hf-id="hf-xhd2" class="03-player-one-crt"></div>
+  </div>
+
+  <script>
+    (function () {
+      var $ = function (n) { return document.getElementById("03-player-one-" + n); };
+
+      // split typed lines into per-character spans (synchronous, deterministic)
+      var chars = {};
+      ["title", "n1", "n2", "ptitle"].forEach(function (k) {
+        var el = $(k);
+        var txt = el.textContent;
+        el.textContent = "";
+        chars[k] = [];
+        for (var i = 0; i < txt.length; i++) {
+          var s = document.createElement("span");
+          s.textContent = txt[i];
+          el.appendChild(s);
+          chars[k].push(s);
+        }
+      });
+
+      var tl = gsap.timeline({ paused: true });
+
+      function type(k, start, step) {
+        chars[k].forEach(function (s, i) {
+          tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: 0.001 }, start + i * step);
+        });
+      }
+      function show(el, t) {
+        tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.001 }, t);
+      }
+
+      // ---- Scene 1 (0.00–0.70): PLAYER 1 types, pedestal bar steps in
+      type("title", 0.05, 0.065);
+      tl.fromTo($("pedestal"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "steps(5)" }, 0.12);
+
+      // ---- Scene 2 (0.70–2.60): sprites drop onto the pedestal in 3 steps
+      // Smári — jump@0.70
+      show($("s1"), 0.70);
+      tl.fromTo($("s1"), { y: -72 }, { y: 0, duration: 0.24, ease: "steps(3)", immediateRender: true }, 0.70);
+      type("n1", 0.80, 0.05);
+      // Jakub — jump@1.27
+      show($("s2"), 1.27);
+      tl.fromTo($("s2"), { y: -72 }, { y: 0, duration: 0.24, ease: "steps(3)", immediateRender: true }, 1.27);
+      type("n2", 1.37, 0.05);
+      // Vefþróun · Vefskólinn steps in at 1.8
+      show($("sub"), 1.80);
+      tl.fromTo($("sub"), { y: 12 }, { y: 0, duration: 0.16, ease: "steps(2)" }, 1.80);
+      // one 2-frame idle bob each, phase-offset (finite)
+      tl.set($("s1-b"), { y: -6 }, 1.62);
+      tl.set($("s1-b"), { y: 0 }, 1.92);
+      tl.set($("s2-b"), { y: -6 }, 2.10);
+      tl.set($("s2-b"), { y: 0 }, 2.40);
+
+      // ---- Scene 3 (2.60–5.00): unlock panel opens — menu-open@2.62
+      show($("panel"), 2.62);
+      tl.fromTo($("panel"), { scaleX: 0.2, scaleY: 0.08 }, { scaleX: 1, scaleY: 1, duration: 0.24, ease: "steps(4)" }, 2.62);
+      type("ptitle", 2.90, 0.04);
+      // row 1 — unlock@3.75 (green tick badge-pop, 2-step overshoot)
+      show($("row1"), 3.75);
+      tl.fromTo($("row1"), { x: -18 }, { x: 0, duration: 0.18, ease: "steps(3)" }, 3.75);
+      tl.fromTo($("ck1"), { opacity: 0, scale: 0 }, { opacity: 1, scale: 1.4, duration: 0.001 }, 3.75);
+      tl.to($("ck1"), { scale: 1, duration: 0.001 }, 3.83);
+      // row 2 — unlock@4.20
+      show($("row2"), 4.20);
+      tl.fromTo($("row2"), { x: -18 }, { x: 0, duration: 0.18, ease: "steps(3)" }, 4.20);
+      tl.fromTo($("ck2"), { opacity: 0, scale: 0 }, { opacity: 1, scale: 1.4, duration: 0.001 }, 4.20);
+      tl.to($("ck2"), { scale: 1, duration: 0.001 }, 4.28);
+
+      // ---- Scene 4 (5.00–7.66): Canvas row on "Canvas" (5.02)
+      tl.fromTo($("divider"), { scaleX: 0 }, { scaleX: 1, duration: 0.16, ease: "steps(4)" }, 5.02);
+      show($("canvas"), 5.02);
+      tl.fromTo($("canvas"), { y: 12 }, { y: 0, duration: 0.16, ease: "steps(2)" }, 5.02);
+      // pink ✕ stamps on "ekki" — buzz@5.77
+      tl.fromTo($("x"), { opacity: 0, scale: 1.8 }, { opacity: 1, scale: 1.8, duration: 0.001 }, 5.77);
+      tl.to($("x"), { scale: 1.25, duration: 0.001 }, 5.83);
+      tl.to($("x"), { scale: 1, duration: 0.001 }, 5.89);
+      // Canvas row knocked by the stamp (finite stepped shake)
+      tl.set($("canvas"), { x: 6 }, 5.77);
+      tl.set($("canvas"), { x: -6 }, 5.83);
+      tl.set($("canvas"), { x: 6 }, 5.89);
+      tl.set($("canvas"), { x: 0 }, 5.95);
+      // small line steps in
+      show($("note"), 5.85);
+      tl.fromTo($("note"), { y: 12 }, { y: 0, duration: 0.16, ease: "steps(2)" }, 5.85);
+      // hold — subtle phase-opposed idle on the focal sprites only
+      tl.set($("s1-b"), { y: -6 }, 6.50);
+      tl.set($("s1-b"), { y: 0 }, 6.80);
+      tl.set($("s2-b"), { y: -6 }, 6.95);
+      tl.set($("s2-b"), { y: 0 }, 7.25);
+
+      // HUD: 2UP "PRESS START" blinks ~2 Hz across the frame (finite stepped sets)
+      for (var t = 0.25; t < 7.6; t += 0.5) {
+        tl.set($("press"), { opacity: 0 }, t);
+        tl.set($("press"), { opacity: 1 }, t + 0.25);
+      }
+
+      // pin the timeline to the frame's exact duration
+      tl.set({}, {}, 7.655);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["03-player-one"] = tl;
+    })();
+  </script>
+</template>

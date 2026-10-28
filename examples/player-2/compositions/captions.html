@@ -1,0 +1,139 @@
+<template id="captions-template" data-composition-id="captions" data-width="1920" data-height="1080">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+<style data-brand-tokens="">
+      @font-face { font-family: 'Jersey 10'; src: url('assets/fonts/Jersey10-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: block; }
+      :root {
+      --night: #14112B;
+      --night-2: #1E1940;
+      --night-3: #2C2560;
+      --ink: #F4F1FF;
+      --ink-dim: #A9A3D9;
+      --coin: #FFE14D;
+      --p1: #3FE0D0;
+      --p2: #FF4F8B;
+      --xp: #7CFF6B;
+      --shadow: #0A0818;
+      --scanline: rgba(10,8,24,0.22);
+      --cap-ink: #F4F1FF;
+      --cap-canvas: #F4F1FF;
+      --cap-accent: #FFE14D;
+      --cap-accent-2: #FF4F8B;
+      --font-display: "Jersey 10", system-ui, serif;
+      --font-body: "Jersey 10", system-ui, sans-serif;
+      --cap-band-top: 900px;
+      --cap-band-height: 180px;
+      }
+    </style>
+
+<style>
+  #captions-root { position: absolute; inset: 0; pointer-events: none; }
+  .caption-layer { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
+  .caption-stage {
+    position: absolute; left: 0; right: 0;
+    top: var(--cap-band-top, 900px);
+    height: var(--cap-band-height, 180px);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .caption-group {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+  }
+  .caption-pill {
+    max-width: 78%;
+    padding: 10px 34px 14px;
+    background: var(--night-2, #1E1940);
+    box-shadow:
+      0 -6px 0 0 var(--ink, #F4F1FF), 0 6px 0 0 var(--ink, #F4F1FF),
+      -6px 0 0 0 var(--ink, #F4F1FF), 6px 0 0 0 var(--ink, #F4F1FF),
+      15px 15px 0 6px var(--shadow, #0A0818);
+  }
+  .caption-line {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 0.06em 0.3em;
+    font-family: "Jersey 10", system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 62px;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+  }
+  .caption-word { display: inline-block; color: var(--ink-dim, #A9A3D9); }
+  .caption-word.is-active { color: var(--coin, #FFE14D); }
+  .caption-word.is-spoken { color: var(--ink, #F4F1FF); }
+</style>
+
+<div data-hf-id="hf-3e1a" id="captions-root" data-composition-id="captions" data-timeline-locked="" data-start="0" data-duration="80.743" data-fps="30" data-width="1920" data-height="1080">
+  <div data-hf-id="hf-9flp" class="caption-layer" aria-hidden="true">
+    <div data-hf-id="hf-ajrg" id="caption-stage" class="caption-stage"></div>
+  </div>
+</div>
+
+<script>
+  var GROUPS = [{"id":"caption-group-0","frame":2,"start":4.91,"end":5.36,"text":"Leik fyrir","words":[{"id":"caption-word-0-0","text":"Leik","start":4.91,"end":5.123},{"id":"caption-word-0-1","text":"fyrir","start":5.172,"end":5.36}]},{"id":"caption-group-1","frame":2,"start":5.36,"end":6.242,"text":"nemendurna þína","words":[{"id":"caption-word-1-0","text":"nemendurna","start":5.36,"end":5.847},{"id":"caption-word-1-1","text":"þína","start":5.847,"end":6.122}]},{"id":"caption-group-2","frame":2,"start":7.072,"end":7.597,"text":"Nýja leið","words":[{"id":"caption-word-2-0","text":"Nýja","start":7.072,"end":7.36},{"id":"caption-word-2-1","text":"leið","start":7.385,"end":7.597}]},{"id":"caption-group-3","frame":2,"start":7.597,"end":7.81,"text":"til að","words":[{"id":"caption-word-3-0","text":"til","start":7.597,"end":7.76},{"id":"caption-word-3-1","text":"að","start":7.76,"end":7.81}]},{"id":"caption-group-4","frame":2,"start":7.81,"end":8.668,"text":"meta verkefni","words":[{"id":"caption-word-4-0","text":"meta","start":7.81,"end":8.097},{"id":"caption-word-4-1","text":"verkefni","start":8.097,"end":8.548}]},{"id":"caption-group-5","frame":2,"start":9.46,"end":9.985,"text":"Eða eitthvað","words":[{"id":"caption-word-5-0","text":"Eða","start":9.46,"end":9.697},{"id":"caption-word-5-1","text":"eitthvað","start":9.71,"end":9.985}]},{"id":"caption-group-6","frame":2,"start":9.985,"end":10.497,"text":"sem enginn","words":[{"id":"caption-word-6-0","text":"sem","start":9.985,"end":10.135},{"id":"caption-word-6-1","text":"enginn","start":10.16,"end":10.498}]},{"id":"caption-group-7","frame":2,"start":10.497,"end":11.442,"text":"hefur gert áður","words":[{"id":"caption-word-7-0","text":"hefur","start":10.497,"end":10.71},{"id":"caption-word-7-1","text":"gert","start":10.71,"end":10.972},{"id":"caption-word-7-2","text":"áður","start":10.997,"end":11.322}]},{"id":"caption-group-8","frame":2,"start":12.26,"end":12.823,"text":"Við smíðum","words":[{"id":"caption-word-8-0","text":"Við","start":12.26,"end":12.41},{"id":"caption-word-8-1","text":"smíðum","start":12.422,"end":12.81}]},{"id":"caption-group-9","frame":2,"start":12.823,"end":13.543,"text":"það með þér","words":[{"id":"caption-word-9-0","text":"það","start":12.823,"end":13.022},{"id":"caption-word-9-1","text":"með","start":13.022,"end":13.173},{"id":"caption-word-9-2","text":"þér","start":13.173,"end":13.423}]},{"id":"caption-group-10","frame":3,"start":14.652,"end":14.977,"text":"Við erum","words":[{"id":"caption-word-10-0","text":"Við","start":14.652,"end":14.777},{"id":"caption-word-10-1","text":"erum","start":14.802,"end":14.965}]},{"id":"caption-group-11","frame":3,"start":14.977,"end":16.122,"text":"Smári og Jakub","words":[{"id":"caption-word-11-0","text":"Smári","start":14.977,"end":15.402},{"id":"caption-word-11-1","text":"og","start":15.427,"end":15.527},{"id":"caption-word-11-2","text":"Jakub","start":15.539,"end":16.002}]},{"id":"caption-group-12","frame":3,"start":16.889,"end":17.464,"text":"Við smíðuðum","words":[{"id":"caption-word-12-0","text":"Við","start":16.889,"end":17.027},{"id":"caption-word-12-1","text":"smíðuðum","start":17.04,"end":17.464}]},{"id":"caption-group-13","frame":3,"start":17.464,"end":18.839,"text":"okkar eigin kennslukerfi","words":[{"id":"caption-word-13-0","text":"okkar","start":17.464,"end":17.739},{"id":"caption-word-13-1","text":"eigin","start":17.739,"end":18.014},{"id":"caption-word-13-2","text":"kennslukerfi","start":18.027,"end":18.727}]},{"id":"caption-group-14","frame":3,"start":18.839,"end":19.227,"text":"af því","words":[{"id":"caption-word-14-0","text":"af","start":18.839,"end":19.077},{"id":"caption-word-14-1","text":"því","start":19.077,"end":19.227}]},{"id":"caption-group-15","frame":3,"start":19.227,"end":19.752,"text":"að Canvas","words":[{"id":"caption-word-15-0","text":"að","start":19.227,"end":19.29},{"id":"caption-word-15-1","text":"Canvas","start":19.29,"end":19.74}]},{"id":"caption-group-16","frame":3,"start":19.752,"end":20.314,"text":"gerði ekki","words":[{"id":"caption-word-16-0","text":"gerði","start":19.752,"end":20.027},{"id":"caption-word-16-1","text":"ekki","start":20.04,"end":20.302}]},{"id":"caption-group-17","frame":3,"start":20.314,"end":20.702,"text":"það sem","words":[{"id":"caption-word-17-0","text":"það","start":20.314,"end":20.514},{"id":"caption-word-17-1","text":"sem","start":20.514,"end":20.677}]},{"id":"caption-group-18","frame":3,"start":20.702,"end":21.297,"text":"við þurftum","words":[{"id":"caption-word-18-0","text":"við","start":20.702,"end":20.777},{"id":"caption-word-18-1","text":"þurftum","start":20.777,"end":21.177}]},{"id":"caption-group-19","frame":4,"start":22.307,"end":22.869,"text":"Nú vantar","words":[{"id":"caption-word-19-0","text":"Nú","start":22.307,"end":22.507},{"id":"caption-word-19-1","text":"vantar","start":22.544,"end":22.87}]},{"id":"caption-group-20","frame":4,"start":22.869,"end":23.495,"text":"okkur leikmann","words":[{"id":"caption-word-20-0","text":"okkur","start":22.869,"end":23.082},{"id":"caption-word-20-1","text":"leikmann","start":23.082,"end":23.495}]},{"id":"caption-group-21","frame":4,"start":23.495,"end":24.707,"text":"númer tvö kennara","words":[{"id":"caption-word-21-0","text":"númer","start":23.495,"end":23.782},{"id":"caption-word-21-1","text":"tvö","start":23.782,"end":24.044},{"id":"caption-word-21-2","text":"kennara","start":24.195,"end":24.707}]},{"id":"caption-group-22","frame":4,"start":24.707,"end":25.057,"text":"sem vill","words":[{"id":"caption-word-22-0","text":"sem","start":24.707,"end":24.882},{"id":"caption-word-22-1","text":"vill","start":24.894,"end":25.057}]},{"id":"caption-group-23","frame":4,"start":25.057,"end":25.644,"text":"smíða sinn","words":[{"id":"caption-word-23-0","text":"smíða","start":25.057,"end":25.394},{"id":"caption-word-23-1","text":"sinn","start":25.394,"end":25.607}]},{"id":"caption-group-24","frame":4,"start":25.644,"end":26.77,"text":"eigin hugbúnað með","words":[{"id":"caption-word-24-0","text":"eigin","start":25.644,"end":25.919},{"id":"caption-word-24-1","text":"hugbúnað","start":25.932,"end":26.47},{"id":"caption-word-24-2","text":"með","start":26.545,"end":26.77}]},{"id":"caption-group-25","frame":4,"start":26.77,"end":28.015,"text":"okkur og gervigreindinni","words":[{"id":"caption-word-25-0","text":"okkur","start":26.77,"end":27.07},{"id":"caption-word-25-1","text":"og","start":27.095,"end":27.195},{"id":"caption-word-25-2","text":"gervigreindinni","start":27.195,"end":27.895}]},{"id":"caption-group-26","frame":5,"start":29.424,"end":30.769,"text":"Fyrsta borð hugmyndin","words":[{"id":"caption-word-26-0","text":"Fyrsta","start":29.424,"end":29.724},{"id":"caption-word-26-1","text":"borð","start":29.749,"end":30.061},{"id":"caption-word-26-2","text":"hugmyndin","start":30.099,"end":30.649}]},{"id":"caption-group-27","frame":5,"start":31.562,"end":32.024,"text":"Þú segir","words":[{"id":"caption-word-27-0","text":"Þú","start":31.562,"end":31.724},{"id":"caption-word-27-1","text":"segir","start":31.737,"end":32.024}]},{"id":"caption-group-28","frame":5,"start":32.024,"end":32.449,"text":"okkur hvað","words":[{"id":"caption-word-28-0","text":"okkur","start":32.024,"end":32.249},{"id":"caption-word-28-1","text":"hvað","start":32.249,"end":32.449}]},{"id":"caption-group-29","frame":5,"start":32.449,"end":33.061,"text":"þig vantar","words":[{"id":"caption-word-29-0","text":"þig","start":32.449,"end":32.587},{"id":"caption-word-29-1","text":"vantar","start":32.587,"end":32.986}]},{"id":"caption-group-30","frame":5,"start":33.061,"end":33.361,"text":"og við","words":[{"id":"caption-word-30-0","text":"og","start":33.061,"end":33.224},{"id":"caption-word-30-1","text":"við","start":33.224,"end":33.361}]},{"id":"caption-group-31","frame":5,"start":33.361,"end":34.369,"text":"hönnum það saman","words":[{"id":"caption-word-31-0","text":"hönnum","start":33.361,"end":33.674},{"id":"caption-word-31-1","text":"það","start":33.686,"end":33.849},{"id":"caption-word-31-2","text":"saman","start":33.849,"end":34.249}]},{"id":"caption-group-32","frame":6,"start":35.579,"end":36.824,"text":"Annað borð saman","words":[{"id":"caption-word-32-0","text":"Annað","start":35.579,"end":35.816},{"id":"caption-word-32-1","text":"borð","start":35.829,"end":36.154},{"id":"caption-word-32-2","text":"saman","start":36.229,"end":36.704}]},{"id":"caption-group-33","frame":6,"start":37.616,"end":38.141,"text":"Við smíðum","words":[{"id":"caption-word-33-0","text":"Við","start":37.616,"end":37.766},{"id":"caption-word-33-1","text":"smíðum","start":37.779,"end":38.141}]},{"id":"caption-group-34","frame":6,"start":38.141,"end":39.254,"text":"fyrstu útgáfuna og","words":[{"id":"caption-word-34-0","text":"fyrstu","start":38.141,"end":38.454},{"id":"caption-word-34-1","text":"útgáfuna","start":38.466,"end":39.016},{"id":"caption-word-34-2","text":"og","start":39.116,"end":39.254}]},{"id":"caption-group-35","frame":6,"start":39.254,"end":39.804,"text":"þú prófar","words":[{"id":"caption-word-35-0","text":"þú","start":39.254,"end":39.379},{"id":"caption-word-35-1","text":"prófar","start":39.404,"end":39.804}]},{"id":"caption-group-36","frame":6,"start":39.804,"end":40.129,"text":"hana með","words":[{"id":"caption-word-36-0","text":"hana","start":39.804,"end":39.992},{"id":"caption-word-36-1","text":"með","start":40.004,"end":40.129}]},{"id":"caption-group-37","frame":6,"start":40.129,"end":41.037,"text":"nemendunum þínum","words":[{"id":"caption-word-37-0","text":"nemendunum","start":40.129,"end":40.629},{"id":"caption-word-37-1","text":"þínum","start":40.641,"end":40.917}]},{"id":"caption-group-38","frame":7,"start":42.247,"end":43.259,"text":"Þriðja borð þú","words":[{"id":"caption-word-38-0","text":"Þriðja","start":42.247,"end":42.634},{"id":"caption-word-38-1","text":"borð","start":42.647,"end":42.972},{"id":"caption-word-38-2","text":"þú","start":43.009,"end":43.234}]},{"id":"caption-group-39","frame":7,"start":43.259,"end":43.904,"text":"við stýrið","words":[{"id":"caption-word-39-0","text":"við","start":43.259,"end":43.335},{"id":"caption-word-39-1","text":"stýrið","start":43.335,"end":43.784}]},{"id":"caption-group-40","frame":7,"start":44.672,"end":45.859,"text":"Þú lætur gervigreindina","words":[{"id":"caption-word-40-0","text":"Þú","start":44.672,"end":44.835},{"id":"caption-word-40-1","text":"lætur","start":44.859,"end":45.185},{"id":"caption-word-40-2","text":"gervigreindina","start":45.185,"end":45.847}]},{"id":"caption-group-41","frame":7,"start":45.859,"end":46.46,"text":"breyta honum","words":[{"id":"caption-word-41-0","text":"breyta","start":45.859,"end":46.172},{"id":"caption-word-41-1","text":"honum","start":46.172,"end":46.447}]},{"id":"caption-group-42","frame":7,"start":46.46,"end":47.047,"text":"og bæta","words":[{"id":"caption-word-42-0","text":"og","start":46.46,"end":46.547},{"id":"caption-word-42-1","text":"bæta","start":46.547,"end":46.935}]},{"id":"caption-group-43","frame":7,"start":47.047,"end":47.634,"text":"alveg eftir","words":[{"id":"caption-word-43-0","text":"alveg","start":47.047,"end":47.385},{"id":"caption-word-43-1","text":"eftir","start":47.384,"end":47.634}]},{"id":"caption-group-44","frame":7,"start":47.634,"end":48.292,"text":"þínu höfði","words":[{"id":"caption-word-44-0","text":"þínu","start":47.634,"end":47.872},{"id":"caption-word-44-1","text":"höfði","start":47.872,"end":48.172}]},{"id":"caption-group-45","frame":8,"start":49.902,"end":50.572,"text":"Verðlaunin","words":[{"id":"caption-word-45-0","text":"Verðlaunin","start":49.902,"end":50.452}]},{"id":"caption-group-46","frame":8,"start":51.377,"end":52.44,"text":"Hugbúnaður sniðinn að","words":[{"id":"caption-word-46-0","text":"Hugbúnaður","start":51.377,"end":51.952},{"id":"caption-word-46-1","text":"sniðinn","start":51.952,"end":52.352},{"id":"caption-word-46-2","text":"að","start":52.352,"end":52.44}]},{"id":"caption-group-47","frame":8,"start":52.44,"end":53.185,"text":"þínum hópi","words":[{"id":"caption-word-47-0","text":"þínum","start":52.44,"end":52.739},{"id":"caption-word-47-1","text":"hópi","start":52.739,"end":53.065}]},{"id":"caption-group-48","frame":8,"start":53.19,"end":54.009,"text":"sem þú átt","words":[{"id":"caption-word-48-0","text":"sem","start":53.19,"end":53.402},{"id":"caption-word-48-1","text":"þú","start":53.415,"end":53.54},{"id":"caption-word-48-2","text":"átt","start":53.602,"end":53.889}]},{"id":"caption-group-49","frame":8,"start":54.802,"end":55.302,"text":"Og færni","words":[{"id":"caption-word-49-0","text":"Og","start":54.802,"end":54.927},{"id":"caption-word-49-1","text":"færni","start":54.939,"end":55.302}]},{"id":"caption-group-50","frame":8,"start":55.302,"end":55.827,"text":"sem fáir","words":[{"id":"caption-word-50-0","text":"sem","start":55.302,"end":55.477},{"id":"caption-word-50-1","text":"fáir","start":55.49,"end":55.827}]},{"id":"caption-group-51","frame":8,"start":55.827,"end":56.797,"text":"kennarar hafa enn","words":[{"id":"caption-word-51-0","text":"kennarar","start":55.827,"end":56.227},{"id":"caption-word-51-1","text":"hafa","start":56.227,"end":56.44},{"id":"caption-word-51-2","text":"enn","start":56.465,"end":56.677}]},{"id":"caption-group-52","frame":9,"start":57.907,"end":59.302,"text":"Þetta er starfendarannsókn","words":[{"id":"caption-word-52-0","text":"Þetta","start":57.907,"end":58.207},{"id":"caption-word-52-1","text":"er","start":58.219,"end":58.282},{"id":"caption-word-52-2","text":"starfendarannsókn","start":58.282,"end":59.182}]},{"id":"caption-group-53","frame":9,"start":59.994,"end":60.444,"text":"Við viljum","words":[{"id":"caption-word-53-0","text":"Við","start":59.994,"end":60.144},{"id":"caption-word-53-1","text":"viljum","start":60.157,"end":60.432}]},{"id":"caption-group-54","frame":9,"start":60.444,"end":61.044,"text":"vita hversu","words":[{"id":"caption-word-54-0","text":"vita","start":60.444,"end":60.757},{"id":"caption-word-54-1","text":"hversu","start":60.757,"end":61.045}]},{"id":"caption-group-55","frame":9,"start":61.044,"end":61.707,"text":"langt kennari","words":[{"id":"caption-word-55-0","text":"langt","start":61.044,"end":61.294},{"id":"caption-word-55-1","text":"kennari","start":61.307,"end":61.682}]},{"id":"caption-group-56","frame":9,"start":61.707,"end":62.832,"text":"kemst með gervigreind","words":[{"id":"caption-word-56-0","text":"kemst","start":61.707,"end":62.02},{"id":"caption-word-56-1","text":"með","start":62.02,"end":62.145},{"id":"caption-word-56-2","text":"gervigreind","start":62.145,"end":62.745}]},{"id":"caption-group-57","frame":9,"start":62.832,"end":63.207,"text":"og hvað","words":[{"id":"caption-word-57-0","text":"og","start":62.832,"end":63.02},{"id":"caption-word-57-1","text":"hvað","start":63.02,"end":63.207}]},{"id":"caption-group-58","frame":9,"start":63.207,"end":64.969,"text":"forritarar framtíðarinnar þurfa enn","words":[{"id":"caption-word-58-0","text":"forritarar","start":63.207,"end":63.77},{"id":"caption-word-58-1","text":"framtíðarinnar","start":63.77,"end":64.47},{"id":"caption-word-58-2","text":"þurfa","start":64.52,"end":64.782},{"id":"caption-word-58-3","text":"enn","start":64.807,"end":64.969}]},{"id":"caption-group-59","frame":9,"start":64.969,"end":65.49,"text":"að kunna","words":[{"id":"caption-word-59-0","text":"að","start":64.969,"end":65.045},{"id":"caption-word-59-1","text":"kunna","start":65.045,"end":65.37}]},{"id":"caption-group-60","frame":10,"start":66.7,"end":67.188,"text":"Og best","words":[{"id":"caption-word-60-0","text":"Og","start":66.7,"end":66.838},{"id":"caption-word-60-1","text":"best","start":66.85,"end":67.175}]},{"id":"caption-group-61","frame":10,"start":67.188,"end":67.387,"text":"er ef","words":[{"id":"caption-word-61-0","text":"er","start":67.188,"end":67.3},{"id":"caption-word-61-1","text":"ef","start":67.3,"end":67.387}]},{"id":"caption-group-62","frame":10,"start":67.387,"end":67.8,"text":"þú kannt","words":[{"id":"caption-word-62-0","text":"þú","start":67.387,"end":67.475},{"id":"caption-word-62-1","text":"kannt","start":67.488,"end":67.762}]},{"id":"caption-group-63","frame":10,"start":67.8,"end":68.25,"text":"alls ekki","words":[{"id":"caption-word-63-0","text":"alls","start":67.8,"end":68.037},{"id":"caption-word-63-1","text":"ekki","start":68.05,"end":68.25}]},{"id":"caption-group-64","frame":10,"start":68.25,"end":68.887,"text":"að forrita","words":[{"id":"caption-word-64-0","text":"að","start":68.25,"end":68.313},{"id":"caption-word-64-1","text":"forrita","start":68.313,"end":68.787}]},{"id":"caption-group-65","frame":10,"start":68.887,"end":69.362,"text":"en hefur","words":[{"id":"caption-word-65-0","text":"en","start":68.887,"end":69.175},{"id":"caption-word-65-1","text":"hefur","start":69.175,"end":69.362}]},{"id":"caption-group-66","frame":10,"start":69.362,"end":70.075,"text":"góða hugmynd","words":[{"id":"caption-word-66-0","text":"góða","start":69.362,"end":69.675},{"id":"caption-word-66-1","text":"hugmynd","start":69.675,"end":70.05}]},{"id":"caption-group-67","frame":10,"start":70.075,"end":70.387,"text":"um hvað","words":[{"id":"caption-word-67-0","text":"um","start":70.075,"end":70.162},{"id":"caption-word-67-1","text":"hvað","start":70.187,"end":70.388}]},{"id":"caption-group-68","frame":10,"start":70.387,"end":70.85,"text":"þig langar","words":[{"id":"caption-word-68-0","text":"þig","start":70.387,"end":70.512},{"id":"caption-word-68-1","text":"langar","start":70.525,"end":70.85}]},{"id":"caption-group-69","frame":10,"start":70.85,"end":71.483,"text":"til að gera","words":[{"id":"caption-word-69-0","text":"til","start":70.85,"end":71.013},{"id":"caption-word-69-1","text":"að","start":71.013,"end":71.05},{"id":"caption-word-69-2","text":"gera","start":71.05,"end":71.363}]},{"id":"caption-group-70","frame":11,"start":72.993,"end":73.713,"text":"Ertu til","words":[{"id":"caption-word-70-0","text":"Ertu","start":72.993,"end":73.231},{"id":"caption-word-70-1","text":"til","start":73.256,"end":73.593}]},{"id":"caption-group-71","frame":11,"start":74.518,"end":75.78,"text":"Svaraðu á padletinn","words":[{"id":"caption-word-71-0","text":"Svaraðu","start":74.518,"end":75.043},{"id":"caption-word-71-1","text":"á","start":75.043,"end":75.105},{"id":"caption-word-71-2","text":"padletinn","start":75.13,"end":75.705}]},{"id":"caption-group-72","frame":11,"start":75.78,"end":76.493,"text":"eða stoppaðu","words":[{"id":"caption-word-72-0","text":"eða","start":75.78,"end":76.03},{"id":"caption-word-72-1","text":"stoppaðu","start":76.03,"end":76.493}]},{"id":"caption-group-73","frame":11,"start":76.493,"end":77.413,"text":"okkur á ganginum","words":[{"id":"caption-word-73-0","text":"okkur","start":76.493,"end":76.755},{"id":"caption-word-73-1","text":"á","start":76.755,"end":76.818},{"id":"caption-word-73-2","text":"ganginum","start":76.831,"end":77.293}]}];
+  var DURATION = 80.743;
+
+  (function () {
+    var stage = document.getElementById("caption-stage");
+    GROUPS.forEach(function (group, g) {
+      var groupEl = document.createElement("div");
+      groupEl.className = "caption-group";
+      groupEl.id = "caption-group-" + g;
+      var pill = document.createElement("div");
+      pill.className = "caption-pill";
+      var line = document.createElement("div");
+      line.className = "caption-line";
+      (group.words || []).forEach(function (w, i) {
+        var span = document.createElement("span");
+        span.className = "caption-word";
+        span.id = "caption-word-" + g + "-" + i;
+        span.textContent = String(w.text);
+        line.appendChild(span);
+      });
+      pill.appendChild(line);
+      groupEl.appendChild(pill);
+      stage.appendChild(groupEl);
+    });
+
+    window.__timelines = window.__timelines || {};
+    var tl = gsap.timeline({ paused: true });
+
+    GROUPS.forEach(function (group, g) {
+      var groupEl = document.getElementById("caption-group-" + g);
+      var words = group.words || [];
+      var next = GROUPS[g + 1];
+      var isLast = g === GROUPS.length - 1;
+      var start = Math.max(0, Number(group.start));
+      var end = isLast ? Math.min(DURATION, Number(group.end) + 0.4) : Math.min(Number(next.start), Number(group.end) + 0.3);
+      if (end <= start) end = start + 0.01;
+
+      tl.set(groupEl, { opacity: 1 }, start);
+      tl.fromTo(groupEl, { y: 6 }, { y: 0, duration: 0.08, ease: "steps(2)" }, start);
+      tl.set(groupEl, { opacity: 0 }, end);
+
+      words.forEach(function (w, i) {
+        var el = document.getElementById("caption-word-" + g + "-" + i);
+        var at = Math.max(start, Number(w.start));
+        tl.set(el, { className: "caption-word" }, start);
+        tl.set(el, { className: "caption-word is-active" }, at);
+        if (i + 1 < words.length) {
+          var nextAt = Math.max(start, Number(words[i + 1].start));
+          tl.set(el, { className: "caption-word is-spoken" }, nextAt);
+        }
+      });
+      if (words.length) {
+        var lastEl = document.getElementById("caption-word-" + g + "-" + (words.length - 1));
+        var lastSpoken = Math.min(end, Number(words[words.length - 1].end) + 0.1);
+        tl.set(lastEl, { className: "caption-word is-spoken" }, lastSpoken);
+      }
+    });
+
+    tl.to({}, { duration: DURATION }, 0);
+    window.__timelines["captions"] = tl;
+  })();
+</script>
+
+<style>
+  .caption-line { line-height: 1.1 !important; }
+</style>
+</template>

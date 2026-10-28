@@ -1,0 +1,254 @@
+<template>
+  <div data-hf-id="hf-brrd" id="root" data-composition-id="06-level-two" data-start="0" data-duration="7.168" data-width="1920" data-height="1080">
+    <style>
+      @font-face { font-family: "Jersey 10"; src: url('assets/fonts/Jersey10-Regular.ttf') format("truetype"); }
+      @font-face { font-family: "Press Start 2P"; src: url('assets/fonts/PressStart2P-Regular.ttf') format("truetype"); }
+      @font-face { font-family: "Silkscreen"; src: url('assets/fonts/Silkscreen-Regular.ttf') format("truetype"); }
+
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; color: #F4F1FF; }
+      #root * { box-sizing: border-box; }
+      #root > * { position: absolute; margin: 0; }
+
+      .\30 6-level-two-bg {
+        inset: 0; background-color: #14112B;
+        background-image:
+          radial-gradient(circle, #2C2560 3.46px, transparent 3.84px),
+          radial-gradient(circle, #3a3270 2.69px, transparent 3.07px);
+        background-size: 134.4px 134.4px, 211.2px 172.8px;
+        background-position: 0 0, 67.2px 44.16px;
+      }
+      .\30 6-level-two-crt {
+        inset: 0; z-index: 20; pointer-events: none;
+        background:
+          repeating-linear-gradient(0deg, rgba(10,8,24,.24) 0 3px, transparent 3px 6px),
+          radial-gradient(ellipse at center, transparent 58%, rgba(10,8,24,.65) 100%);
+      }
+      .\30 6-level-two-hud {
+        top: 0; left: 0; right: 0; height: 80.64px; display: flex; align-items: center; justify-content: space-between;
+        padding: 0 57.6px; font-family: "Press Start 2P", monospace; font-size: 19.2px; letter-spacing: .04em;
+        color: #F4F1FF; border-bottom: 6px solid #2C2560; background: rgba(10,8,24,.35); z-index: 5;
+      }
+      .\30 6-level-two-banner {
+        left: 0; right: 0; top: 107.52px; height: 142.08px; display: flex; align-items: center; gap: 46.08px;
+        padding: 0 96px; background: #1E1940; border-top: 6px solid #F4F1FF; border-bottom: 6px solid #F4F1FF; z-index: 4;
+      }
+      .\30 6-level-two-arcade { font-family: "Press Start 2P", monospace; line-height: 1.15; letter-spacing: .04em; }
+      .\30 6-level-two-is { font-family: "Jersey 10", sans-serif; line-height: .95; }
+      .\30 6-level-two-lbl { font-family: "Silkscreen", monospace; letter-spacing: .08em; text-transform: uppercase; line-height: 1.1; margin: 0; }
+      .\30 6-level-two-spr { display: block; overflow: visible; }
+      .\30 6-level-two-panel {
+        background: #1E1940;
+        box-shadow: 0 -6px 0 0 #F4F1FF, 0 6px 0 0 #F4F1FF, -6px 0 0 0 #F4F1FF, 6px 0 0 0 #F4F1FF, 15px 15px 0 6px #0A0818;
+      }
+      .\30 6-level-two-row { position: absolute; left: 0; width: 100%; height: 36px; }
+      .\30 6-level-two-node {
+        width: 99.84px; height: 99.84px; display: grid; place-items: center;
+        font-family: "Press Start 2P", monospace; font-size: 30.72px;
+      }
+      .\30 6-level-two-path { height: 19.2px; background: repeating-linear-gradient(90deg, #2C2560 0 30.72px, transparent 30.72px 46.08px); }
+      .\30 6-level-two-xpbar { display: flex; gap: 6.72px; }
+      .\30 6-level-two-xpbar i { display: block; width: 30.72px; height: 30.72px; background: #2C2560; }
+    </style>
+
+    <!-- pixel sprites (copied from storyboard.html) -->
+    <svg data-hf-id="hf-8h6w" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs data-hf-id="hf-mh0t">
+        <symbol data-hf-id="hf-stgc" id="06-level-two-hero" viewBox="0 0 12 16" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-50dh" x="3" y="0" width="6" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-9oat" x="2" y="1" width="1" height="3" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-r2w5" x="9" y="1" width="1" height="2" style="fill:var(--hair,#3b2a1a)" />
+          <rect data-hf-id="hf-yqhe" x="3" y="2" width="6" height="4" fill="#f2c29b" />
+          <rect data-hf-id="hf-gw56" x="4" y="3" width="1" height="1" fill="#0A0818" /><rect data-hf-id="hf-rwnd" x="7" y="3" width="1" height="1" fill="#0A0818" />
+          <rect data-hf-id="hf-7x80" x="5" y="5" width="2" height="1" fill="#c9876a" />
+          <rect data-hf-id="hf-h3wf" x="2" y="6" width="8" height="5" fill="currentColor" />
+          <rect data-hf-id="hf-3435" x="1" y="7" width="1" height="3" fill="#f2c29b" /><rect data-hf-id="hf-rdc1" x="10" y="7" width="1" height="3" fill="#f2c29b" />
+          <rect data-hf-id="hf-3v50" x="3" y="11" width="2" height="4" fill="#2C2560" /><rect data-hf-id="hf-nl14" x="7" y="11" width="2" height="4" fill="#2C2560" />
+          <rect data-hf-id="hf-9p11" x="2" y="15" width="3" height="1" fill="#0A0818" /><rect data-hf-id="hf-s9ti" x="7" y="15" width="3" height="1" fill="#0A0818" />
+        </symbol>
+        <symbol data-hf-id="hf-tsg5" id="06-level-two-heart" viewBox="0 0 7 6" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-v1ys" x="1" y="0" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-r6id" x="4" y="0" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-96v2" x="0" y="1" width="7" height="2" fill="currentColor" /><rect data-hf-id="hf-b6ts" x="1" y="3" width="5" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-e33m" x="2" y="4" width="3" height="1" fill="currentColor" /><rect data-hf-id="hf-wo4c" x="3" y="5" width="1" height="1" fill="currentColor" />
+        </symbol>
+        <symbol data-hf-id="hf-he4v" id="06-level-two-check" viewBox="0 0 8 7" shape-rendering="crispEdges">
+          <rect data-hf-id="hf-jm34" x="6" y="0" width="2" height="2" fill="currentColor" /><rect data-hf-id="hf-w3b6" x="5" y="2" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-v4me" x="4" y="3" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-sd4y" x="0" y="3" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-7nyo" x="1" y="4" width="2" height="1" fill="currentColor" /><rect data-hf-id="hf-ts6e" x="3" y="4" width="2" height="1" fill="currentColor" />
+          <rect data-hf-id="hf-5jr5" x="2" y="5" width="2" height="2" fill="currentColor" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- ground: night + starfield -->
+    <div data-hf-id="hf-2ze6" id="06-level-two-bg" class="clip 06-level-two-bg" data-start="0" data-duration="7.168" data-track-index="0"></div>
+
+    <!-- HUD -->
+    <div data-hf-id="hf-zaeq" class="06-level-two-hud">
+      <span data-hf-id="hf-5jnh"><b data-hf-id="hf-c8f7" style="color:#3FE0D0;font-weight:400">1UP</b> 008400</span>
+      <span data-hf-id="hf-5zal" style="color:#FFE14D">HI-SCORE 099999</span>
+      <span data-hf-id="hf-uckh"><b data-hf-id="hf-slvi" style="color:#FF4F8B;font-weight:400">2UP</b> <span data-hf-id="hf-fvf9" id="06-level-two-press">PRESS START</span></span>
+    </div>
+
+    <!-- level banner -->
+    <div data-hf-id="hf-8jkd" class="06-level-two-banner">
+      <span data-hf-id="hf-94lp" id="06-level-two-lvl" class="06-level-two-arcade" style="color:#FFE14D;font-size:42.24px;display:inline-block">LEVEL 2</span>
+      <span data-hf-id="hf-171s" class="06-level-two-is" style="color:#F4F1FF;font-size:115.2px;display:inline-block;white-space:nowrap"><span data-hf-id="hf-ti0x" id="06-level-two-c0">S</span><span data-hf-id="hf-68i8" id="06-level-two-c1">a</span><span data-hf-id="hf-wwal" id="06-level-two-c2">m</span><span data-hf-id="hf-m68m" id="06-level-two-c3">a</span><span data-hf-id="hf-gwpy" id="06-level-two-c4">n</span><span data-hf-id="hf-ugrj" id="06-level-two-caret" style="display:inline-block;width:40px;height:84px;margin-left:8px;background:#FFE14D;vertical-align:-6px"></span></span>
+    </div>
+
+    <!-- Player 1 builders (Smári, Jakub) -->
+    <svg data-hf-id="hf-p4kz" id="06-level-two-p1a" class="06-level-two-spr" style="left:153.6px;top:357.12px;width:142.08px;height:190.08px;color:#3FE0D0"><use data-hf-id="hf-q2wb" href="#06-level-two-hero" /></svg>
+    <svg data-hf-id="hf-zf5s" id="06-level-two-p1b" class="06-level-two-spr" style="left:314.88px;top:357.12px;width:142.08px;height:190.08px;color:#3FE0D0;--hair:#8a5a2b"><use data-hf-id="hf-cop7" href="#06-level-two-hero" /></svg>
+
+    <!-- the app window (focal) -->
+    <div data-hf-id="hf-7got" id="06-level-two-win" style="left:576px;top:288px;width:537.6px;height:288px">
+      <div data-hf-id="hf-3jyo" class="06-level-two-panel" style="position:absolute;left:0;top:0;width:100%;height:100%"></div>
+      <div data-hf-id="hf-c73o" style="position:absolute;left:0;top:0;width:100%;height:46.08px;background:#3FE0D0"></div>
+      <div data-hf-id="hf-n7qt" style="position:absolute;left:30.72px;top:76.8px;width:476.16px;height:180.48px;overflow:hidden">
+        <div data-hf-id="hf-ibjf" id="06-level-two-r3" class="06-level-two-row" style="top:59.52px;background:repeating-linear-gradient(90deg,#c4703a 0 72px,#0A0818 72px 78px)"></div>
+        <div data-hf-id="hf-p05v" id="06-level-two-r2" class="06-level-two-row" style="top:101.52px;background:repeating-linear-gradient(90deg,#a86b32 0 33px,#0A0818 33px 39px,#a86b32 39px 72px,#0A0818 72px 78px);background-position:-18px 0"></div>
+        <div data-hf-id="hf-4rdj" id="06-level-two-r1" class="06-level-two-row" style="top:143.52px;background:repeating-linear-gradient(90deg,#c4703a 0 72px,#0A0818 72px 78px);background-position:-39px 0"></div>
+      </div>
+      <p data-hf-id="hf-5f7z" id="06-level-two-ver" class="06-level-two-lbl" style="position:absolute;left:30.72px;top:82.56px;font-size:26.88px;color:#F4F1FF">Útgáfa 1</p>
+    </div>
+
+    <!-- hearts -->
+    <svg data-hf-id="hf-xt4u" id="06-level-two-h0" class="06-level-two-spr" style="left:1251.84px;top:291.84px;width:57.6px;height:49.92px;color:#FF4F8B;transform-origin:50% 100%"><use data-hf-id="hf-qjy9" href="#06-level-two-heart" /></svg>
+    <svg data-hf-id="hf-2xee" id="06-level-two-h1" class="06-level-two-spr" style="left:1405.44px;top:268.8px;width:57.6px;height:49.92px;color:#FF4F8B;transform-origin:50% 100%"><use data-hf-id="hf-fno5" href="#06-level-two-heart" /></svg>
+    <svg data-hf-id="hf-92xv" id="06-level-two-h2" class="06-level-two-spr" style="left:1559.04px;top:291.84px;width:57.6px;height:49.92px;color:#FF4F8B;transform-origin:50% 100%"><use data-hf-id="hf-gul8" href="#06-level-two-heart" /></svg>
+
+    <!-- students -->
+    <svg data-hf-id="hf-hf75" id="06-level-two-s0" class="06-level-two-spr" style="left:1228.8px;top:376.32px;width:103.68px;height:138.24px;color:#FFE14D;--hair:#5b3618"><use data-hf-id="hf-cae6" href="#06-level-two-hero" /></svg>
+    <svg data-hf-id="hf-87sv" id="06-level-two-s1" class="06-level-two-spr" style="left:1382.4px;top:376.32px;width:103.68px;height:138.24px;color:#7CFF6B;--hair:#d9a441"><use data-hf-id="hf-bw35" href="#06-level-two-hero" /></svg>
+    <svg data-hf-id="hf-md45" id="06-level-two-s2" class="06-level-two-spr" style="left:1536px;top:376.32px;width:103.68px;height:138.24px;color:#b48cff;--hair:#1a1a1a"><use data-hf-id="hf-bhs4" href="#06-level-two-hero" /></svg>
+    <p data-hf-id="hf-74er" id="06-level-two-stl" class="06-level-two-lbl" style="left:1228.8px;top:537.6px;width:422.4px;text-align:center;font-size:24.96px;color:#A9A3D9">Nemendurnir þínir</p>
+
+    <!-- world map (shared stage with frames 05 / 07) -->
+    <div data-hf-id="hf-l3df" class="06-level-two-path" style="left:192px;top:702.72px;width:1536px"></div>
+    <div data-hf-id="hf-qjd9" id="06-level-two-n1" class="06-level-two-node" style="left:326.4px;top:662.4px;background:#FFE14D;color:#0A0818;box-shadow:0 0 0 6px #F4F1FF, 0 0 0 18px rgba(255,225,77,.35), 11.52px 11.52px 0 6px #0A0818">
+      <span data-hf-id="hf-jdmt" id="06-level-two-n1d">1</span>
+      <svg data-hf-id="hf-aqmy" id="06-level-two-n1c" class="06-level-two-spr" style="display:none;width:48px;height:42px;color:#0A0818"><use data-hf-id="hf-dc9p" href="#06-level-two-check" /></svg>
+    </div>
+    <div data-hf-id="hf-8q05" id="06-level-two-n2" class="06-level-two-node" style="left:910.08px;top:662.4px;background:#2C2560;color:#F4F1FF;box-shadow:0 0 0 6px #F4F1FF, 11.52px 11.52px 0 6px #0A0818">2</div>
+    <div data-hf-id="hf-74a5" class="06-level-two-node" style="left:1493.76px;top:662.4px;background:#2C2560;color:#F4F1FF;box-shadow:0 0 0 6px #F4F1FF, 11.52px 11.52px 0 6px #0A0818">3</div>
+
+    <!-- XP bar: 4 of 12 carried over from frame 05 -->
+    <div data-hf-id="hf-bsff" class="06-level-two-xpbar" style="left:76.8px;top:798.72px">
+      <i data-hf-id="hf-jriu" style="background:#7CFF6B"></i><i data-hf-id="hf-l3ay" style="background:#7CFF6B"></i><i data-hf-id="hf-lhlz" style="background:#7CFF6B"></i><i data-hf-id="hf-lvx0" style="background:#7CFF6B"></i><i data-hf-id="hf-fxi4" id="06-level-two-x4"></i><i data-hf-id="hf-gp5x" id="06-level-two-x5"></i><i data-hf-id="hf-kn9y" id="06-level-two-x6"></i><i data-hf-id="hf-qszr" id="06-level-two-x7"></i><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><i data-hf-id="hf-ylp6"></i>
+    </div>
+
+    <!-- CRT veil: top layer -->
+    <div data-hf-id="hf-ut3s" id="06-level-two-crt" class="clip 06-level-two-crt" data-start="0" data-duration="7.168" data-track-index="2"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        var ID = "06-level-two";
+        var root = document.querySelector('[data-composition-id="' + ID + '"]') || document;
+        function el(n) { return root.querySelector('[id="' + ID + '-' + n + '"]'); }
+
+        var INK = "#F4F1FF", COIN = "#FFE14D", XP = "#7CFF6B", SHADOW = "#0A0818";
+        var SH_BASE = "0 0 0 6px #F4F1FF, 11.52px 11.52px 0 6px #0A0818";
+        var SH_NOW = "0 0 0 6px #F4F1FF, 0 0 0 18px rgba(255,225,77,.35), 11.52px 11.52px 0 6px #0A0818";
+
+        window.__timelines = window.__timelines || {};
+        var tl = gsap.timeline({ paused: true });
+
+        // ---- Scene 1 (0.00-1.33): banner LEVEL 2 snaps in on the jingle (0.10) ----
+        var lvl = el("lvl");
+        tl.fromTo(lvl, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05, ease: "steps(1)" }, 0);
+        tl.fromTo(lvl, { x: -48 }, { x: 0, duration: 0.10, ease: "steps(2)" }, 0);
+
+        // node 1: coin -> green with check, 2 hard steps landing 0.30
+        var n1 = el("n1");
+        tl.set(n1, { backgroundColor: INK, boxShadow: SH_BASE }, 0.22);
+        tl.set(n1, { backgroundColor: XP }, 0.30);
+        tl.set(el("n1d"), { display: "none" }, 0.30);
+        tl.set(el("n1c"), { display: "block" }, 0.30);
+
+        // node 2: inactive -> coin (current level), 2 hard steps
+        var n2 = el("n2");
+        tl.set(n2, { backgroundColor: INK, color: SHADOW }, 0.46);
+        tl.set(n2, { backgroundColor: COIN, boxShadow: SH_NOW }, 0.54);
+
+        // "Saman" types per character behind a yellow caret from 1.33
+        var caret = el("caret");
+        tl.fromTo(caret, { display: "none" }, { display: "inline-block", duration: 0.001, ease: "none" }, 1.27);
+        for (var i = 0; i < 5; i++) {
+          tl.fromTo(el("c" + i), { display: "none" }, { display: "inline", duration: 0.001, ease: "none" }, 1.33 + i * 0.07);
+        }
+        // finite 2Hz-ish caret blink, then it leaves the line
+        tl.set(caret, { opacity: 0 }, 1.90);
+        tl.set(caret, { opacity: 1 }, 2.15);
+        tl.set(caret, { display: "none" }, 2.40);
+
+        // HUD: PRESS START blinks ~2Hz across the whole shot (finite)
+        var press = el("press");
+        for (var k = 1; k <= 26; k++) tl.set(press, { opacity: k % 2 ? 0 : 1 }, k * 0.25);
+
+        // ---- Scene 2 (1.33-4.30): empty window opens, P1 builders drop in on "Við" ----
+        var win = el("win");
+        tl.fromTo(win, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.08, ease: "steps(1)" }, 1.50);
+        tl.fromTo(win, { scaleY: 0 }, { scaleY: 1, duration: 0.24, ease: "steps(3)" }, 1.50);
+
+        var p1a = el("p1a"), p1b = el("p1b");
+        [[p1a, 2.50], [p1b, 2.56]].forEach(function (p) {
+          tl.fromTo(p[0], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05, ease: "steps(1)" }, p[1]);
+          tl.fromTo(p[0], { y: -48 }, { y: 0, duration: 0.16, ease: "steps(3)" }, p[1]);
+        });
+
+        // bricks: three hard-stepped drops landing 2.88 / 3.25 / 3.60 (bottom row first)
+        var drops = [["r1", 2.88, 144], ["r2", 3.25, 108], ["r3", 3.60, 72]];
+        drops.forEach(function (d) {
+          var row = el(d[0]), t = d[1];
+          tl.fromTo(row, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05, ease: "steps(1)" }, t - 0.15);
+          tl.fromTo(row, { y: -d[2] }, { y: 0, duration: 0.15, ease: "steps(3)" }, t - 0.15);
+          // impact: window jolts one game pixel, builders hop
+          tl.set(win, { y: 6 }, t);
+          tl.set(win, { y: 0 }, t + 0.06);
+          tl.set([p1a, p1b], { y: -12 }, t);
+          tl.set([p1a, p1b], { y: 0 }, t + 0.08);
+        });
+
+        // "ÚTGÁFA 1" stamps into the window header on "útgáfuna" (3.57)
+        tl.fromTo(el("ver"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.08, ease: "steps(2)" }, 3.49);
+
+        // builders' 2-frame idle bob through the rest of the shot
+        for (var b = 0; b < 6; b++) {
+          var bt = 3.90 + b * 0.5;
+          tl.set(p1a, { y: -6 }, bt);
+          tl.set(p1a, { y: 0 }, bt + 0.25);
+          tl.set(p1b, { y: -6 }, bt + 0.25);
+          tl.set(p1b, { y: 0 }, bt + 0.5);
+        }
+
+        // ---- Scene 3 (4.30-6.67): students run in on "nemendunum" (5.10) ----
+        for (var s = 0; s < 3; s++) {
+          var st = el("s" + s), t0 = 5.10 + s * 0.06;
+          tl.fromTo(st, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.001, ease: "none" }, t0);
+          tl.fromTo(st, { x: 720 }, { x: 0, duration: 0.48, ease: "steps(6)" }, t0);
+          for (var w = 1; w <= 5; w++) tl.set(st, { y: w % 2 ? -6 : 0 }, t0 + w * 0.08);
+          tl.set(st, { y: 0 }, t0 + 0.48);
+
+          // hearts pop above each on "þínum" (5.74), 2-step pop, staggered
+          var h = el("h" + s), ht = 5.74 + s * 0.10;
+          tl.fromTo(h, { autoAlpha: 0, scale: 0.4, y: 12 }, { autoAlpha: 1, scale: 1.35, y: -6, duration: 0.08, ease: "steps(1)" }, ht - 0.08);
+          tl.to(h, { scale: 1, y: 0, duration: 0.08, ease: "steps(1)" }, ht);
+          // the student hops as their heart pops
+          tl.set(st, { y: -12 }, ht);
+          tl.set(st, { y: 0 }, ht + 0.08);
+        }
+
+        // label under the students stamps in as they line up
+        tl.fromTo(el("stl"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.08, ease: "steps(2)" }, 5.58);
+
+        // XP bar steps from 4 to 8 cells starting on the xp cue (6.10)
+        for (var x = 0; x < 4; x++) tl.set(el("x" + (4 + x)), { backgroundColor: XP }, 6.10 + x * 0.06);
+
+        // hold to the end of the frame
+        tl.set({}, {}, 6.668);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </div>
+</template>
