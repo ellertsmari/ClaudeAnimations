@@ -57,12 +57,16 @@ server, and the Copy buttons need http(s) for the clipboard. The page notices
 when it's opened from disk and only then shows a note about this. Step ticks
 and the model choice are saved in the viewer's browser only.
 
-To open one of the films in HyperFrames Studio (step 08):
+To open one of the films in HyperFrames Studio (step 08), from a clone of the
+repo (Node 22+; nothing else to install, tested from a fresh clone on 28 October 2026):
 
 ```sh
-npx hyperframes preview examples/clay          # prints a localhost link
-npx hyperframes preview examples/clay --stop
+git clone https://github.com/ellertsmari/ClaudeAnimations.git
+cd ClaudeAnimations
+npx hyperframes preview examples/view-source   # opens Studio; Ctrl+C stops it
 ```
+
+The page explains this to students in a box above the films (`#try-studio`).
 
 ## Files
 
