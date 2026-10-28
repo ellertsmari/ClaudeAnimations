@@ -1,0 +1,89 @@
+<template>
+  <style>
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; src: url("assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2"); }
+    @font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; src: url("assets/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2"); }
+    @font-face { font-family: "JetBrains Mono"; font-weight: 400; src: url("assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+
+    #root { position: absolute; inset: 0; overflow: hidden; background: #17140f; }
+    #s2-ground { position: absolute; inset: 0; background: #e5461c; opacity: 0; }
+        .s2-cam { position: absolute; inset: 0; overflow: hidden; }
+    .s2-cam video { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; object-fit: cover; }
+    .s2-flash { position: absolute; inset: 0; background: rgba(111, 168, 220, 0.66); opacity: 0; }
+    .s2-tip { position: absolute; left: 96px; top: 80px; padding: 16px 24px 18px; background: #fff; border-radius: 8px;
+              box-shadow: 0 4px 18px rgba(0,0,0,.45); opacity: 0; white-space: nowrap; }
+    .s2-tip p { font: 400 34px/1.25 "JetBrains Mono", monospace; color: #5f6368; }
+    .s2-tip p .t { color: #881280; }
+    .s2-tip p + p { font: 400 30px/1.3 "Atkinson Hyperlegible", sans-serif; color: #202124; margin-top: 4px; }
+    #s2-cam1 { z-index: 1; } #s2-cam2 { z-index: 2; } #s2-cam3 { z-index: 3; } #s2-cam4 { z-index: 4; } #s2-cam5 { z-index: 5; }
+    .s2-cam { visibility: hidden; }
+    #s2-line { position: absolute; left: 140px; top: 300px; width: 1000px; z-index: 6;
+               font: 700 132px/1.0 "Space Grotesk", sans-serif; letter-spacing: -0.035em; color: #17140f; }
+    #s2-line span { display: inline-block; opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="films" data-start="0" data-duration="12" data-width="1920" data-height="1080">
+    <div id="s2-ground" data-layout-ignore></div>
+
+    <div class="s2-cam" id="s2-cam1"><video id="s2-v1" class="clip" data-start="0" data-duration="2.35" data-track-index="1" src="assets/clips/clay.mp4" muted playsinline></video>
+        <div class="s2-flash"></div>
+        <div class="s2-tip"><p><span class="t">canvas</span>  1920 × 1080</p><p>Three.js · clay puppets</p></div></div>
+    <div class="s2-cam" id="s2-cam2"><video id="s2-v2" class="clip" data-start="2" data-duration="2" data-track-index="2" src="assets/clips/player2.mp4" muted playsinline></video>
+        <div class="s2-flash"></div>
+        <div class="s2-tip"><p><span class="t">div</span>  1920 × 1080</p><p>HTML + GSAP · pixel arcade</p></div></div>
+    <div class="s2-cam" id="s2-cam3"><video id="s2-v3" class="clip" data-start="4" data-duration="2.35" data-track-index="3" src="assets/clips/neopunk.mp4" muted playsinline></video>
+        <div class="s2-flash"></div>
+        <div class="s2-tip"><p><span class="t">canvas</span>  1920 × 1080</p><p>a pixel engine · neo-punk</p></div></div>
+    <div class="s2-cam" id="s2-cam4"><video id="s2-v4" class="clip" data-start="6" data-duration="2.35" data-track-index="4" src="assets/clips/island.mp4" muted playsinline></video>
+        <div class="s2-flash"></div>
+        <div class="s2-tip"><p><span class="t">canvas</span>  1920 × 1080</p><p>p5.js · watercolour brushes</p></div></div>
+    <div class="s2-cam" id="s2-cam5"><video id="s2-v5" class="clip" data-start="8" data-duration="4" data-track-index="5" src="assets/clips/ordabokin.mp4" muted playsinline></video>
+        <div class="s2-flash"></div>
+        <div class="s2-tip"><p><span class="t">div</span>  1920 × 1080</p><p>HTML + GSAP · flashcards</p></div></div>
+
+    <h2 id="s2-line"><span>Five</span> <span>films.</span><br><span>None</span> <span>drawn</span><br><span>by</span> <span>hand.</span></h2>
+  </div>
+
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const cam = (n) => "#s2-cam" + n;
+      // each camera is on screen only while its clip plays
+      [[1, 0, 2.35], [2, 2, 4], [3, 4, 6.35], [4, 6, 8.35], [5, 8, 12]].forEach(([n, a, b]) => {
+        tl.set(cam(n), { visibility: "visible" }, a);
+        if (b < 12) tl.set(cam(n), { visibility: "hidden" }, b);
+      });
+      const tip = (n, t) => {
+        tl.fromTo(cam(n) + " .s2-flash", { opacity: 0.9 }, { opacity: 0, duration: 0.35, ease: "power2.out" }, t);
+        tl.fromTo(cam(n) + " .s2-tip", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power4.out" }, t + 0.12);
+      };
+
+      // 0.0 the clay film grows out of the ink
+      tl.fromTo(cam(1), { scale: 0.06, borderRadius: 120 }, { scale: 1, borderRadius: 0, duration: 0.55, ease: "expo.out" }, 0);
+      tip(1, 0.3);
+      // 2.0 whip to Player 2
+      tl.fromTo(cam(1), { x: 0, filter: "blur(0px)" }, { x: -1920, filter: "blur(18px)", duration: 0.3, ease: "power3.in", immediateRender: false }, 2.0);
+      tl.fromTo(cam(2), { x: 1920, filter: "blur(18px)" }, { x: 0, filter: "blur(0px)", duration: 0.32, ease: "power3.out" }, 2.0);
+      tip(2, 2.2);
+      // 4.0 hard cut to neo-punk, on the bar
+      tip(3, 4.0);
+      // 6.0 iris into the island
+      tl.fromTo(cam(4), { clipPath: "circle(0% at 50% 50%)" }, { clipPath: "circle(75% at 50% 50%)", duration: 0.32, ease: "power2.out" }, 6.0);
+      tip(4, 6.15);
+      // 8.0 push up into Orðabókin
+      tl.fromTo(cam(4), { y: 0, filter: "blur(0px)" }, { y: -1080, filter: "blur(16px)", duration: 0.3, ease: "power3.in", immediateRender: false }, 8.0);
+      tl.fromTo(cam(5), { y: 1080, filter: "blur(16px)" }, { y: 0, filter: "blur(0px)", duration: 0.32, ease: "power3.out" }, 8.0);
+      tip(5, 8.2);
+      // 9.55 the ground floods orange, the film steps aside, the line lands word by word
+      tl.to(cam(5) + " .s2-tip", { opacity: 0, duration: 0.12 }, 9.45);
+      tl.fromTo("#s2-ground", { opacity: 0 }, { opacity: 1, duration: 0.01 }, 9.55);
+      tl.to(cam(5), { scale: 0.36, x: 520, y: 90, boxShadow: "40px 40px 0 #17140f", duration: 0.6, ease: "expo.out" }, 9.55);
+      const words = document.querySelectorAll("#s2-line span");
+      words.forEach((w, i) => {
+        tl.fromTo(w, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.14, ease: "power4.out" }, 9.75 + i * 0.09 + (i > 1 ? 0.25 : 0));
+      });
+
+      window.__timelines["films"] = tl;
+    })();
+  </script>
+</template>

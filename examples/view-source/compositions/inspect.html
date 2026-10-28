@@ -1,0 +1,180 @@
+<template>
+  <style>
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; src: url("assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2"); }
+    @font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; src: url("assets/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2"); }
+    @font-face { font-family: "JetBrains Mono"; font-weight: 400; src: url("assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+
+    #root { position: absolute; inset: 0; overflow: hidden; background: #2a251d; }
+    #s1-cam { position: absolute; inset: 0; }
+    #s1-dive { position: absolute; inset: 0; }
+
+    /* the Chromium window */
+    #s1-win { position: absolute; left: 96px; top: 64px; width: 1728px; height: 952px; border-radius: 14px; overflow: hidden;
+              background: #fff; box-shadow: 12px 12px 0 #000; }
+    #s1-tabs { position: absolute; left: 0; top: 0; right: 0; height: 46px; background: #dee1e6; }
+    #s1-tab { position: absolute; left: 12px; top: 8px; width: 300px; height: 38px; background: #fff; border-radius: 10px 10px 0 0;
+              font: 400 21px "Atkinson Hyperlegible", sans-serif; color: #3c4043; padding: 8px 0 0 44px; }
+    #s1-tab i { position: absolute; left: 16px; top: 11px; width: 16px; height: 16px; border-radius: 4px; background: #e5461c; }
+    #s1-bar { position: absolute; left: 0; top: 46px; right: 0; height: 56px; background: #fff; border-bottom: 1px solid #dadce0; }
+    #s1-nav { position: absolute; left: 22px; top: 12px; font: 400 26px "Atkinson Hyperlegible", sans-serif; color: #5f6368; letter-spacing: 18px; }
+    #s1-omni { position: absolute; left: 150px; top: 8px; width: 1100px; height: 40px; border-radius: 20px; background: #f1f3f4;
+               font: 400 22px "Atkinson Hyperlegible", sans-serif; color: #202124; padding: 7px 0 0 24px; }
+    #s1-omni span { color: #5f6368; }
+
+    /* the page */
+    #s1-view { position: absolute; left: 0; top: 102px; width: 1728px; height: 850px; overflow: hidden; background: #e5461c; }
+    #s1-title { position: absolute; left: 230px; right: 40px; top: 250px; margin: 0 0 24px;
+                font: 700 180px/0.95 "Space Grotesk", sans-serif; letter-spacing: -0.035em; color: #17140f; }
+    #s1-title span { display: none; }
+    #s1-hl { position: absolute; left: 230px; top: 250px; width: 690px; height: 342px; opacity: 0; }
+    #s1-hl b { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: rgba(111, 168, 220, 0.66); }
+    #s1-hl em { position: absolute; left: 0; top: 100%; width: 100%; height: 24px; background: rgba(246, 178, 107, 0.66); }
+    #s1-tip { position: absolute; left: 230px; top: 176px; padding: 10px 16px; background: #fff; border-radius: 6px;
+              box-shadow: 0 2px 10px rgba(0,0,0,.35); font: 400 28px "JetBrains Mono", monospace; color: #5f6368; opacity: 0; white-space: nowrap; }
+    #s1-tip .t { color: #881280; } #s1-tip .i { color: #1a1aa6; }
+
+    /* DevTools, docked right */
+    #s1-dev { position: absolute; left: 960px; top: 102px; width: 768px; height: 850px; background: #202124; border-left: 2px solid #3c4043;
+              opacity: 0; font: 400 28px/44px "JetBrains Mono", monospace; color: #e8eaed; }
+    #s1-devbar { height: 44px; background: #292a2d; border-bottom: 1px solid #3c4043; font: 400 20px/44px "Atkinson Hyperlegible", sans-serif; color: #9aa0a6; padding-left: 16px; word-spacing: 22px; }
+    #s1-devbar b { color: #e8eaed; font-weight: 400; border-bottom: 3px solid #8ab4f8; padding-bottom: 9px; }
+    #s1-tree { position: absolute; left: 0; top: 54px; right: 0; }
+    #s1-tree div { padding-left: 16px; height: 44px; white-space: pre; }
+    #s1-tree .sel { background: #2f4562; }
+    .tg { color: #5db0d7; } .an { color: #9bbbdc; } .av { color: #f29766; } .gr { color: #9aa0a6; }
+    #s1-node .film { padding: 0 1px; }
+    #s1-node span.ty { display: none; }
+    #s1-styhead { position: absolute; left: 0; top: 520px; right: 0; height: 44px; background: #292a2d; border-top: 1px solid #3c4043;
+                  border-bottom: 1px solid #3c4043; font: 400 20px/44px "Atkinson Hyperlegible", sans-serif; color: #9aa0a6; padding-left: 16px; word-spacing: 22px; }
+    #s1-styhead b { color: #e8eaed; font-weight: 400; }
+    #s1-styles { position: absolute; left: 0; top: 576px; right: 0; padding-left: 16px; }
+    #s1-styles div { white-space: pre; height: 44px; }
+    .pp { color: #35d4c7; }
+    #s1-fsval { padding: 0 2px; border-radius: 3px; }
+
+    /* the context menu */
+    #s1-menu { position: absolute; left: 648px; top: 528px; width: 340px; padding: 8px 0; background: #fff; border-radius: 8px;
+               box-shadow: 0 6px 24px rgba(0,0,0,.4); font: 400 28px/46px "Atkinson Hyperlegible", sans-serif; color: #202124;
+               opacity: 0; transform-origin: 0 0; }
+    #s1-menu div { padding-left: 28px; height: 46px; }
+    #s1-menu hr { border: 0; border-top: 1px solid #dadce0; margin: 8px 0; }
+    #s1-menu .dim { color: #9aa0a6; }
+    #s1-inspect-row { background: transparent; }
+
+    #s1-cursor { position: absolute; left: 0; top: 0; width: 52px; height: 76px; transform-origin: 4px 4px; }
+
+    #s1-flood { position: absolute; inset: 0; background: #17140f; opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="inspect" data-start="0" data-duration="10" data-width="1920" data-height="1080">
+    <div id="s1-cam">
+      <div id="s1-dive">
+        <div id="s1-win">
+          <div id="s1-tabs" data-layout-ignore><div id="s1-tab"><i></i>View Source</div></div>
+          <div id="s1-bar" data-layout-ignore>
+            <div id="s1-nav">←→↻</div>
+            <div id="s1-omni">localhost:3002<span>/view-source</span></div>
+          </div>
+
+          <div id="s1-view" data-layout-allow-overflow>
+            <h1 id="s1-title">This is a <i id="s1-pg-film" style="font-style:normal">film</i><span>w</span><span>e</span><span>b</span><span> </span><span>p</span><span>a</span><span>g</span><span>e</span>.</h1>
+            <div id="s1-hl" data-layout-ignore><b></b><em></em></div>
+            <div id="s1-tip" data-layout-ignore><span class="t">h1</span><span class="i">#s1-title</span>  690 × 342</div>
+          </div>
+
+          <div id="s1-dev" data-layout-allow-overflow>
+            <div id="s1-devbar" data-layout-ignore><b>Elements</b> Console Sources Network</div>
+            <div id="s1-tree">
+              <div>&lt;<span class="tg">html</span> <span class="an">lang</span>=<span class="av">"en"</span>&gt;</div>
+              <div>  &lt;<span class="tg">body</span>&gt;</div>
+              <div>    &lt;<span class="tg">div</span> <span class="an">id</span>=<span class="av">"root"</span>&gt;</div>
+              <div id="s1-row-h1">      &lt;<span class="tg">h1</span> <span class="an">id</span>=<span class="av">"s1-title"</span>&gt; <span class="gr">== $0</span></div>
+              <div id="s1-node">        <span id="s1-q1">"</span>This is a <span id="s1-film" class="film">film</span><span class="ty">w</span><span class="ty">e</span><span class="ty">b</span><span class="ty"> </span><span class="ty">p</span><span class="ty">a</span><span class="ty">g</span><span class="ty">e</span>.<span id="s1-q2">"</span></div>
+              <div>      &lt;/<span class="tg">h1</span>&gt;</div>
+              <div>    &lt;/<span class="tg">div</span>&gt;</div>
+            </div>
+            <div id="s1-styhead" data-layout-ignore><b>Styles</b> Computed Layout</div>
+            <div id="s1-styles"><div><span class="tg">#s1-title</span> {</div><div>  <span class="pp">font-size</span>: <span id="s1-fsval">180px</span>;</div><div>  <span class="pp">color</span>: <span class="av">#17140f</span>;</div><div>}</div></div>
+          </div>
+        </div>
+
+        <div id="s1-menu" data-layout-ignore>
+          <div>Back</div><div class="dim">Forward</div><div>Reload</div><hr>
+          <div>Save as…</div><div>Print…</div><div>Cast…</div><hr>
+          <div>View page source</div><div id="s1-inspect-row">Inspect</div>
+        </div>
+
+        <svg id="s1-cursor" viewBox="0 0 52 76" data-layout-ignore>
+          <path d="M4 4 L4 62 L18 49 L28 72 L38 67 L28 45 L47 45 Z" fill="#fff" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+    <div id="s1-flood" data-layout-ignore></div>
+  </div>
+
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const $ = (s) => document.querySelector(s);
+
+      // 0.0 the page fills the frame; 1.0-1.8 pull back to show it is a browser tab
+      tl.fromTo("#s1-cam", { scale: 1.271, y: -51, transformOrigin: "960px 591px" },
+                           { scale: 1, y: 0, duration: 0.8, ease: "power2.inOut" }, 1.0);
+
+      // 1.9 the cursor comes in from the bottom right and lands on the title
+      tl.set("#s1-cursor", { x: 1500, y: 1120, scale: 1, opacity: 1 }, 0);
+      tl.to("#s1-cursor", { x: 640, y: 520, duration: 0.6, ease: "power3.out" }, 1.9);
+      // 2.6 right-click
+      tl.to("#s1-cursor", { scale: 0.88, duration: 0.06, yoyo: true, repeat: 1, ease: "none" }, 2.6);
+      tl.fromTo("#s1-menu", { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power2.out" }, 2.66);
+      // down to Inspect
+      tl.to("#s1-cursor", { x: 690, y: 948, duration: 0.45, ease: "power2.inOut" }, 2.85);
+      tl.set("#s1-inspect-row", { backgroundColor: "#e8f0fe" }, 3.18);
+      tl.to("#s1-cursor", { scale: 0.88, duration: 0.06, yoyo: true, repeat: 1, ease: "none" }, 3.4);
+      // 3.45 DevTools docks: the menu closes, the page narrows, the h1 is highlighted
+      tl.set("#s1-menu", { opacity: 0 }, 3.45);
+      tl.set("#s1-view", { width: 960 }, 3.45);
+      tl.set("#s1-dev", { opacity: 1 }, 3.45);
+      tl.set("#s1-row-h1", { backgroundColor: "#2f4562" }, 3.45);
+      tl.set(["#s1-hl", "#s1-tip"], { opacity: 1 }, 3.5);
+
+      // 4.4 to the text node in the Elements tree; double-click "film"
+      tl.to("#s1-cursor", { x: 1418, y: 412, duration: 0.45, ease: "power2.inOut" }, 4.3);
+      tl.set(["#s1-hl", "#s1-tip"], { opacity: 0 }, 4.85);
+      tl.to("#s1-cursor", { scale: 0.88, duration: 0.05, yoyo: true, repeat: 1, ease: "none" }, 4.9);
+      tl.to("#s1-cursor", { scale: 0.88, duration: 0.05, yoyo: true, repeat: 1, ease: "none" }, 5.02);
+      tl.set("#s1-row-h1", { backgroundColor: "rgba(0,0,0,0)" }, 5.08);
+      tl.set("#s1-node", { backgroundColor: "#2f4562" }, 5.08);
+      tl.set("#s1-film", { backgroundColor: "#3d6fb5" }, 5.1);
+      tl.set("#s1-cursor", { opacity: 0 }, 5.2);
+
+      // 5.3 typing "web page", live in the page and in the DOM, one key every 0.075 s
+      tl.set(["#s1-film", "#s1-pg-film"], { display: "none" }, 5.3);
+      const devKeys = document.querySelectorAll("#s1-node span.ty");
+      const pageKeys = document.querySelectorAll("#s1-title span");
+      for (let k = 0; k < 8; k++) {
+        tl.set([devKeys[k], pageKeys[k]], { display: "inline" }, 5.3 + k * 0.075);
+      }
+      // 6.0 Enter
+      tl.set("#s1-node", { backgroundColor: "rgba(0,0,0,0)" }, 6.0);
+      tl.set("#s1-cursor", { opacity: 1 }, 7.4);
+
+      // 7.4 Styles: click the font-size value and push it up
+      tl.set("#s1-cursor", { x: 1600, y: 620 }, 7.39);
+      tl.to("#s1-cursor", { x: 1335, y: 800, duration: 0.5, ease: "power2.out" }, 7.4);
+      tl.to("#s1-cursor", { scale: 0.88, duration: 0.06, yoyo: true, repeat: 1, ease: "none" }, 8.0);
+      tl.set("#s1-fsval", { backgroundColor: "#ffffff", color: "#202124" }, 8.05);
+      const fs = { v: 180 };
+      const title = $("#s1-title"), val = $("#s1-fsval");
+      tl.fromTo(fs, { v: 180 }, { v: 600, duration: 0.95, ease: "power2.in",
+        onUpdate: () => { title.style.fontSize = fs.v + "px"; val.textContent = Math.round(fs.v) + "px"; } }, 8.1);
+
+      // 9.0 dive into the giant letters; ink floods the frame
+      tl.fromTo("#s1-dive", { scale: 1, transformOrigin: "560px 700px" }, { scale: 7, duration: 0.95, ease: "power3.in" }, 9.0);
+      tl.fromTo("#s1-flood", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.in" }, 9.62);
+
+      window.__timelines["inspect"] = tl;
+    })();
+  </script>
+</template>

@@ -4,7 +4,8 @@ A step-by-step tutorial for Vefskólinn students (guide 4.4, Motion and video) o
 making a short film with a coding agent, the way we made ours in autumn 2026:
 the watercolour island film, *Player 2 óskast*, the neo-punk *Vefþróun með
 gervigreind*, *Orðabókin*, and the clay stop-motion *From one island to
-another* for the El Rincón teachers.
+another* for the El Rincón teachers. A sixth film, *View Source*, explains the
+guide itself; Claude made it from one message overnight on 28 October 2026.
 
 It is built from those projects in `~/Documents/claudeMovies` (the briefs,
 `STYLE-LIBRARY.md`, the tool scripts) and from the prompts we actually sent in
@@ -12,7 +13,7 @@ those Claude Code sessions.
 
 ## What's in it
 
-The page starts with our five films, each with the files behind it, then
+The page starts with our six films, each with the files behind it, then
 walks through eleven steps (00–10): set up, your message, pitches, voice,
 plan, storyboard page, checking the letters, build, review, render, and
 writing it down. Step 08 (Review) shows HyperFrames Studio in an annotated
@@ -77,6 +78,8 @@ npx hyperframes preview examples/clay --stop
   - `clay.mp4` + `clay.jpg`: a 720p copy of *From one island to another*
     (the 86 MB original is in `~/Documents/claudeMovies/videos/el-rincon-clay/renders/`)
   - `ordabokin.mp4` + poster: the Orðabókin film (from `introToUppt-glaerur`)
+  - `view-source.mp4` + `view-source.jpg`: a 720p copy of *View Source*
+    (the 1080p render is in `~/Documents/claudeMovies/videos/view-source/renders/`)
   - `studio.jpg`: Studio with the Player 2 film at 0:19 and one element
     selected, used in step 08 with numbered markers
   - `island.mp4`, `player2.mp4`, `neopunk.mp4` + `.jpg` posters: copies of
@@ -96,6 +99,11 @@ npx hyperframes preview examples/clay --stop
     than the originals. All four pass `hyperframes check` with 0 errors, and a
     snapshot at 20 s matches the film. For a full-quality render, use the
     originals.
+  - `view-source/`: the whole HyperFrames project for *View Source*, with
+    `BRIEF.md`, `STORYLINES.md` (the three storylines, one built), `SPEC.md`,
+    `REVIEW.md` and `tools/make_music.py`. It uses short muted clips of the
+    other five films (`assets/clips/`) and screenshots of this page
+    (`assets/img/guide-*.jpg`), so if the page changes, the film doesn't.
   - Not copied: the rendered films, `.venv` folders, and the El Rincón casting
     page (it has photos of people from the hero video).
 
@@ -107,6 +115,10 @@ npx hyperframes preview examples/clay --stop
 - The "Our real prompts" section quotes your own messages verbatim (typos kept on
   purpose) and leaves out colleagues' names in the El Rincón prompts. Check
   you're happy to show them.
+- *View Source* ends on your own words, “Surprise me with the style.”, signed
+  “Smári, before going to bed”, and shows the clay film's puppets for 2 s.
+  Its music and sound effects were made in code and checked by measurement
+  only, not by ear; see `examples/view-source/REVIEW.md`.
 - The clay film shows colleagues from El Rincón and TECHCOLLEGE as puppets.
   Check they're fine with it being shown to students.
 - The hand-in list in the last section is a suggestion. Align it with the 4.4

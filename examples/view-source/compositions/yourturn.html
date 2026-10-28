@@ -1,0 +1,139 @@
+<template>
+  <style>
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; src: url("assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2"); }
+    @font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; src: url("assets/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2"); }
+    @font-face { font-family: "Atkinson Hyperlegible"; font-weight: 700; src: url("assets/fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2"); }
+    @font-face { font-family: "JetBrains Mono"; font-weight: 400; src: url("assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+    @font-face { font-family: "JetBrains Mono"; font-weight: 600; src: url("assets/fonts/jetbrains-mono-latin-600-normal.woff2") format("woff2"); }
+
+    #root { position: absolute; inset: 0; overflow: hidden; background: #17140f; }
+
+    /* the guide, live in Chrome */
+    #s6-cam { position: absolute; inset: 0; }
+    #s6-bar { position: absolute; left: 0; top: 0; width: 1920px; height: 102px; background: #fff; }
+    #s6-tabs { position: absolute; left: 0; top: 0; right: 0; height: 46px; background: #dee1e6; }
+    #s6-tab { position: absolute; left: 12px; top: 8px; width: 360px; height: 38px; background: #fff; border-radius: 10px 10px 0 0;
+              font: 400 21px "Atkinson Hyperlegible", sans-serif; color: #3c4043; padding: 8px 0 0 44px; }
+    #s6-tab i { position: absolute; left: 16px; top: 11px; width: 16px; height: 16px; border-radius: 4px; background: #e5461c; }
+    #s6-omni { position: absolute; left: 150px; top: 54px; width: 1100px; height: 40px; border-radius: 20px; background: #f1f3f4;
+               font: 400 22px "Atkinson Hyperlegible", sans-serif; color: #202124; padding: 7px 0 0 24px; }
+    #s6-nav { position: absolute; left: 22px; top: 58px; font: 400 26px "Atkinson Hyperlegible", sans-serif; color: #5f6368; letter-spacing: 18px; }
+    #s6-view { position: absolute; left: 0; top: 102px; width: 1920px; height: 978px; overflow: hidden; }
+    #s6-view img { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #s6-weak { opacity: 0; }
+    #s6-cursor { position: absolute; left: 0; top: 0; width: 52px; height: 76px; transform-origin: 4px 4px; }
+
+    #s6-note { position: absolute; left: 140px; top: 860px; padding: 24px 40px 28px; background: #f3eee4; border: 4px solid #17140f;
+               box-shadow: 12px 12px 0 #17140f; font: 700 54px "Space Grotesk", sans-serif; letter-spacing: -0.02em; color: #17140f; opacity: 0; }
+
+    /* your turn */
+    #s6-orange { position: absolute; inset: 0; background: #e5461c; opacity: 0; }
+    #s6-turn { position: absolute; left: 140px; top: 250px; font: 700 300px/0.95 "Space Grotesk", sans-serif; letter-spacing: -0.045em; color: #17140f; }
+    #s6-turn span { display: inline-block; opacity: 0; }
+    #s6-sub { position: absolute; left: 150px; top: 640px; font: 700 64px "Space Grotesk", sans-serif; letter-spacing: -0.02em; color: #17140f; opacity: 0; }
+
+    /* the reveal */
+    #s6-paper { position: absolute; inset: 0; background: #f3eee4; clip-path: inset(100% 0 0 0); }
+    #s6-made { position: absolute; left: 140px; top: 150px; width: 1500px; font: 700 120px/1.0 "Space Grotesk", sans-serif; letter-spacing: -0.035em; color: #17140f; }
+    #s6-made span { display: inline-block; opacity: 0; }
+    #s6-made .o { color: #e5461c; }
+    #s6-quote { position: absolute; left: 140px; top: 560px; width: 1180px; padding: 40px 56px 44px; background: #fbf8f2; border: 4px solid #17140f;
+                border-radius: 8px 40px 40px 40px; box-shadow: 14px 14px 0 #17140f; opacity: 0; }
+    #s6-quote p { font: 400 72px/1.2 "Atkinson Hyperlegible", sans-serif; color: #17140f; }
+    #s6-quote small { display: block; margin-top: 18px; font: 400 36px "JetBrains Mono", monospace; color: #4a443a; }
+
+    /* the end card: the guide's own hero */
+    #s6-end { position: absolute; inset: 0; background: #17140f; clip-path: inset(0 0 0 100%); }
+    #s6-eyebrow { position: absolute; left: 140px; top: 150px; font: 600 32px "JetBrains Mono", monospace; letter-spacing: 0.12em; color: #e5461c; opacity: 0; }
+    #s6-h1 { position: absolute; left: 132px; top: 230px; font: 700 210px/0.95 "Space Grotesk", sans-serif; letter-spacing: -0.045em; color: #f3eee4; }
+    #s6-h1 span { display: inline-block; opacity: 0; }
+    #s6-h1 .o { color: #e5461c; }
+    #s6-url { position: absolute; left: 140px; top: 720px; font: 400 48px "JetBrains Mono", monospace; color: #f3eee4; opacity: 0; }
+    #s6-strip { position: absolute; left: 0; right: 0; top: 860px; height: 120px; background: #2a251d; }
+    #s6-strip i { position: absolute; left: 0; right: 0; height: 16px;
+                  background: repeating-linear-gradient(90deg, transparent 0 12px, #000 12px 34px, transparent 34px 48px); }
+    #s6-strip i:first-child { top: 10px; } #s6-strip i:last-child { bottom: 10px; }
+  </style>
+
+  <div id="root" data-composition-id="yourturn" data-start="0" data-duration="16" data-width="1920" data-height="1080">
+    <div id="s6-cam">
+      <div id="s6-view">
+        <img id="s6-strong" src="assets/img/guide-strong.jpg" alt="The guide's hero with Claude Opus 5.5 chosen">
+        <img id="s6-weak" src="assets/img/guide-weak.jpg" alt="The guide's hero with a weaker model chosen">
+      </div>
+      <div id="s6-bar" data-layout-ignore>
+        <div id="s6-tabs"><div id="s6-tab"><i></i>Animations with Claude</div></div>
+        <div id="s6-nav">←→↻</div>
+        <div id="s6-omni">ellertsmari.github.io/ClaudeAnimations/</div>
+      </div>
+    </div>
+    <svg id="s6-cursor" viewBox="0 0 52 76" data-layout-ignore>
+      <path d="M4 4 L4 62 L18 49 L28 72 L38 67 L28 45 L47 45 Z" fill="#fff" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+    </svg>
+    <div id="s6-note">The steps change to match your model.</div>
+
+    <div id="s6-orange" data-layout-ignore></div>
+    <h2 id="s6-turn"><span>Your</span> <span>turn.</span></h2>
+    <p id="s6-sub">A 30–60 s film for your 4.3 page.</p>
+
+    <div id="s6-paper">
+      <h2 id="s6-made"><span>This</span> <span>film</span> <span>was</span> <span>made</span> <span>from</span> <span class="o">one</span> <span class="o">message.</span></h2>
+      <div id="s6-quote"><p>“Surprise me with the style.”</p><small>Smári, before going to bed</small></div>
+    </div>
+
+    <div id="s6-end">
+      <p id="s6-eyebrow">VEFSKÓLINN · GUIDE 4.4</p>
+      <h1 id="s6-h1"><span>Animations</span><br><span>with</span> <span class="o">Claude</span></h1>
+      <p id="s6-url">ellertsmari.github.io/ClaudeAnimations</p>
+      <div id="s6-strip" data-layout-ignore><i></i><i></i></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const words = (sel, t, gap) => document.querySelectorAll(sel).forEach((w, i) =>
+        tl.fromTo(w, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.15, ease: "power4.out" }, t + i * gap));
+
+      // 0.0 the guide itself; 0.5 push in on "Which model are you using?"
+      tl.fromTo("#s6-cam", { scale: 1, transformOrigin: "750px 649px" }, { scale: 1.55, x: 210, y: -60, duration: 0.8, ease: "power2.inOut" }, 0.5);
+
+      // the cursor clicks "A weaker model", then "Claude Opus 5.5"
+      tl.set("#s6-cursor", { x: 1500, y: 1100, scale: 1 }, 0);
+      tl.to("#s6-cursor", { x: 1240, y: 585, duration: 0.55, ease: "power3.out" }, 1.3);
+      tl.to("#s6-cursor", { scale: 0.88, duration: 0.06, yoyo: true, repeat: 1, ease: "none" }, 1.95);
+      tl.set("#s6-weak", { opacity: 1 }, 2.0);
+      tl.fromTo("#s6-note", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 2.25);
+      tl.to("#s6-cursor", { x: 650, y: 585, duration: 0.45, ease: "power2.inOut" }, 3.0);
+      tl.to("#s6-cursor", { scale: 0.88, duration: 0.06, yoyo: true, repeat: 1, ease: "none" }, 3.5);
+      tl.set("#s6-weak", { opacity: 0 }, 3.55);
+
+      // 4.4 zoom through the orange button: it becomes the next world
+      tl.to("#s6-note", { opacity: 0, filter: "blur(6px)", duration: 0.2 }, 4.3);
+      tl.to("#s6-cursor", { opacity: 0, duration: 0.1 }, 4.35);
+      // keep an empty orange corner of the button (730, 615) still on screen while it grows past the frame
+      tl.to("#s6-cam", { scale: 40, x: 979, y: 1247, duration: 0.7, ease: "power3.in" }, 4.4);
+      tl.set("#s6-orange", { opacity: 1 }, 5.08);
+
+      // 5.1 Your turn.
+      words("#s6-turn span", 5.15, 0.12);
+      tl.fromTo("#s6-sub", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power4.out" }, 5.9);
+
+      // 8.2 paper rises: this film was made from one message
+      tl.to(["#s6-turn", "#s6-sub"], { opacity: 0, filter: "blur(8px)", duration: 0.2 }, 8.15);
+      tl.fromTo("#s6-paper", { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", duration: 0.45, ease: "power2.inOut" }, 8.25);
+      words("#s6-made span", 8.6, 0.09);
+      tl.fromTo("#s6-quote", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.45, ease: "expo.out", transformOrigin: "0 0" }, 9.6);
+
+      // 11.6 the end card wipes in from the right, like the guide's hero
+      tl.fromTo("#s6-end", { clipPath: "inset(0 0 0 100%)" }, { clipPath: "inset(0 0 0 0%)", duration: 0.45, ease: "power2.inOut" }, 11.55);
+      tl.fromTo("#s6-eyebrow", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 11.9);
+      words("#s6-h1 span", 12.0, 0.14);
+      tl.fromTo("#s6-url", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 12.6);
+      tl.fromTo("#s6-strip", { x: 1920 }, { x: 0, duration: 0.6, ease: "expo.out" }, 12.3);
+
+      window.__timelines["yourturn"] = tl;
+    })();
+  </script>
+</template>

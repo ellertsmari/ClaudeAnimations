@@ -1,0 +1,88 @@
+<template>
+  <style>
+    @font-face { font-family: "Space Grotesk"; font-weight: 700; src: url("assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2"); }
+    @font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; src: url("assets/fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2"); }
+    @font-face { font-family: "JetBrains Mono"; font-weight: 600; src: url("assets/fonts/jetbrains-mono-latin-600-normal.woff2") format("woff2"); }
+    @font-face { font-family: "JetBrains Mono"; font-weight: 400; src: url("assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+
+    #root { position: absolute; inset: 0; overflow: hidden; background: #17140f; }
+    #s4-head { position: absolute; left: 140px; top: 52px; font: 700 52px "Space Grotesk", sans-serif; color: #f3eee4; letter-spacing: -0.02em; }
+    #s4-head span { color: #e5461c; }
+    #s4-strip { position: absolute; left: 0; top: 170px; width: 14200px; height: 800px; background: #2a251d; }
+    .s4-holes { position: absolute; left: 0; right: 0; height: 22px;
+                background: repeating-linear-gradient(90deg, transparent 0 14px, #0b0a08 14px 44px, transparent 44px 62px); }
+    .s4-holes.t { top: 22px; } .s4-holes.b { bottom: 22px; }
+    .s4-f { position: absolute; top: 70px; width: 1180px; height: 660px; background: #f3eee4; border-radius: 8px; overflow: hidden; }
+    .s4-f .n { position: absolute; left: 70px; top: 64px; font: 600 64px "JetBrains Mono", monospace; color: #e5461c; }
+    .s4-f h3 { position: absolute; left: 70px; top: 160px; width: 520px; font: 700 96px/1.0 "Space Grotesk", sans-serif; letter-spacing: -0.035em; color: #17140f; }
+    .v { position: absolute; left: 640px; top: 70px; width: 480px; height: 520px; }
+    .term { background: #17140f; border-radius: 12px; padding: 34px 30px; font: 400 30px/1.6 "JetBrains Mono", monospace; color: #f3eee4; }
+    .term .pr { color: #e5461c; } .term .ok { color: #6cc3cb; margin-top: 18px; } .term .h { color: #e5461c; margin-bottom: 14px; }
+    .note { display: flex; align-items: center; background: #fbf8f2; border: 3px solid #17140f; box-shadow: 12px 12px 0 #17140f;
+            padding: 44px; font: 400 54px/1.25 "Atkinson Hyperlegible", sans-serif; color: #17140f; height: 460px; }
+    .note u { text-decoration-color: #e5461c; text-decoration-thickness: 8px; text-underline-offset: 8px; }
+    .chips p { height: 84px; margin-bottom: 18px; padding: 0 28px; border: 3px solid #17140f; border-radius: 10px; background: #fbf8f2;
+               font: 700 40px/78px "Space Grotesk", sans-serif; color: #17140f; }
+    .chips p.on { background: #e5461c; color: #fff; border-color: #e5461c; }
+    .wave .bars { display: flex; align-items: center; gap: 7px; height: 340px; }
+    .wave .bars i { display: block; width: 11px; background: #17140f; border-radius: 6px; }
+    .wave p { font: 400 40px "Atkinson Hyperlegible", sans-serif; color: #4a443a; margin-top: 40px; }
+    .wave b { color: #e5461c; }
+    .files p { height: 120px; margin-bottom: 28px; padding-left: 34px; background: #fbf8f2; border: 3px solid #17140f; box-shadow: 8px 8px 0 #17140f;
+               font: 600 42px/114px "JetBrains Mono", monospace; color: #17140f; }
+    .pic { border: 3px solid #17140f; overflow: hidden; box-shadow: 12px 12px 0 #17140f; }
+    .pic img { width: 100%; height: 100%; object-fit: cover; }
+    .glyphs p { font: 700 150px/1.1 "Space Grotesk", sans-serif; color: #17140f; letter-spacing: 0.02em; }
+    .glyphs p.sm { font-size: 80px; color: #1d6b73; margin-top: 20px; }
+    .quote { display: flex; align-items: center; }
+    .quote p { font: 700 118px/1.0 "Space Grotesk", sans-serif; color: #17140f; letter-spacing: -0.03em; }
+    .quote span { color: #e5461c; }
+    .rend .pb { height: 64px; border: 4px solid #17140f; border-radius: 34px; overflow: hidden; margin-top: 90px; }
+    .rend .pb i { display: block; width: 100%; height: 100%; background: #e5461c; }
+    .rend p { font: 400 36px "JetBrains Mono", monospace; color: #4a443a; margin-top: 26px; }
+    .rend p.big { font: 700 88px "Space Grotesk", sans-serif; color: #17140f; margin-top: 50px; }
+    #s4-gl, #s4-gr { position: absolute; top: 0; bottom: 0; background: rgba(23, 20, 15, 0.55); }
+    #s4-gl { left: 0; width: 342px; } #s4-gr { right: 0; width: 342px; }
+  </style>
+
+  <div id="root" data-composition-id="steps" data-start="0" data-duration="16.5" data-width="1920" data-height="1080">
+    <h2 id="s4-head">The guide: <span>11 steps</span></h2>
+    <div id="s4-strip" data-layout-allow-overflow>
+      <div class="s4-holes t"></div><div class="s4-holes b"></div>
+        <div class="s4-f" style="left:370px"><p class="n">00</p><h3>Set up</h3><div class="v term"><p><span class="pr">$</span> claude plugin install</p><p>&nbsp;&nbsp;hyperframes@hyperframes</p><p class="ok">✓ skills installed</p></div></div>
+        <div class="s4-f" style="left:1610px"><p class="n">01</p><h3>Your message</h3><div class="v note"><p>One sentence the viewer should <u>remember</u>.</p></div></div>
+        <div class="s4-f" style="left:2850px"><p class="n">02</p><h3>Ask for pitches</h3><div class="v chips"><p>1 · Napkin to app</p><p>2 · Poster wall</p><p>3 · Blueprint</p><p class="on">4 · Player 2 wanted</p><p>5 · The Padlet</p></div></div>
+        <div class="s4-f" style="left:4090px"><p class="n">03</p><h3>Choose a voice</h3><div class="v wave"><div class="bars"><i style="height:40px"></i><i style="height:90px"></i><i style="height:150px"></i><i style="height:110px"></i><i style="height:200px"></i><i style="height:170px"></i><i style="height:80px"></i><i style="height:130px"></i><i style="height:220px"></i><i style="height:160px"></i><i style="height:60px"></i><i style="height:120px"></i><i style="height:190px"></i><i style="height:240px"></i><i style="height:140px"></i><i style="height:70px"></i><i style="height:180px"></i><i style="height:210px"></i><i style="height:100px"></i><i style="height:50px"></i><i style="height:150px"></i><i style="height:230px"></i><i style="height:120px"></i><i style="height:80px"></i><i style="height:170px"></i><i style="height:110px"></i><i style="height:60px"></i></div><p><b>▶ Emma</b> · Gunnar · Ryan</p></div></div>
+        <div class="s4-f" style="left:5330px"><p class="n">04</p><h3>Agree on a plan</h3><div class="v files"><p>▤ BRIEF.md</p><p>▤ SCRIPT.md</p><p>▤ STORYBOARD.md</p></div></div>
+        <div class="s4-f" style="left:6570px"><p class="n">05</p><h3>Storyboard page</h3><div class="v pic"><img src="assets/img/storyboard-p2.jpg" alt="" style="object-position: 0 0"></div></div>
+        <div class="s4-f" style="left:7810px"><p class="n">06</p><h3>Check the letters</h3><div class="v glyphs"><p>Þ Ð Æ Ö</p><p class="sm">á é í ó ú ý</p></div></div>
+        <div class="s4-f" style="left:9050px"><p class="n">07</p><h3>Build</h3><div class="v quote"><p><span>“</span>now do it!<span>”</span></p></div></div>
+        <div class="s4-f" style="left:10290px"><p class="n">08</p><h3>Review in Studio</h3><div class="v pic"><img src="assets/img/studio.jpg" alt="" style="object-position: 30% 30%"></div></div>
+        <div class="s4-f" style="left:11530px"><p class="n">09</p><h3>Render</h3><div class="v rend"><div class="pb"><i></i></div><p class="big">film.mp4</p><p>80 s rendered in 1.5 min</p></div></div>
+        <div class="s4-f" style="left:12770px"><p class="n">10</p><h3>Write it down</h3><div class="v term lib"><p class="h">STYLE-LIBRARY.md</p><p>clay · Three.js · 5 min</p><p>arcade · GSAP · 1.5 min</p><p class="ok">+ your film</p></div></div>
+    </div>
+    <div id="s4-gl" data-layout-ignore></div><div id="s4-gr" data-layout-ignore></div>
+  </div>
+
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const PITCH = 1240, STEP = 1.5;
+
+      tl.fromTo("#s4-head", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power4.out" }, 0.1);
+      // 0.0 the strip arrives in the gate
+      tl.fromTo("#s4-strip", { x: 1500 }, { x: 0, duration: 0.45, ease: "power3.out" }, 0);
+      // every 1.5 s the projector pulls the next frame into the gate
+      for (let i = 1; i <= 10; i++) {
+        const t = i * STEP;
+        tl.to("#s4-strip", { x: -i * PITCH, duration: 0.32, ease: "power3.inOut" }, t);
+      }
+      // 16.1 the strip whips out to the render
+      tl.to("#s4-strip", { x: -10 * PITCH - 2400, duration: 0.38, ease: "power3.in" }, 16.1);
+      tl.to("#s4-head", { opacity: 0, duration: 0.15 }, 16.1);
+
+      window.__timelines["steps"] = tl;
+    })();
+  </script>
+</template>
