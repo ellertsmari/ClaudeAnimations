@@ -279,6 +279,7 @@ ul.files li { padding: 6px 0; border-bottom: 1px dashed var(--line); }
 html[data-model="strong"] [data-for="weak"],
 html[data-model="weak"] [data-for="strong"] { display: none !important; }
 i[data-for] { font-style: normal; }
+html:not(.from-file) .only-file { display: none; }
 
 .pick { margin: 0 0 40px; max-width: 760px; }
 .pick-q { font: 600 0.8rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: #d9d1bf; margin: 0 0 10px; }

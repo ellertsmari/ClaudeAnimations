@@ -41,7 +41,9 @@ prompts, a troubleshooting table and a suggested hand-in list.
 
 ## Run it
 
-Serve the folder and open the link it prints:
+It's online on GitHub Pages: https://ellertsmari.github.io/ClaudeAnimations/
+
+To run it locally, serve the folder and open the link it prints:
 
 ```sh
 npx serve .
@@ -50,8 +52,9 @@ npx serve .
 
 Most of the page works straight from disk too, but the clay storyboard loads
 ES modules and `fetch()`es its timeline, which browsers only allow from a
-server, and the Copy buttons need http://localhost for the clipboard. Step
-ticks are saved in the viewer's browser only.
+server, and the Copy buttons need http(s) for the clipboard. The page notices
+when it's opened from disk and only then shows a note about this. Step ticks
+and the model choice are saved in the viewer's browser only.
 
 To open one of the films in HyperFrames Studio (step 08):
 
